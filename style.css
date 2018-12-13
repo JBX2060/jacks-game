@@ -1,0 +1,82 @@
+.banner {
+    background: #222222;
+    padding: 16px;
+    text-align: center;
+}
+
+body {
+    background: #EEEEEE;
+}
+
+* {
+    font-family: 'Roboto', sans-serif;
+    color: #EEEEEE;
+    margin: 0;
+}
+
+.textcontainer {
+    background: #222222;
+    padding: 16px;
+    margin-top: 0.5%;
+}
+
+h1 {
+    font-size: 6em;
+}
+
+h2 {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.textcontainer * {
+    margin: 8px;
+    text-align: left;
+    width: 70%;
+    margin-left: 15%;
+}
+
+p {
+    font-size: 1em;
+}
+
+.gameicon {
+    background: #222222;
+    padding: 16px;
+    transition: background 0.5s;
+    margin-top: 2.5%;
+}
+
+button {
+    border: none;
+    background: #555555;
+    transition: background 0.5s;
+    font-size: 1em;
+    width: 100%;
+}
+
+button:hover {
+    background: #666666;
+}
+
+.gameicon p {
+    margin: 8px;
+}
+
+.gameicon:hover {
+    background: #333333;
+}
+
+.flex {
+    display: flex;
+    flex-direction: column;
+    width: 19%;
+    padding-left: 0.25%;
+    padding-right: 0.25%;
+}
+
+.flexcontainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
