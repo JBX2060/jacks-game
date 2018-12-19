@@ -77,6 +77,10 @@ a.toggle = wsrc("tiles/toggle.png");
 
 a.boss1 = wsrc("entities/boss1.png");
 
+a.gunbody = wsrc("entities/gunbody.png");
+
+a.gunbarrel = wsrc("entities/gunbarrel.png");
+
 aa = Object.values(a);
 
 aarr = [];

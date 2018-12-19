@@ -1063,6 +1063,29 @@ function Boss1(x, y) {
 function Gun(x, y, range, angle) {
     this.range = range;
     this.angle = angle;
+    this.gunDirection = angle;
+    this.engaged = false;
     this.x = x;
     this.y = y;
+    this.hitbox = [];
+    this.hp = 1;
+    this.death = function () {
+
+    }
+    this.frame = function () {
+        var lineOfSight = [ray(this.x, this.y, Math.atan2(this.y - p.y, this.x - p.x), chunks, lineOfSight, 1, {})];
+        if (lineOfSight[0] && lineOfSight[0].dist > pyth(this.x, this.y, p.x, p.y)) {
+            this.engaged = true;
+        }
+        if (this.engaged) {
+            this.gunDirection = Math.atan2(this.y - p.y, this.x - p.x);
+        }
+    }
+    this.draw = function () {
+        imgRotate(a.gunbody, this.x, this.y, 16, 16, this.angle);
+        imgRotate(a.gunbarrel, this.x, this.y, 32, 32, this.gunDirection);
+    }
+    this.init = function () {
+
+    }
 }

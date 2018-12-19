@@ -358,6 +358,7 @@ map.events[2][1].load = function () {
             y: 1487
         };
     }));
+    o.push(new Gun(888, 1216, 80, Math.PI / 2));
 }
 
 map.events[3][0].load = function () {
