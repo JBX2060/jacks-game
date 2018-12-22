@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            body {
+                margin: 0px;
+                background: #000000;
+                overflow: hidden;
+            }
+
+            canvas {
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                image-rendering: pixelated;
+            }
+
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" width="3840" height="2160"></canvas>
+        <script>
+            //define canvas
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+            
+            //define ant position
+            var p = {
+                x: 1920,
+                y: 1080,
+                a: 1
+            };
+            
+            //gets coordinates
+            function getCoord(x, y, w) {
+                return x * 4 + y * w * 4;
+            }
+            
+            //image data to be displayed on canvas
+            var imgdata = new ImageData(3840, 2160);
+            
+            //all pixels of image data
+            var pixels = imgdata.data;
+            
+            //contains all states
+            var img = new Uint16Array(3840 * 2160 * 4);
+            
+            //clear canvas (idk why i do this)
+            ctx.fillStyle = "White";
+            ctx.fillRect(0, 0, c.width, c.height);
+            
+            //contains all direction rules
+            var dirs = [];
+            
+            //fill with zeroes
+            for (var i = 0; 4096 > i; i++) {
+                dirs.push(0);
+            }
+            
+            //change a few to "1" (turns the other direction)
+            for (var i = 0; 300 > i; i++) {
+                dirs[Math.floor(dirs.length * Math.random())] = 1;
+            }
+            
+            //loop function
+            function loop() {
+
+                //adjust canvas height
+                c.style.height = window.innerHeight + "px";
+                
+                //update pixels of imagedata to display on screen
+                for (var i = 0; img.length / 4 > i; i++) {
+                    pixels[i * 4] = Math.floor(img[i * 4] / 256);
+                    pixels[i * 4 + 2] = (img[i * 4] / 16) % 256;
+                    pixels[i * 4 + 1] = Math.floor(img[i * 4] / 64) % 256;
+                    pixels[i * 4 + 3] = 255;
+                }
+                
+                //draw image data onto canvas
+                ctx.putImageData(imgdata, 0, 0);
+                
+                //langton's ant calculations
+                for (var i = 0; 500000 > i; i++) {
+
+                    //get coordinate position of ant
+                    var data = getCoord(p.x, p.y, 3840);
+                    
+                    //direction
+                    var dir = false;
+                    
+                    //equal to 65536 / 4096 (4096 is the number of states)
+                    var num = 16;
+                    
+                    //determine what rule corresponds to the color the ant is on
+                    var dirIndex = ~~(img[data] / num) % (65536 / num - 1);
+
+                    //set direction to that rule
+                    dir = dirs[dirIndex];
+
+                    //change color of square the ant is on
+                    img[data] = dirIndex * num + num;
+                    
+                    //change ant direction based on its direction given by the rule
+                    if (dir == 0) {
+                        p.a++;
+                        if (p.a > 3) {
+                            p.a = 0;
+                        }
+                    } else {
+                        p.a--;
+                        if (p.a < 0) {
+                            p.a = 3;
+                        }
+                    }
+                    
+                    //move ant forward
+                    switch (p.a) {
+                        case 0:
+                            p.x++;
+                            break;
+                        case 1:
+                            p.y++;
+                            break;
+                        case 2:
+                            p.x--;
+                            break;
+                        case 3:
+                            p.y--;
+                            break;
+                    }
+                    
+                    //wrap ant around screen
+                    if (p.x > c.width) {
+                        p.x = 0;
+                    } else if (p.x < 0) {
+                        p.x = c.width;
+                    }
+                    if (p.y > c.height) {
+                        p.y = 0;
+                    } else if (p.y < 0) {
+                        p.y = c.height;
+                    }
+                }
+            
+                //repeat loop
+                setTimeout(loop, 0);
+            }
+            
+            //initial loop call
+            loop();
+        </script>
+    </body>    
+</html>

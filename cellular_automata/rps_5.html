@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            body {
+                margin: 0px;
+                background: #000000;
+                overflow: hidden;
+            }
+
+            canvas {
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                image-rendering: pixelated;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas width="192" height="108" id="canvas"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            var image = new ImageData(c.width, c.height);
+
+            for (var i = 0; image.data.length / 4 > i; i++) {
+                image.data[i * 4] = Math.floor(Math.random() * 5) * 48;
+                image.data[i * 4 + 3] = 255;
+            }
+
+            ctx.putImageData(image, 0, 0);
+
+            function clamp(value, min, max) {
+                if (value > max) {
+                    return max;
+                } else if (value < min) {
+                    return min;
+                }
+                return value;
+            }
+
+            function loop() {
+                c.style.height = window.innerHeight + "px";
+
+                var newImageData = new ImageData(c.width, c.height);
+                
+                var data = newImageData.data;
+
+                for (var i = 0; c.width * c.height > i; i++) {
+                    data[i * 4 + 3] = 255;
+
+                    var neighbors = ctx.getImageData(clamp(i % c.width - 1, 0, c.width - 1), clamp(Math.floor(i / c.width) - 1, 0, c.height - 1), 3, 3).data;
+
+                    var typeCounts = [0, 0, 0, 0, 0];
+
+                    for (var i2 = 0; typeCounts.length > i2; i2++) {
+                        typeCounts[i2] = Math.floor(Math.random() * 2);
+                    }
+
+                    for (var i2 = 0; 9 > i2; i2++) {
+                        typeCounts[Math.floor(neighbors[i2 * 4] / 47)]++;
+                    }
+
+                    
+                    // var max = 0;
+                    // var maxIndex = 0;
+
+                    // for (var i2 = 0; typeCounts.length > i2; i2++) {
+                    //     if (typeCounts[i2] > max) {
+                    //         max = typeCounts[i2];
+                    //         maxIndex = i2;
+                    //     }
+                    // }
+
+                    switch (neighbors[16]) {
+                        case (0):
+                            if (typeCounts[1] >= 2) {
+                                data[i * 4] = 48;
+                            } else {
+                                data[i * 4] = 0;
+                            }
+                            break;
+                        case (48):
+                            if (typeCounts[2] >= 2) {
+                                data[i * 4] = 96;
+                            } else {
+                                data[i * 4] = 48;
+                            }
+                            break;
+                        case (96):
+                            if (typeCounts[3] >= 2) {
+                                data[i * 4] = 144;
+                            } else {
+                                data[i * 4] = 96;
+                            }
+                            break;
+                        case (144):
+                            if (typeCounts[4] >= 2) {
+                                data[i * 4] = 192;
+                            } else {
+                                data[i * 4] = 144;
+                            }
+                            break;
+                        case (192):
+                            if (typeCounts[0] >= 2) {
+                                data[i * 4] = 0;
+                            } else {
+                                data[i * 4] = 192;
+                            }
+                            break;
+                    }
+                }
+                //console.log(newImageData);
+                ctx.putImageData(newImageData, 0, 0);
+                
+                requestAnimationFrame(loop);
+            }
+            loop();
+        </script>
+    </body>
+</html>
