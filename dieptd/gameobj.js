@@ -49,6 +49,8 @@ function Simple_Tower(x, y, draw, action, action_in_FOV, hp, fov, power_cap, min
         a.hp = clamp(a.hp, 0, a.mhp);
         a.power = clamp(a.power, 0, a.power_cap);
 
+        request_power(a);
+
         //do simple action to do by default every frame
         a.action_2(a);
 

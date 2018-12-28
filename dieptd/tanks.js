@@ -23,7 +23,7 @@ function Basic_Tank(x, y) {
         if (a.t % 30 == 0 && closest !== false && dist_to_obj(a, o[closest]) < 210) {
             o.push(Bullet(a.x, a.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 8, "eb", 5, 15));
         }
-    }, "e", 50);
+    }, "e", 150);
 
     return tank;
 }
@@ -60,7 +60,7 @@ function Twin_Tank(x, y) {
                 o.push(Bullet(off_p.x, off_p.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 10, "eb", 5, 15));
             }
         }
-    }, "e", 75);
+    }, "e", 225);
 
     return tank;
 }
@@ -94,7 +94,7 @@ function Triple_Shot_Tank(x, y) {
             o.push(Bullet(a.x, a.y, Math.cos(a.angle + tau / 8) * 15, Math.sin(a.angle + tau / 8) * 15, 11, "eb", 5, 15));
             o.push(Bullet(a.x, a.y, Math.cos(a.angle - tau / 8) * 15, Math.sin(a.angle - tau / 8) * 15, 11, "eb", 5, 15));
         }
-    }, "e", 100);
+    }, "e", 300);
 
     return tank;
 }
@@ -134,7 +134,7 @@ function Triplet_Tank(x, y) {
                 o.push(Bullet(a.x, a.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "eb", 5, 15));
             }
         }
-    }, "e", 125);
+    }, "e", 375);
 
     return tank;
 }
@@ -172,7 +172,7 @@ function Auto_5_Tank(x, y) {
 
             }
         }
-    }, "e", 125);
+    }, "e", 375);
 
     var barrel_angles = [0, 0, 0, 0, 0];
 

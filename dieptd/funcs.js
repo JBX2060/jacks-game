@@ -14,6 +14,14 @@ function dist_to_obj(a, b) {
     return dist(a.x, a.y, b.x, b.y);
 }
 
+//is this in my fov?
+function in_fov(a, b) {
+    if (dist_to_obj(a, b) <= a.fov) {
+        return true;
+    }
+    return false;
+}
+
 //simple point to and move towards function
 function simple_move_behavior(a, v, discrim, minrange) {
     var closest = find_closest(a, o, discrim);
@@ -77,6 +85,26 @@ function find_closest(me, arr, discrim) {
     return min_dist_index;
 }
 
+//find closest by tank type
+function find_closest_by_tank_type(me, arr, discrim) {
+
+    //index of object with minimum distance
+    var min_dist_index = false;
+
+    //minimum distance
+    var min_dist = Infinity;
+
+    //cycle through array, find minimum distance
+    arr.forEach(function (e, i) {
+        if (dist(e.x, e.y, me.x, me.y) < min_dist && e.tank_type == discrim) {
+            min_dist_index = i;
+            min_dist = dist(e.x, e.y, me.x, me.y);
+        }
+    });
+
+    return min_dist_index;
+}
+
 //finds direction pointing towards a given object
 function point_towards(a, b) {
     return Math.atan2(b.y - a.y, b.x - a.x);
@@ -89,7 +117,22 @@ function get_all_in_range(a, arr, discrim) {
     var in_range = [];
     
     arr.forEach(function (e, i) {
-        if (dist(e.x, e.y, a.x, a.y) <= a.fov && e.discrim == discrim) {
+        if (dist(e.x, e.y, a.x, a.y) <= a.fov && e.discrim == discrim && e != a) {
+            in_range.push(i);
+        }
+    });
+
+    return in_range;
+}
+
+//get all indexes of objects in range of a given tower (except based on tank type)
+function get_all_in_range_by_tank_type(a, arr, discrim) {
+    
+    //all in range
+    var in_range = [];
+    
+    arr.forEach(function (e, i) {
+        if (dist(e.x, e.y, a.x, a.y) <= a.fov && e.tank_type == discrim && e != a) {
             in_range.push(i);
         }
     });
@@ -105,4 +148,147 @@ function clamp(value, min, max) {
         return max;
     }
     return value;
+}
+
+//generator count
+function generator_count() {
+    var count = 0;
+   
+    o.forEach(function (e) {
+        if (e.tank_type == "generator") {
+            count++;
+        }
+    });
+
+    return count;
+}
+
+function index_of_obj(arr, obj) {
+    arr.forEach(function (e, i) {
+        if (e === obj) {
+            return i;
+        }
+    })
+
+    return -1;
+}
+
+function discriminate(discrim) {
+    var subset = [];
+
+    o.forEach(function (e) {
+        if (e.discrim == discrim) {
+            subset.push(e);
+        }
+    });
+
+    return subset;
+}
+
+function discriminate_by_tank_type(discrim, arr) {
+    var subset = [];
+
+    if (arr == undefined) {
+        arr = o;
+    }
+
+    arr.forEach(function (e) {
+        if (e.tank_type == discrim) {
+            subset.push(e);
+        }
+    });
+
+    return subset;
+}
+
+function request_power(a) {
+    var connected = find_closest_by_tank_type(a, o, "relay");
+
+    if (connected && in_fov(o[connected], a) && a.power / a.power_cap < 0.5 && a.t % 20 == 0) {
+        o.push(Request_Signal(a, o[connected], a.power_cap - a.power, a));
+    }
+}
+
+//group towers into specific subsets by seeing how they're connected
+function group_towers() {
+    
+    var towers = discriminate_by_tank_type("relay").concat(discriminate_by_tank_type("generator"));
+
+    var groups = [];
+
+    var tc = 0;
+
+    while (towers.length > 0) {
+        tc = 0;
+        while (towers.length > tc && towers[tc].tank_type == "generator") {
+            tc++;
+        }
+        if (towers.length != tc) {
+            var active = [towers[tc]];
+            towers.splice(tc, 1);
+            for (var i2 = 0; active.length > i2; i2++) {
+                for (var i = 0; towers.length > i; i++) {
+                    if (in_fov(active[i2], towers[i])) {
+                        active.push(towers[i]);
+                        towers.splice(i, 1);
+                        i--;
+                    }
+                }
+            }
+            groups.push({ all: active, gen: discriminate_by_tank_type("generator", active) });
+        } else {
+            for (var i = 0; towers.length > i; i++) {
+                groups.push([towers[i]]);
+                towers.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
+    return groups;
+
+}
+
+//find group of generator
+function find_gen_of_group(gen) {
+    for (var i = 0; gt.length > i; i++) {
+        for (var i2 = 0; gt[i].gen.length > i2; i2++) {
+            if (gt[i].gen[i2] == gen) {
+                return i;
+            }
+        }
+    }
+}
+
+//power something
+function distrib_power(a, gen, power) {
+    var group = find_gen_of_group(gen);
+    gt[group].gen.forEach(function (e) {
+        if (e.power > power / gt[group].gen.length) {
+            e.power -= power / gt[group].gen.length;
+            a.power += power / gt[group].gen.length;
+        } else {
+            a.power += e.power;
+            e.power = 0;
+        }
+    });
+}
+
+//determine shape total hp
+function get_shape_total_hp() {
+    var shapes = discriminate("s");
+
+    var hp = 0;
+
+    var mhp = 0
+
+    shapes.forEach(function (e) {
+        hp += e.hp;
+        mhp += e.mhp;
+    });
+
+    return {
+        hp: hp,
+        mhp: mhp
+    };
 }

@@ -110,10 +110,40 @@ function tank_base(x, y, r) {
 
 //draws field of view
 function fov(a) {
-    ctx.beginPath();
-    ctx.arc(a.x, a.y, a.fov, 0, tau);
-    ctx.strokeStyle = "#00000011";
-    ctx.stroke();
-    ctx.fillStyle = "rgba(0, 0, 0, " + clamp(1000 / Math.pow(dist(a.x, a.y, m.x, m.y), 2), 0, 0.1) + ")";
-    ctx.fill();
+    cc.beginPath();
+    cc.arc(a.x, a.y, a.fov, 0, tau);
+    cc.globalAlpha = clamp(3000 / Math.pow(dist(a.x, a.y, tmc.x, tmc.y), 2), 0.14, 0.4);
+    switch (a.discrim_2) {
+        case "relay":
+            cc.strokeStyle = "#00e06c";
+            break;
+        case "miner":
+            cc.strokeStyle = "#000000";
+            break;
+        default: 
+            cc.strokeStyle = "#1db2df";
+            break;
+    }
+    cc.stroke();
+    cc.globalAlpha = 1;
+    if (a.discrim_2 == "relay") {
+        if (!place.placing) {
+            cc.fillStyle = "#00e06c06";
+        } else {
+            cc.fillStyle = "#00e06c14";
+        }
+        cc.fill();
+    }
+}
+
+//diep.io text function
+function diep_text(txt, x, y, size) {
+    cc.font = size + "px Ubuntu";
+    cc.lineJoin = "round";
+    cc.lineWidth = size / 5;
+    cc.strokeStyle = "#3A3A3A";
+    cc.fillStyle = "#E9E9E9";
+    cc.beginPath();
+    cc.strokeText(txt, x, y);
+    cc.fillText(txt, x, y);
 }
