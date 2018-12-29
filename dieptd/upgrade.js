@@ -6,12 +6,13 @@ function handle_upgrades() {
     }
     switch (select.selection.tank_type) {
         case "basic":
-            if (k[81]) {
-                o.push(Twin_Tower(select.selection.x, select.selection.y));
-                o[o.length - 1].hp = select.selection.hp / select.selection.mhp * o[o.length - 1].mhp;
-                o.splice(select.selection_index, 1);
-                select.selection = o[o.length - 1];
-                select.selection_index = o.length - 1;
+            if (kd[81]) {
+                upgrade(Twin_Tower(select.selection.x, select.selection.y), 8);
+            }
+            break;
+        case "twin":
+            if (kd[81]) {
+                upgrade(Triple_Shot_Tower(select.selection.x, select.selection.y), 5);
             }
             break;
         // case "relay":

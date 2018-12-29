@@ -32,6 +32,15 @@ for (var i = 0; 7 > i; i++) {
     o.push(Pentagon_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
 }
 
+// o.push(Green_Square_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+
+// if (Math.random() > 0.75) {
+//     o.push(Green_Triangle_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+// }
+// if (Math.random() > 0.9) {
+//     o.push(Green_Pentagon_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+// }
+
 var max_poly_hp = get_shape_total_hp().mhp;
 
 //loop function for the game
@@ -39,10 +48,37 @@ function loop() {
 
     gt = group_towers();
 
+    var diff = 20 * (1 - get_shape_total_hp().hp / max_poly_hp);
+
     if (l % 300 == 0) {
-        for (var i = 0; 30 * (1 - get_shape_total_hp().hp / max_poly_hp) > i; i++ ) {
+        for (var i = 0; diff > i; i++ ) {
             var angle = tau * Math.random()
-            o.push(Basic_Tank(10000 * Math.cos(angle), 10000 * Math.sin(angle)));
+            switch (Math.floor(Math.random() * 4)) {
+                case 0:
+                    o.push(Basic_Tank(10000 * Math.cos(angle), 10000 * Math.sin(angle)));
+                    break;
+                case 1:
+                    if (diff > 3) {
+                        o.push(Twin_Tank(10000 * Math.cos(angle), 10000 * Math.sin(angle)));
+                    } else {
+                        o.push(Basic_Tank(10000 * Math.cos(angle), 10000 * Math.sin(angle)));
+                    }
+                    break;
+                case 2:
+                    if (diff > 6) {
+                        o.push(Triple_Shot_Tank(10000 * Math.cos(angle), 10000 * Math.sin(angle)));
+                    } else {
+                        o.push(Basic_Tank(10000 * Math.cos(angle), 10000 * Math.sin(angle)));
+                    }
+                    break;
+                case 3:
+                    if (diff > 9) {
+                        o.push(Triplet_Tank(10000 * Math.cos(angle), 10000 * Math.sin(angle)));
+                    } else {
+                        o.push(Basic_Tank(10000 * Math.cos(angle), 10000 * Math.sin(angle)));
+                    }
+                    break;
+            }
             //o.push(Basic_Tank(Math.random() * c.width / 2, Math.random() * c.height - 8000));
             //o.push(Twin_Tank(Math.random() * c.width / 2 - 15000, Math.random() * c.height));
             //o.push(Triple_Shot_Tank(Math.random() * c.width / 2 - 15000, Math.random() * c.height));
@@ -69,18 +105,23 @@ function loop() {
         }
     }
 
+    //toggle fov rendering
+    if (kd[70]) {
+        fov_toggle = !fov_toggle;
+    }
+
     //handle scaling
     scale.factor = Math.pow(2, scale.log);
 
     if (k[187]) {
-        scale.d += 0.01;
+        scale.d += 0.02;
     }
 
     if (k[189]) {
-        scale.d -= 0.01;
+        scale.d -= 0.02;
     }
 
-    scale.d -= m.w / 40;
+    scale.d -= Math.sign(m.w) / 60;
 
     scale.log += scale.d;
     scale.d *= 0.9;
@@ -94,38 +135,12 @@ function loop() {
     tmc.x += pos.x;
     tmc.y += pos.y;
 
-    //handle placing
-    if (kd[49]) {
-        place.placing = true;
-        place.place_id = "Basic_Tower";
-    }
-
-    if (kd[50]) {
-        place.placing = true;
-        place.place_id = "Relay_Tower";
-    }
-
-    if (kd[51]) {
-        place.placing = true;
-        place.place_id = "Generator_Tower";
-    }
-
-    if (kd[52]) {
-        place.placing = true;
-        place.place_id = "Healer_Tower";
-    }
-
-    if (kd[53]) {
-        place.placing = true;
-        place.place_id = "Miner_Tower";
-    }
-
     if (place.placing && m.md[0]) {
         switch (place.place_id) {
             case "Basic_Tower":
-                if (pt >= 10) {
+                if (pt >= 40) {
                     o.push(Basic_Tower(tmc.x, tmc.y));
-                    pt -= 10;
+                    pt -= 40;
                 }
                 break;
             case "Relay_Tower":
@@ -154,6 +169,32 @@ function loop() {
                 break;
         }
         place.placing = false;
+    }
+
+    //handle placing
+    if (kd[49] || click_in_rect(1920 - 550, 10, 100, 100)) {
+        place.placing = true;
+        place.place_id = "Basic_Tower";
+    }
+
+    if (kd[50] || click_in_rect(1920 - 440, 10, 100, 100)) {
+        place.placing = true;
+        place.place_id = "Relay_Tower";
+    }
+
+    if (kd[51] || click_in_rect(1920 - 330, 10, 100, 100)) {
+        place.placing = true;
+        place.place_id = "Generator_Tower";
+    }
+
+    if (kd[52] || click_in_rect(1920 + 220, 10, 100, 100)) {
+        place.placing = true;
+        place.place_id = "Healer_Tower";
+    }
+
+    if (kd[53] || click_in_rect(1920 + 110, 10, 100, 100)) {
+        place.placing = true;
+        place.place_id = "Miner_Tower";
     }
 
     if (place.placing && m.m[2]) { 
@@ -220,7 +261,7 @@ function loop() {
     ctx.restore();
 
     if (place.placing) {
-        Draw_Obj(place.place_id, m.x, m.y, 0);
+        draw_obj(place.place_id, m.x, m.y, 0);
     }
 
     var total_power = 0;
@@ -233,9 +274,38 @@ function loop() {
         }
     })
 
+    ctx.textAlign = "left";
     diep_text("Total Power: " + Math.floor(total_power) + " / " + total_max_power, 10, 25, 24);
     diep_text("Points: " + Math.floor(pt), 10, 50, 24);
     diep_text("Remaining Points: " + Math.floor(get_shape_total_hp().hp / 20) + " / " + max_poly_hp / 20, 10, 75, 24);
+
+
+    for (var i = 0; 5 > i; i++) {
+        diep_icon(1920 - 550 + 110 * i, 10, 100, 100, i);
+    }
+
+    ctx.textAlign = "center";
+
+    draw_obj("Basic_Tower", 1920 - 550 + 50, 60, l / 100, true, true);
+    diep_text("1 - Tank", 1920 - 550 + 50, 100, 16);
+    diep_text("40 Points", 1920 - 550 + 50, 35, 16);
+
+    draw_obj("Relay_Tower", 1920 - 440 + 50, 60, l / 100, true, true);
+    diep_text("2 - Relay", 1920 - 440 + 50, 100, 16);
+    diep_text("10 Points", 1920 - 440 + 50, 35, 16);
+
+    draw_obj("Generator_Tower", 1920 - 330 + 50, 60, l / 100, true, true);
+    diep_text("3 - Generator", 1920 - 330 + 50, 100, 16);
+    diep_text("80 Points", 1920 - 330 + 50, 35, 16);
+
+    draw_obj("Healer_Tower", 1920 - 220 + 50, 60, l / 100, true, true);
+    diep_text("4 - Healer", 1920 - 220 + 50, 100, 16);
+    diep_text("30 Points", 1920 - 220 + 50, 35, 16);
+
+    draw_obj("Miner_Tower", 1920 - 110 + 50, 60, l / 100, true, true);
+    diep_text("5 - Miner", 1920 - 110 + 50, 100, 16);
+    diep_text("30 Points", 1920 - 110 + 50, 35, 16);
+
 
     //reset single-press keys
     kd = new Array(256);

@@ -83,3 +83,6 @@ var scale = {
 
 //grouped towers
 var gt = [];
+
+//display fov toggle
+var fov_toggle = true;

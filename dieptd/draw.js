@@ -110,29 +110,31 @@ function tank_base(x, y, r) {
 
 //draws field of view
 function fov(a) {
-    cc.beginPath();
-    cc.arc(a.x, a.y, a.fov, 0, tau);
-    cc.globalAlpha = clamp(3000 / Math.pow(dist(a.x, a.y, tmc.x, tmc.y), 2), 0.14, 0.4);
-    switch (a.discrim_2) {
-        case "relay":
-            cc.strokeStyle = "#00e06c";
-            break;
-        case "miner":
-            cc.strokeStyle = "#000000";
-            break;
-        default: 
-            cc.strokeStyle = "#1db2df";
-            break;
-    }
-    cc.stroke();
-    cc.globalAlpha = 1;
-    if (a.discrim_2 == "relay") {
-        if (!place.placing) {
-            cc.fillStyle = "#00e06c06";
-        } else {
-            cc.fillStyle = "#00e06c14";
+    if (fov_toggle) {
+        cc.beginPath();
+        cc.arc(a.x, a.y, a.fov, 0, tau);
+        cc.globalAlpha = clamp(3000 / Math.pow(dist(a.x, a.y, tmc.x, tmc.y), 2), 0.14, 0.4);
+        switch (a.discrim_2) {
+            case "relay":
+                cc.strokeStyle = "#00e06c";
+                break;
+            case "miner":
+                cc.strokeStyle = "#000000";
+                break;
+            default: 
+                cc.strokeStyle = "#1db2df";
+                break;
         }
-        cc.fill();
+        cc.stroke();
+        cc.globalAlpha = 1;
+        if (a.discrim_2 == "relay") {
+            if (!place.placing) {
+                cc.fillStyle = "#00e06c06";
+            } else {
+                cc.fillStyle = "#00e06c14";
+            }
+            cc.fill();
+        }
     }
 }
 
@@ -146,4 +148,51 @@ function diep_text(txt, x, y, size) {
     cc.beginPath();
     cc.strokeText(txt, x, y);
     cc.fillText(txt, x, y);
+}
+
+//diep.io icon function
+function diep_icon(x, y, w, h, color) {
+    var c1, c2;
+    switch (color) {
+        case 0:
+            c1 = "#8EFFFB";
+            c2 = "#72CDCA";
+            break;
+        case 1:
+            c1 = "#B4FF8E";
+            c2 = "#91CD72";
+            break;
+        case 2:
+            c1 = "#FF8E8E";
+            c2 = "#CD7272";
+            break;
+        case 3:
+            c1 = "#FFEB8E";
+            c2 = "#CDBD72";
+            break;
+        case 4:
+            c1 = "#8EB2FF";
+            c2 = "#728FCD";
+            break;
+        case 5:
+            c1 = "#B58EFF";
+            c2 = "#9272CD";
+            break;
+        case 6:
+            c1 = "#FB8EFF";
+            c2 = "#CA72CD";
+            break;
+        case 7:
+            c1 = "#FDCDAC";
+            c2 = "#CCA58A";
+            break;
+    }
+    cc.fillStyle = c1;
+    cc.fillRect(x, y, w, h * (58 / 101));
+    cc.fillStyle = c2;
+    cc.fillRect(x, y + h * (58 / 101), w, h * (43 / 101));
+    cc.strokeStyle = "#5F5F5F";
+    cc.lineWidth = 6;
+    cc.lineJoin = "round";
+    cc.strokeRect(x, y, w, h);
 }

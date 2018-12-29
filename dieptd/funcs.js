@@ -292,3 +292,40 @@ function get_shape_total_hp() {
         mhp: mhp
     };
 }
+
+//simpler syntax for buying an upgrade
+function upgrade(tank) {
+    console.log(tank.cost);
+    console.log(select.selection.cost);
+    if (pt >= tank.cost - select.selection.cost) {
+        pt -= tank.cost - select.selection.cost;
+        o.push(tank);
+        o[o.length - 1].hp = select.selection.hp / select.selection.mhp * o[o.length - 1].mhp;
+        o.splice(select.selection_index, 1);
+        select.selection = o[o.length - 1];
+        select.selection_index = o.length - 1;
+    }
+}
+
+function between(value, min, max) {
+    if (value == clamp(value, min, max)) {
+        return true;
+    }
+    return false;
+}
+
+//tests if inside rectangle
+function in_rect(x, y, w, h, point_x, point_y) {
+    if (between(point_x, x, x + w) && between(point_y, y, y + h)) {
+        return true;
+    }
+    return false;
+}
+
+//tests if clicking inside rectangle
+function click_in_rect(x, y, w, h) {
+    if (m.md[0] && in_rect(x, y, w, h, m.x, m.y)) {
+        return true;
+    }
+    return false;
+}

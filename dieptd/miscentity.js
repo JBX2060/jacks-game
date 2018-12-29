@@ -140,6 +140,69 @@ function Pentagon_Polygon(x, y) {
     return tank;
 }
 
+//square polygon
+function Green_Square_Polygon(x, y) {
+
+    var tank = new Game_Obj(x, y, function (a) {
+        ctx.lineJoin = "round";
+        ctx.fillStyle = "#8aff69";
+        ctx.strokeStyle = "#6cbe55";
+        ctx.beginPath();
+        poly(a.x, a.y, 25, 4, a.t / 100);
+        ctx.fill();
+        ctx.stroke();
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 20);
+    }, function (a) {
+        a.t++;
+    }, "s", 100000);
+
+    tank.t = 0;
+
+    return tank;
+}
+
+//triangle polygon
+function Green_Triangle_Polygon(x, y) {
+
+    var tank = new Game_Obj(x, y, function (a) {
+        ctx.lineJoin = "round";
+        ctx.fillStyle = "#8aff69";
+        ctx.strokeStyle = "#6cbe55";
+        ctx.beginPath();
+        poly(a.x, a.y, 20, 3, a.t / 100);
+        ctx.fill();
+        ctx.stroke();
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 20);
+    }, function (a) {
+        a.t++;
+    }, "s", 250000);
+
+    tank.t = 0;
+
+    return tank;
+}
+
+//pentagon polygon
+function Green_Pentagon_Polygon(x, y) {
+
+    var tank = new Game_Obj(x, y, function (a) {
+        ctx.lineJoin = "round";
+        ctx.fillStyle = "#8aff69";
+        ctx.strokeStyle = "#6cbe55";
+        ctx.beginPath();
+        poly(a.x, a.y, 40, 5, a.t / 100);
+        ctx.fill();
+        ctx.stroke();
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 40);
+    }, function (a) {
+        a.t++;
+    }, "s", 1300000);
+
+    tank.t = 0;
+
+    return tank;
+}
+
 var id = 0;
 function set_id() {
     id++;
