@@ -1,3 +1,10 @@
+Diep TD Changelog
+Date format is YYYY-MM-DD
+Updates (usually just commits) are separated by new lines
+Sub-topics of major changes are intented
+
+
+
 2018-12-29
 
 Added Changelog
