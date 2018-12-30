@@ -155,7 +155,7 @@ function generator_count() {
     var count = 0;
    
     o.forEach(function (e) {
-        if (e.tank_type == "generator") {
+        if (e.tank_type == "Generator_Tower") {
             count++;
         }
     });
@@ -202,7 +202,7 @@ function discriminate_by_tank_type(discrim, arr) {
 }
 
 function request_power(a) {
-    var connected = find_closest_by_tank_type(a, o, "relay");
+    var connected = find_closest_by_tank_type(a, o, "Relay_Tower");
 
     if (connected && in_fov(o[connected], a) && a.power / a.power_cap < 0.5 && a.t % 20 == 0) {
         o.push(Request_Signal(a, o[connected], a.power_cap - a.power, a));
@@ -212,7 +212,7 @@ function request_power(a) {
 //group towers into specific subsets by seeing how they're connected
 function group_towers() {
     
-    var towers = discriminate_by_tank_type("relay").concat(discriminate_by_tank_type("generator"));
+    var towers = discriminate_by_tank_type("Relay_Tower").concat(discriminate_by_tank_type("Generator_Tower"));
 
     var groups = [];
 
@@ -220,7 +220,7 @@ function group_towers() {
 
     while (towers.length > 0) {
         tc = 0;
-        while (towers.length > tc && towers[tc].tank_type == "generator") {
+        while (towers.length > tc && towers[tc].tank_type == "Generator_Tower") {
             tc++;
         }
         if (towers.length != tc) {
@@ -235,7 +235,7 @@ function group_towers() {
                     }
                 }
             }
-            groups.push({ all: active, gen: discriminate_by_tank_type("generator", active) });
+            groups.push({ all: active, gen: discriminate_by_tank_type("Generator_Tower", active) });
         } else {
             for (var i = 0; towers.length > i; i++) {
                 groups.push([towers[i]]);
@@ -295,14 +295,16 @@ function get_shape_total_hp() {
 
 //simpler syntax for buying an upgrade
 function upgrade(tank) {
-    console.log(tank.cost);
-    console.log(select.selection.cost);
+    //console.log(tank.cost);
+    //console.log(select.selection.cost);
     if (pt >= tank.cost - select.selection.cost) {
         pt -= tank.cost - select.selection.cost;
         o.push(tank);
-        o[o.length - 1].hp = select.selection.hp / select.selection.mhp * o[o.length - 1].mhp;
-        o.splice(select.selection_index, 1);
-        select.selection = o[o.length - 1];
+        tank.hp = select.selection.hp / select.selection.mhp * o[o.length - 1].mhp;
+        //o.splice(select.selection_index, 1);
+        select.selection.hp = -Infinity;
+        select.selection = tank;
+        o.push(Upgrade_Menu(select.selection.tank_type));
         select.selection_index = o.length - 1;
     }
 }
@@ -328,4 +330,38 @@ function click_in_rect(x, y, w, h) {
         return true;
     }
     return false;
+}
+
+function tank_from_string(str, x, y) {
+    return new Function("return " + str + "(" + x + ", " + y + ");");
+}
+
+function remove_underscores(str) {
+    for (var i = 0; str.length > i; i++) {
+        if (str[i] == "_") {
+            str[i] = " ";
+        }
+    }
+    return str;
+}
+
+function get_upgrades_for_tank(tank) {
+    var upgrade = undefined
+    upgrades.forEach(function (e, i) {
+        if (e.source == tank) {
+            upgrade = e;
+        }
+    });
+    return upgrade;
+}
+
+function upgrade_buttons(upgrade_list) {
+    var toprow = "QWERTYUIOP"
+    if (upgrade_list) {
+        upgrade_list.upgrades.forEach(function (e, i) {
+            if (click_in_rect(1920 - upgrade_list.upgrades.length * 110 + 110 * i, 10, 100, 100) || kd[toprow.charCodeAt(i)]) {
+                upgrade(tank_from_string(e, select.selection.x, select.selection.y)());
+            }
+        });
+    }
 }

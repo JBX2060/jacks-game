@@ -1,18 +1,13 @@
 function handle_upgrades() {
-    if (k[88]) {
-        pt += select.selection.cost;
-        o.splice(select.selection_index, 1);
-        select.selecting = false;
-    }
     switch (select.selection.tank_type) {
-        case "basic":
+        case "Basic_Tower":
             if (kd[81]) {
-                upgrade(Twin_Tower(select.selection.x, select.selection.y), 8);
+                upgrade(Twin_Tower(select.selection.x, select.selection.y));
             }
             break;
-        case "twin":
+        case "Twin_Tower":
             if (kd[81]) {
-                upgrade(Triple_Shot_Tower(select.selection.x, select.selection.y), 5);
+                upgrade(Triple_Shot_Tower(select.selection.x, select.selection.y));
             }
             break;
         // case "relay":
@@ -24,4 +19,45 @@ function handle_upgrades() {
         //         select.selection_index = o.length - 1;
         //     }
     }
+    if (k[88]) {
+        pt += select.selection.cost;
+        //o.splice(select.selection_index, 1);
+        select.selection.hp = -1;
+        select.selecting = false;
+    }
 }
+
+var upgrades = [
+    {
+        source: "Basic_Tower",
+        upgrades: [
+            "Twin_Tower",
+            "Machine_Gun_Tower",
+            "Sniper_Tower"
+        ]
+    },
+    {
+        source: "Twin_Tower",
+        upgrades: [
+            "Triple_Shot_Tower"
+        ]
+    },
+    {
+        source: "Machine_Gun_Tower",
+        upgrades: [
+            "Destroyer_Tower"
+        ]
+    },
+    {
+        source: "Miner_Tower",
+        upgrades: [
+            "Triangle_Miner_Tower"
+        ]
+    },
+    {
+        source: "Triangle_Miner_Tower",
+        upgrades: [
+            "Pentagon_Miner_Tower"
+        ]
+    }
+]

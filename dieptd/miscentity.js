@@ -212,7 +212,7 @@ function set_id() {
 function Request_Signal(start, end, amount, source, id, path, age) {
 
     var tank = new Game_Obj(0, 0, function (a) {
-        if (a.end && a.start && a.end.tank_type == "generator") {
+        if (a.end && a.start && a.end.tank_type == "Generator_Tower") {
             ctx.lineWidth = 8;
             ctx.strokeStyle = "#00e06c";
             ctx.beginPath();
@@ -225,7 +225,7 @@ function Request_Signal(start, end, amount, source, id, path, age) {
     }, function (a) {
         if (a.hp == 2 && a.age < 128 && a.source.power < a.source.power_cap) {
             if (a.end && a.start) {
-                if (a.end.tank_type == "generator") {
+                if (a.end.tank_type == "Generator_Tower") {
                     o.forEach(function (e) {
                         if (e.id == a.id) {
                             e.hp--;
@@ -240,11 +240,11 @@ function Request_Signal(start, end, amount, source, id, path, age) {
                         e = o[e];
                         if (e !== a.start && e !== a.source && e !== a.end && index_of_obj(a.path, e) == -1) {
                             switch (e.tank_type) {
-                                case "relay":
+                                case "Relay_Tower":
                                     o.push(Request_Signal(a.end, e, a.amount, a.source, a.id, a.path.concat([e]), a.age + 1));
                                     a.hp = -1;
                                     break;
-                                case "generator":
+                                case "Generator_Tower":
                                     o.push(Request_Signal(a.end, e, a.amount, a.source, a.id, a.path.concat([e]), a.age + 1));
                                     break;
                                 default:
@@ -279,4 +279,103 @@ function Request_Signal(start, end, amount, source, id, path, age) {
     tank.age = age;
 
     return tank;
+}
+
+function Upgrade_Menu(source) {
+    
+    var tank = {};
+
+    if (!source) {
+        tank.draw = function (a) {
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, a.y);
+            icon_set([
+                {
+                    top: "40 Points",
+                    center: "Basic_Tower",
+                    bottom: "1 - Tank"
+                },
+                {
+                    top: "10 Points",
+                    center: "Relay_Tower",
+                    bottom: "2 - Relay"
+                },
+                {
+                    top: "80 Points",
+                    center: "Generator_Tower",
+                    bottom: "3 - Generator"
+                },
+                {
+                    top: "30 Points",
+                    center: "Healer_Tower",
+                    bottom: "4 - Healer"
+                },
+                {
+                    top: "30 Points",
+                    center: "Miner_Tower",
+                    bottom: "5 - Miner"
+                },
+            ]);
+            ctx.restore();
+        }
+    } else {
+        tank.draw = function (a) {
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, a.y);
+            if (a.source) {
+                upgrade_menu(a.source);
+            } else {
+                a.hp = -1;
+            }
+            ctx.restore();
+        }
+
+        source = get_upgrades_for_tank(source);
+        tank.source = source;
+
+    }
+
+    tank.action = function (a) {
+        if (!a.source) {
+            if (!select.selecting) {
+                a.y *= 0.92;
+            } else {
+                if (a.y > -0.5) {
+                    a.y = -0.5
+                }
+                a.y *= 1 / 0.92;
+            }
+        } else {
+            if (select.selecting && select.selection.tank_type == a.source.source) {
+                a.y *= 0.92;
+            } else {
+                if (a.y > -0.5) {
+                    a.y = -0.5
+                }
+                a.y *= 1 / 0.92;
+            }
+        }
+
+        if (!between(tank.y, -130, 1)) {
+            a.hp = -1;
+        }
+    }
+
+    tank.y = -120;
+
+    tank.x = Infinity;
+
+    tank.discrim = "upg";
+
+    o.forEach(function (e) {
+        if (e.source && tank.source && e.source.source == tank.source.source) {
+            tank.hp = -1;
+        }
+        if (e.discrim == "upg" && !e.source && !tank.source) {
+            tank.hp = -1;
+        }
+    });
+
+    return tank;
+
 }

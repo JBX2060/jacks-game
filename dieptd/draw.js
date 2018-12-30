@@ -37,6 +37,48 @@ function diep_barrel(x, y, w, h, a, ox, oy, c1, c2) {
     cc.restore();
 }
 
+//draw diep.io barrel (x position, y position, width, height, angle, offset x, offset y, fill color, border color)
+function diep_trapezoid_barrel(x, y, w1, w2, h, a, ox, oy, c1, c2) {
+
+    //set values to their defaults if not provided
+    if (a == undefined) {
+        a = 0;
+    }
+    if (ox == undefined) {
+        ox = 0;
+        oy = 0;
+    }
+    if (c1 == undefined) {
+        c1 = "#999999";
+        c2 = "#727272";
+    }
+
+    //translate and rotate
+    cc.save();
+    cc.translate(x, y);
+    cc.rotate(a);
+
+    //set fill and stroke colors
+    cc.fillStyle = c1;
+    cc.strokeStyle = c2;
+
+    //set line width and line join
+    cc.lineWidth = 4;
+    cc.lineJoin = "round";
+
+    //actually draw the barrel
+    cc.beginPath();
+    cc.moveTo(oy, -w1 / 2 + ox);
+    cc.lineTo(oy + h, -w2 / 2 + ox);
+    cc.lineTo(oy + h, w2 / 2 + ox);
+    cc.lineTo(oy, w1 / 2 + ox);
+    cc.fill();
+    cc.stroke();
+
+    //restore translation and rotation to normal
+    cc.restore();
+}
+
 //draws diep.io circle (x position, y position, radius, fill color, stroke color)
 function diep_circle(x, y, r, c1, c2) {
 
@@ -54,38 +96,42 @@ function diep_circle(x, y, r, c1, c2) {
     cc.stroke();
 }
 
+var enable_hp_bar = true;
 function diep_healthbar(x, y, hp, max, l, c1) {
 
-    //set line cap
-    cc.lineCap = "round";
+    if (enable_hp_bar) {
 
-    //draw path of border
-    cc.beginPath();
-    cc.moveTo(x - l / 0.8, y + l + 15);
-    cc.lineTo(x + l / 0.8, y + l + 15);
+        //set line cap
+        cc.lineCap = "round";
 
-    //set border parameters
-    cc.lineWidth = 8;
-    cc.strokeStyle = "#555555";
+        //draw path of border
+        cc.beginPath();
+        cc.moveTo(x - l / 0.8, y + l + 15);
+        cc.lineTo(x + l / 0.8, y + l + 15);
 
-    //draw border
-    cc.stroke();
+        //set border parameters
+        cc.lineWidth = 8;
+        cc.strokeStyle = "#555555";
 
-    //draw path of border
-    cc.beginPath();
-    cc.moveTo(x - l / 0.8, y + l + 15);
-    cc.lineTo(x - l / 0.8 + l / 0.4 * (hp / max), y + l + 15);
+        //draw border
+        cc.stroke();
 
-    //set fill parameters
-    cc.lineWidth = 4;
-    if (c1 == undefined) {
-        cc.strokeStyle = "#85E37D";
-    } else {
-        cc.strokeStyle = c1;
+        //draw path of border
+        cc.beginPath();
+        cc.moveTo(x - l / 0.8, y + l + 15);
+        cc.lineTo(x - l / 0.8 + l / 0.4 * (hp / max), y + l + 15);
+
+        //set fill parameters
+        cc.lineWidth = 4;
+        if (c1 == undefined) {
+            cc.strokeStyle = "#85E37D";
+        } else {
+            cc.strokeStyle = c1;
+        }
+
+        //draw fill
+        cc.stroke();
     }
-
-    //draw fill
-    cc.stroke();
 }
 
 //draws a polygon (x position, y position, radius, sides)
@@ -195,4 +241,31 @@ function diep_icon(x, y, w, h, color) {
     cc.lineWidth = 6;
     cc.lineJoin = "round";
     cc.strokeRect(x, y, w, h);
+}
+
+//draw upgrade menu (set of icons)
+function icon_set(display) {
+    cc.textAlign = "center";
+    for (var i = 0; display.length > i; i++) {
+        diep_icon(1920 + 110 * i - display.length * 110, 10, 100, 100, i);
+        draw_obj(display[i].center, 1920 + 110 * i - display.length * 110 + 50, 60, l / 100, true, true);
+        diep_text(display[i].top, 1920 + 110 * i - display.length * 110 + 50, 30, 12);
+        diep_text(display[i].bottom, 1920 + 110 * i - display.length * 110 + 50, 100, 12);
+    }
+}
+
+//draw upgrade menu from upgrade info
+function upgrade_menu(upgrade) {
+    var icon = [];
+    var toprow = "QWERTYUIOP";
+    original = tank_from_string(upgrade.source, 0, 0)();
+    for (var i = 0; upgrade.upgrades.length > i; i++) {
+        var tank = tank_from_string(upgrade.upgrades[i], 0, 0)();
+        icon[i] = {
+            top: tank.cost - original.cost + " Points",
+            center: tank.tank_type,
+            bottom: toprow[i] + " - " + remove_underscores(tank.tank_type)
+        }
+    }
+    icon_set(icon);
 }
