@@ -336,13 +336,17 @@ function tank_from_string(str, x, y) {
     return new Function("return " + str + "(" + x + ", " + y + ");");
 }
 
-function remove_underscores(str) {
+function format_tank_name(string) {
+    var str = string.slice(0, -6);
+    var str2 = "";
     for (var i = 0; str.length > i; i++) {
         if (str[i] == "_") {
-            str[i] = " ";
+            str2 += " ";
+        } else {
+            str2 += str[i];
         }
     }
-    return str;
+    return str2;
 }
 
 function get_upgrades_for_tank(tank) {

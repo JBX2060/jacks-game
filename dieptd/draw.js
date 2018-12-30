@@ -264,7 +264,7 @@ function upgrade_menu(upgrade) {
         icon[i] = {
             top: tank.cost - original.cost + " Points",
             center: tank.tank_type,
-            bottom: toprow[i] + " - " + remove_underscores(tank.tank_type)
+            bottom: toprow[i] + " - " + format_tank_name(tank.tank_type)
         }
     }
     icon_set(icon);

@@ -1,0 +1,23 @@
+2018-12-29
+
+Added Changelog
+Fixed GUI text formatting
+    Removed underscores from tank names
+    Removed "_Tower" suffix
+
+Added Destroyer, Machine Gun, Sniper, Triangle Miner, and Pentagon Miner
+    Destroyer, Machine Gun, and Sniper are combat tanks from diep.io
+        Sniper has higher range and hgiher damaged but half fire rate
+        Machine gun has higher fire rate but bullets are spread (crowd control)
+        Destroyer fires extremely damaging bullets at a low fire rate (can one-shot a basic tank)
+    Triangle Miner and Pentagon Miner take the same time to mine their respective shapes as an ordinary miner takes to mine a square (and are proportionately more durable and costly)
+Massive changes to GUI
+    Added GUI for upgrades
+    Regular GUI is now temporary
+    Refactored upgrade system to make adding tanks easier
+        Now only tanks and their upgrades need to be specified in order for upgrade menus to appear, no other code is required
+        Keys and mouse controls improved and automated
+Fixed bugs
+    Tanks no longer sometimes persist after upgrades
+    GUI button hitboxes fixed
+Added option to disable FOV using the F key
