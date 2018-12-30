@@ -184,7 +184,7 @@ function fov(a) {
     }
 }
 
-//diep.io text function
+//diep.io text function.
 function diep_text(txt, x, y, size) {
     cc.font = size + "px Ubuntu";
     cc.lineJoin = "round";
