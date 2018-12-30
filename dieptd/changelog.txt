@@ -5,9 +5,11 @@ Sub-topics of major changes are intented
 
 
 
-2018-12-29
+2018-12-30
 
 Tank-twin-triple shot bug fixed. Tanks being upgraded to twins would do an additional upgrade to triple shot. This has now been fixed.
+
+2018-12-29
 
 Added Changelog
 Fixed GUI text formatting
