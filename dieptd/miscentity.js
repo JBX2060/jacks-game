@@ -60,7 +60,7 @@ function Bullet(x, y, dx, dy, r, discrim, dmg, hp, c1, c2) {
             }
         }
 
-        if (a.t > 500) {
+        if (a.t > 60) {
             a.hp = -1;
         }
     }, discrim);

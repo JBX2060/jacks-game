@@ -138,38 +138,39 @@ function loop() {
     tmc.y += pos.y;
 
     if (place.placing && m.md[0]) {
-        switch (place.place_id) {
-            case "Basic_Tower":
-                if (pt >= 40) {
-                    o.push(Basic_Tower(tmc.x, tmc.y));
-                    pt -= 40;
-                }
-                break;
-            case "Relay_Tower":
-                if (pt >= 10) {
-                    o.push(Relay_Tower(tmc.x, tmc.y));
-                    pt -= 10;
-                }
-                break;
-            case "Generator_Tower":
-                if (pt >= 80) {
-                    o.push(Generator_Tower(tmc.x, tmc.y));
-                    pt -= 80;
-                }
-                break;
-            case "Healer_Tower":
-                if (pt >= 30) {
-                    o.push(Healer_Tower(tmc.x, tmc.y));
-                    pt -= 30;
-                }
-                break;
-            case "Miner_Tower":
-                if (pt >= 30) {
-                    o.push(Miner_Tower(tmc.x, tmc.y));
-                    pt -= 30;
-                }
-                break;
-        }
+        // switch (place.place_id) {
+        //     case "Basic_Tower":
+        //         if (pt >= 40) {
+        //             o.push(Basic_Tower(tmc.x, tmc.y));
+        //             pt -= 40;
+        //         }
+        //         break;
+        //     case "Relay_Tower":
+        //         if (pt >= 10) {
+        //             o.push(Relay_Tower(tmc.x, tmc.y));
+        //             pt -= 10;
+        //         }
+        //         break;
+        //     case "Generator_Tower":
+        //         if (pt >= 80) {
+        //             o.push(Generator_Tower(tmc.x, tmc.y));
+        //             pt -= 80;
+        //         }
+        //         break;
+        //     case "Healer_Tower":
+        //         if (pt >= 30) {
+        //             o.push(Healer_Tower(tmc.x, tmc.y));
+        //             pt -= 30;
+        //         }
+        //         break;
+        //     case "Miner_Tower":
+        //         if (pt >= 30) {
+        //             o.push(Miner_Tower(tmc.x, tmc.y));
+        //             pt -= 30;
+        //         }
+        //         break;
+        // }
+        o.push(tank_from_string(place.place_id, tmc.x, tmc.y)());
         place.placing = false;
     }
 
