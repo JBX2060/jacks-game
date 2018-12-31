@@ -48,7 +48,8 @@ var upgrades = [
     {
         source: "Healer_II_Tower",
         upgrades: [
-            "Healer_III_Tower"
+            "Healer_III_Tower",
+            "Bulk_Healer_Tower"
         ]
     },
     {
@@ -67,6 +68,18 @@ var upgrades = [
         source: "Generator_III_Tower",
         upgrades: [
             "Generator_IIII_Tower",
+        ]
+    },
+    {
+        source: "Sniper_Tower",
+        upgrades: [
+            "Assassin_Tower",
+        ]
+    },
+    {
+        source: "Assassin_Tower",
+        upgrades: [
+            "Ranger_Tower",
         ]
     }
 ]

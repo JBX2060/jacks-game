@@ -184,6 +184,26 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 });
             }
         }
+        if (command[0] == "==stackoverflow") {
+            var cmd2 = "";
+
+            for (var i = 1; command.length > i; i++) {
+                cmd2 += command[i] + " ";
+            }
+            request({ url: 'https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&q=' + cmd2 + '&site=stackoverflow', gzip: true }, function (error, response, body) {
+                if (JSON.parse(body).items.length > 0) {
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "<@" + userID + "> " + JSON.parse(body).items[0].link
+                    });
+                } else {
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "<@" + userID + "> " + "Found nothing on StackOverflow."
+                    });
+                }
+            });
+        }
         if (command[0] == "==help") {
             // bot.sendMessage({
             //     to: channelID,
@@ -198,7 +218,8 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     "`sqrt`: Returns the square root of the following number.",
                     "`madtanks`: Get the madtanks script (turns diep tanks into madman emojis).",
                     "`balance`: Check your adasbucks balance.",
-                    "`addmessage`: Adds a message to the global message board, which can be found here: http://50.39.110.171:42069/discordbot/index.html"
+                    "`addmessage`: Adds a message to the global message board, which can be found here: http://50.39.110.171:42069/discordbot/index.html",
+                    "`stackoverflow`: Searches for the following text on stackoverflow."
                 ])
             });
         }

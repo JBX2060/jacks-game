@@ -134,6 +134,76 @@ function Sniper_Tower(x, y) {
     return tank;
 }
 
+//assassin tower
+function Assassin_Tower(x, y) {
+    
+    //create tank
+    var tank = Simple_Tower(x, y, function (a) {
+        
+        //draw base
+        tank_base(a.x, a.y, 40);
+
+        //draw tank
+        diep_barrel(a.x, a.y, 27, 70, a.angle);
+        diep_circle(a.x, a.y, 30, "#1db2df", "#1386a6");
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 30);
+        diep_healthbar(a.x, a.y + 10, a.power, a.power_cap, 30, "#8EFFFB");
+
+    }, function (a) {
+        if (a.hp < a.mhp && a.power >= 0.4) {
+            a.hp += 0.05;
+            a.power -= 0.4;
+        }
+    }, function (a) {
+        if (a.t % 60 == 0) {
+            o.push(Bullet(a.x, a.y, Math.cos(a.angle) * 30, Math.sin(a.angle) * 30, 10, "pb", 25, 25));
+            a.power -= 10;
+        }
+    }, 300, 1200, 400, 10);
+
+    tank.tank_type = "Assassin_Tower";
+    tank.cost = 90;
+
+    //return the tower
+    return tank;
+}
+
+//ranger tower
+function Ranger_Tower(x, y) {
+    
+    //create tank
+    var tank = Simple_Tower(x, y, function (a) {
+        
+        //draw base
+        tank_base(a.x, a.y, 45);
+
+        //draw tank
+        diep_barrel(a.x, a.y, 32, 80, a.angle);
+        diep_trapezoid_barrel(a.x, a.y, 55, 32, 45, a.angle);
+        diep_circle(a.x, a.y, 35, "#1db2df", "#1386a6");
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 35);
+        diep_healthbar(a.x, a.y + 10, a.power, a.power_cap, 35, "#8EFFFB");
+
+    }, function (a) {
+        if (a.hp < a.mhp && a.power >= 0.4) {
+            a.hp += 0.05;
+            a.power -= 0.4;
+        }
+    }, function (a) {
+        if (a.t % 60 == 0) {
+            o.push(Bullet(a.x, a.y, Math.cos(a.angle) * 40, Math.sin(a.angle) * 40, 12, "pb", 32, 32));
+            a.power -= 10;
+        }
+    }, 300, 2400, 400, 10);
+
+    tank.tank_type = "Ranger_Tower";
+    tank.cost = 150;
+
+    //return the tower
+    return tank;
+}
+
+
 //twin tower
 function Twin_Tower(x, y) {
     
@@ -788,6 +858,72 @@ function Healer_III_Tower(x, y) {
     tank.power_cap = 400;
     tank.cost = 115;
     tank.tank_type = "Healer_III_Tower";
+
+    return tank;
+}
+
+//bulk healer tower
+function Bulk_Healer_Tower(x, y) {
+
+    //create tank
+    var tank = Simpler_Tower(x, y, function (a) {
+
+        //draw base
+        tank_base(a.x, a.y, 40);
+
+        //draw tank
+        diep_barrel(a.x, a.y, 60, 42, a.angle);
+        diep_circle(a.x, a.y, 30, "#00e06c", "#00a851");
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 30);
+        diep_healthbar(a.x, a.y + 10, a.power, a.power_cap, 30, "#8EFFFB");
+
+    }, function (a) {
+
+        a.hp = clamp(a.hp, 0, a.mhp);
+        a.power = clamp(a.power, 0, a.power_cap);
+
+        var in_range = get_all_in_range(a, o, "p");
+
+        var min_hp = 1;
+
+        var min_hp_index = false;
+
+        in_range.forEach(function (e) {
+            if (o[e].hp / o[e].mhp < min_hp && a !== o[e]) {
+                min_hp = o[e].hp / o[e].mhp;
+                min_hp_index = e;
+            }
+        });
+
+        var angle = false;
+
+        if (min_hp_index !== false) {
+            angle = point_towards(a, o[min_hp_index]);
+        } else {
+            angle = false;
+        }
+
+        if (angle !== false) {
+            if (a.t % 2 == 0 && a.power >= 15) {
+                a.angle = angle;
+                o.push(Bullet(a.x, a.y, Math.cos(a.angle) * 50, Math.sin(a.angle) * 50, 16, "hpb", 6, 6));
+                o[o.length - 1].sender = a;
+                o[o.length - 1].intended_target = o[min_hp_index];
+                a.power -= 15;
+            }
+        }
+
+        request_power(a);
+
+        if (a.hp < a.mhp) {
+            a.hp += 0.05;
+        }
+    }, 300, 500);
+
+    tank.power = 0;
+    tank.power_cap = 400;
+    tank.cost = 100;
+    tank.tank_type = "Bulk_Healer_Tower";
 
     return tank;
 }

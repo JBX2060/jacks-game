@@ -5,6 +5,16 @@ Sub-topics of major changes are intented
 
 
 
+2018-12-31
+
+Added Bulk Healer.
+    Upgrades from healer II
+    Very inefficient in terms of power usage, but is cheaper and heals faster than healer III
+Added Assassin and Ranger towers
+    Upgrade path is: Sniper -> Assassin -> Ranger
+    FOV doubles each time, along with a slight increase in damage.
+    Reload is half of sniper for both assassin and ranger.
+
 2018-12-30
 
 Miner couldn't be placed from clicking, this bug has now been fixed.
