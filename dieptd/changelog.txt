@@ -7,6 +7,8 @@ Sub-topics of major changes are intented
 
 2018-12-30
 
+Miner couldn't be placed from clicking, this bug has now been fixed.
+
 Fixed bug which only recognized the original generators as actual generators.
 New tanks Added
     Healer II and Healer III, both are healers which heal faster (and use power more efficiently).

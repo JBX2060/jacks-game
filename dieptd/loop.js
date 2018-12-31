@@ -221,7 +221,7 @@ function loop() {
             place.place_id = "Healer_Tower";
         }
 
-        if (kd[53] || click_in_rect(1920 + 110, 10, 100, 100)) {
+        if (kd[53] || click_in_rect(1920 - 110, 10, 100, 100)) {
             place.placing = true;
             place.place_id = "Miner_Tower";
         }
