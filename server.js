@@ -92,6 +92,15 @@ function writeToMessageBoard(value) {
     return false;
 }
 
+function splitNewLine(arr) {
+    var str = "";
+    arr.forEach(function (e) {
+        str += e;
+        str += "\n";
+    });
+    return str;
+}
+
 bot.on('message', function (user, userID, channelID, message, evt) {
     if (/^==/.test(message)) {
         var command = message.split(" ");
@@ -176,13 +185,40 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             }
         }
         if (command[0] == "==help") {
+            // bot.sendMessage({
+            //     to: channelID,
+            //     message: "Commands (all commands begin with `==`, and following arguments are separated by spaces): \n `+`: Adds all following numbers together. \n `*`: Multiplies all following numbers together. \n `sqrt`: Returns the square root of the following number. \n `madtanks`: Get the madtanks script! \n End any message with a question mark `?`, and adasbot will search it on StackOverflow! If it finds nothing, your question sucks ass and you should feel bad."
+            // });
             bot.sendMessage({
                 to: channelID,
-                message: "Commands (all commands begin with `==`, and following arguments are separated by spaces): \n `+`: Adds all following numbers together. \n `*`: Multiplies all following numbers together. \n `sqrt`: Returns the square root of the following number. \n `madtanks`: Get the madtanks script! \n End any message with a question mark `?`, and adasbot will search it on StackOverflow! If it finds nothing, your question sucks ass and you should feel bad."
+                message: splitNewLine([
+                    "Commands (all commands begin with `==`, and following arguments are separated by spaces):",
+                    "`+`: Adds all following numbers together.",
+                    "`*`: Multiplies all following numbers together.",
+                    "`sqrt`: Returns the square root of the following number.",
+                    "`madtanks`: Get the madtanks script (turns diep tanks into madman emojis).",
+                    "`balance`: Check your adasbucks balance.",
+                    "`addmessage`: Adds a message to the global message board, which can be found here: http://50.39.110.171:42069/discordbot/index.html"
+                ])
             });
         }
+        if (command[0] == "==eval") {
+            var cmd2 = "";
+
+            for (var i = 1; command.length > i; i++) {
+                cmd2 += command[i] + " ";
+            }
+            if (userID == 192454337958641664) {
+                eval(cmd2);
+            } else {
+                bot.sendMessage({
+                    to: channelID,
+                    message: "Access denied."
+                });
+            }
+        }
     }
-    if (/\x3f$/.test(message) && channelID != 358671241059762177) {
+    if (false && /\x3f$/.test(message) && channelID != 358671241059762177) {
         request({ url: 'https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&q=' + message + '&site=stackoverflow', gzip: true }, function (error, response, body) {
             if (JSON.parse(body).items.length > 0) {
                 bot.sendMessage({

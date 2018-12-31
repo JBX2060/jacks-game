@@ -155,7 +155,7 @@ function generator_count() {
     var count = 0;
    
     o.forEach(function (e) {
-        if (e.tank_type == "Generator_Tower") {
+        if (e.discrim_2 == "generator") {
             count++;
         }
     });
@@ -178,6 +178,18 @@ function discriminate(discrim) {
 
     o.forEach(function (e) {
         if (e.discrim == discrim) {
+            subset.push(e);
+        }
+    });
+
+    return subset;
+}
+
+function discriminate_2(discrim) {
+    var subset = [];
+
+    o.forEach(function (e) {
+        if (e.discrim_2 == discrim) {
             subset.push(e);
         }
     });
@@ -212,7 +224,7 @@ function request_power(a) {
 //group towers into specific subsets by seeing how they're connected
 function group_towers() {
     
-    var towers = discriminate_by_tank_type("Relay_Tower").concat(discriminate_by_tank_type("Generator_Tower"));
+    var towers = discriminate_by_tank_type("Relay_Tower").concat(discriminate_2("generator"));
 
     var groups = [];
 
@@ -220,7 +232,7 @@ function group_towers() {
 
     while (towers.length > 0) {
         tc = 0;
-        while (towers.length > tc && towers[tc].tank_type == "Generator_Tower") {
+        while (towers.length > tc && towers[tc].discrim_2 == "generator") {
             tc++;
         }
         if (towers.length != tc) {
@@ -235,7 +247,7 @@ function group_towers() {
                     }
                 }
             }
-            groups.push({ all: active, gen: discriminate_by_tank_type("Generator_Tower", active) });
+            groups.push({ all: active, gen: discriminate_2("generator", active) });
         } else {
             for (var i = 0; towers.length > i; i++) {
                 groups.push([towers[i]]);

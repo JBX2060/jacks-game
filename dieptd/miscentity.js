@@ -212,7 +212,7 @@ function set_id() {
 function Request_Signal(start, end, amount, source, id, path, age) {
 
     var tank = new Game_Obj(0, 0, function (a) {
-        if (a.end && a.start && a.end.tank_type == "Generator_Tower") {
+        if (a.end && a.start && a.end.discrim_2 == "generator") {
             ctx.lineWidth = 8;
             ctx.strokeStyle = "#00e06c";
             ctx.beginPath();
@@ -225,7 +225,7 @@ function Request_Signal(start, end, amount, source, id, path, age) {
     }, function (a) {
         if (a.hp == 2 && a.age < 128 && a.source.power < a.source.power_cap) {
             if (a.end && a.start) {
-                if (a.end.tank_type == "Generator_Tower") {
+                if (a.end.discrim_2 == "generator") {
                     o.forEach(function (e) {
                         if (e.id == a.id) {
                             e.hp--;
@@ -239,17 +239,13 @@ function Request_Signal(start, end, amount, source, id, path, age) {
                     connections.forEach(function (e) {
                         e = o[e];
                         if (e !== a.start && e !== a.source && e !== a.end && index_of_obj(a.path, e) == -1) {
-                            switch (e.tank_type) {
-                                case "Relay_Tower":
-                                    o.push(Request_Signal(a.end, e, a.amount, a.source, a.id, a.path.concat([e]), a.age + 1));
-                                    a.hp = -1;
-                                    break;
-                                case "Generator_Tower":
-                                    o.push(Request_Signal(a.end, e, a.amount, a.source, a.id, a.path.concat([e]), a.age + 1));
-                                    break;
-                                default:
-                                    a.hp = -1;
-                                    break;
+                            if (e.tank_type == "Relay_Tower") {
+                                o.push(Request_Signal(a.end, e, a.amount, a.source, a.id, a.path.concat([e]), a.age + 1));
+                                a.hp = -1;
+                            } else if (e.discrim_2 == "generator") {
+                                o.push(Request_Signal(a.end, e, a.amount, a.source, a.id, a.path.concat([e]), a.age + 1));
+                            } else {
+                                a.hp = -1;
                             }
                         }
                     });

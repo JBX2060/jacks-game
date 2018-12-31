@@ -1,27 +1,6 @@
 function handle_upgrades() {
-    // switch (select.selection.tank_type) {
-    //     case "Basic_Tower":
-    //         if (kd[81]) {
-    //             upgrade(Twin_Tower(select.selection.x, select.selection.y));
-    //         }
-    //         break;
-    //     case "Twin_Tower":
-    //         if (kd[81]) {
-    //             upgrade(Triple_Shot_Tower(select.selection.x, select.selection.y));
-    //         }
-    //         break;
-    //     // case "relay":
-    //     //     if (k[81]) {
-    //     //         o.push(High_Bandwidth_Relay_Tower(select.selection.x, select.selection.y));
-    //     //         o[o.length - 1].hp = select.selection.hp / select.selection.mhp * o[o.length - 1].mhp;
-    //     //         o.splice(select.selection_index, 1);
-    //     //         select.selection = o[o.length - 1];
-    //     //         select.selection_index = o.length - 1;
-    //     //     }
-    // }
     if (k[88]) {
         pt += select.selection.cost;
-        //o.splice(select.selection_index, 1);
         select.selection.hp = -1;
         select.selecting = false;
     }
@@ -58,6 +37,36 @@ var upgrades = [
         source: "Triangle_Miner_Tower",
         upgrades: [
             "Pentagon_Miner_Tower"
+        ]
+    },
+    {
+        source: "Healer_Tower",
+        upgrades: [
+            "Healer_II_Tower"
+        ]
+    },
+    {
+        source: "Healer_II_Tower",
+        upgrades: [
+            "Healer_III_Tower"
+        ]
+    },
+    {
+        source: "Generator_Tower",
+        upgrades: [
+            "Generator_II_Tower",
+        ]
+    },
+    {
+        source: "Generator_II_Tower",
+        upgrades: [
+            "Generator_III_Tower",
+        ]
+    },
+    {
+        source: "Generator_III_Tower",
+        upgrades: [
+            "Generator_IIII_Tower",
         ]
     }
 ]
