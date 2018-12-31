@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100" rel="stylesheet">
+        <style type="text/css">
+            p {
+                font-family: 'Roboto', sans-serif;
+                width: 17.5%;
+                margin: 0.5%;
+                padding: 0.5%;
+                font-size: 1em;
+                float: left;
+                color: #eeeeee;
+                background: #333333;
+            }
+            body {
+                margin: 0.5%;
+                padding: 0%;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            var getjson = new XMLHttpRequest();
+
+            getjson.open("GET", "messageboard.json");
+
+            getjson.send();
+
+            getjson.onload = function() {
+                var body = document.getElementsByTagName("body")[0];
+                var msg = JSON.parse(getjson.responseText);
+                for (var i = 0; msg.length > i; i++) {
+                    var p = document.createElement("p");
+                    p.innerHTML = msg[i];
+                    body.appendChild(p);
+                }
+            }
+        </script>
+    </body>
+</html>

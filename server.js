@@ -33,7 +33,7 @@ app.get(/[\s\S]*/, function (req, res) {
             }
         });
     } else {
-        res.send("fuck you");
+        res.send("<h1>fuck you</h1>");
     }
     writeLog("OPENED URL: " + req.url + "     TIME: " + new Date() + "     IP: " + req.ip + "\n");
 });
@@ -55,7 +55,8 @@ app.listen(42069, function () {
 var Discord = require('discord.io');
 var request = require('request');
 var auth = require('./auth.json');
-var userdata = require('./userdata.json');
+var userdata = require('./discordbot/userdata.json');
+var messageboard = require('./discordbot/messageboard.json');
 var bot = new Discord.Client({
    token: auth.token,
    autorun: true
@@ -66,13 +67,29 @@ bot.on('ready', function (evt) {
 
 var so_status = true;
 
+var msgBoardCoolDown = 0;
+
 function writeToBalance(key, value) {
     var data2 = userdata;
     data2[key] = value;
     console.log(data2);
-    fs.writeFile('userdata.json', JSON.stringify(data2), function(err) {
+    fs.writeFile('discordbot/userdata.json', JSON.stringify(data2), function(err) {
         if(err) throw err;
     });
+}
+
+function writeToMessageBoard(value) {
+    if (new Date().getTime() - msgBoardCoolDown > 10000) {
+        msgBoardCoolDown = new Date().getTime();
+        var data2 = messageboard;
+        data2.push(value);
+        console.log(data2);
+        fs.writeFile('discordbot/messageboard.json', JSON.stringify(data2), function(err) {
+            if(err) throw err;
+        });
+        return true;
+    }
+    return false;
 }
 
 bot.on('message', function (user, userID, channelID, message, evt) {
@@ -137,6 +154,24 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 bot.sendMessage({
                     to: channelID,
                     message: "<@" + userID + ">'s balance: " + userdata[userID]
+                });
+            }
+        }
+        if (command[0] == "==addmessage") {
+            var cmd2 = "";
+
+            for (var i = 1; command.length > i; i++) {
+                cmd2 += command[i] + " ";
+            }
+            if (writeToMessageBoard(cmd2)) {
+                bot.sendMessage({
+                    to: channelID,
+                    message: "Successfully added."
+                });
+            } else {
+                bot.sendMessage({
+                    to: channelID,
+                    message: "You're doing this too fast. Wait " + Math.round(10 -  (new Date().getTime() - msgBoardCoolDown) / 1000) + " seconds."
                 });
             }
         }
