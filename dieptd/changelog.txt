@@ -5,8 +5,13 @@ Sub-topics of major changes are intented
 
 
 
+2019-1-1
+
+Bug fixed where towers could be placed for free.
+
 2018-12-31
 
+Refactoring and code cleanup.
 Added Bulk Healer.
     Upgrades from healer II
     Very inefficient in terms of power usage, but is cheaper and heals faster than healer III

@@ -269,3 +269,20 @@ function upgrade_menu(upgrade) {
     }
     icon_set(icon);
 }
+
+//draw ingame object
+function draw_obj(obj, x, y, angle, override_scale, override_fov) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (!override_scale) {
+        ctx.scale(scale.factor, scale.factor);
+    }
+    var tank = tank_from_string(obj, 0, 0)();
+    enable_hp_bar = false;
+    tank.draw();
+    enable_hp_bar = true;
+    if (!override_fov) {
+        fov(tank);
+    }
+    ctx.restore();
+}

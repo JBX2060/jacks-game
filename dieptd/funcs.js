@@ -307,13 +307,10 @@ function get_shape_total_hp() {
 
 //simpler syntax for buying an upgrade
 function upgrade(tank) {
-    //console.log(tank.cost);
-    //console.log(select.selection.cost);
     if (pt >= tank.cost - select.selection.cost) {
         pt -= tank.cost - select.selection.cost;
         o.push(tank);
         tank.hp = select.selection.hp / select.selection.mhp * o[o.length - 1].mhp;
-        //o.splice(select.selection_index, 1);
         select.selection.hp = -Infinity;
         select.selection = tank;
         o.push(Upgrade_Menu(select.selection.tank_type));
