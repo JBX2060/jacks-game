@@ -1,11 +1,3 @@
-function handle_upgrades() {
-    if (k[88]) {
-        pt += select.selection.cost;
-        select.selection.hp = -1;
-        select.selecting = false;
-    }
-}
-
 var upgrades = [
     {
         source: "Basic_Tower",
@@ -81,5 +73,28 @@ var upgrades = [
         upgrades: [
             "Ranger_Tower",
         ]
+    }
+]
+
+
+
+var menu_icons = [
+    {
+        x: 0,
+        y: 0,
+        text: "Tutorial Level",
+        complete: false,
+        lvl: lvls[0],
+        unlocked: true,
+        unlocks: []
+    },
+    {
+        x: 300,
+        y: 0,
+        text: "Level 1",
+        complete: false,
+        lvl: lvls[1],
+        unlocked: true,
+        unlocks: [2]
     }
 ]

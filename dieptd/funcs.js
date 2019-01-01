@@ -378,3 +378,11 @@ function upgrade_buttons(upgrade_list) {
         });
     }
 }
+
+function handle_upgrades() {
+    if (k[88]) {
+        pt += select.selection.cost;
+        select.selection.hp = -1;
+        select.selecting = false;
+    }
+}

@@ -176,42 +176,44 @@ function loop() {
     ctx.translate(-pos.x, -pos.y);
 
     //handle selection
-    var closest_to_mouse_index = find_closest({ x: tmc.x, y: tmc.y }, o, "p");
+    if (discriminate("p").length != 0) {
+        var closest_to_mouse_index = find_closest({ x: tmc.x, y: tmc.y }, o, "p");
 
-    var closest_to_mouse = o[closest_to_mouse_index];
+        var closest_to_mouse = o[closest_to_mouse_index];
 
-    if (dist_to_obj({ x: tmc.x, y: tmc.y }, closest_to_mouse) < 50 || select.selecting) {
-        ctx.setLineDash([20, 40]);
-        ctx.lineCap = "round";
-        ctx.strokeStyle = "#555555";
-        ctx.lineWidth = 4;
-        if (!select.selecting) {
-            ctx.arc(closest_to_mouse.x, closest_to_mouse.y, 75, 0, tau);
-        } else {
-            ctx.arc(select.selection.x, select.selection.y, 75, 0, tau);
+        if (dist_to_obj({ x: tmc.x, y: tmc.y }, closest_to_mouse) < 50 || select.selecting) {
+            ctx.setLineDash([20, 40]);
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "#555555";
+            ctx.lineWidth = 4;
+            if (!select.selecting) {
+                ctx.arc(closest_to_mouse.x, closest_to_mouse.y, 75, 0, tau);
+            } else {
+                ctx.arc(select.selection.x, select.selection.y, 75, 0, tau);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
         }
-        ctx.stroke();
-        ctx.setLineDash([]);
-    }
 
-    if (m.md[0] && dist_to_obj({ x: tmc.x, y: tmc.y }, closest_to_mouse) < 50) {
-        o.push(Upgrade_Menu(closest_to_mouse.tank_type));
-        select.selecting = true;
-        select.selection = closest_to_mouse;
-        select.selection_index = closest_to_mouse_index;
-    }
+        if (m.md[0] && dist_to_obj({ x: tmc.x, y: tmc.y }, closest_to_mouse) < 50) {
+            o.push(Upgrade_Menu(closest_to_mouse.tank_type));
+            select.selecting = true;
+            select.selection = closest_to_mouse;
+            select.selection_index = closest_to_mouse_index;
+        }
 
-    if (m.m[2]) {
-        select.selecting = false;
-    }
+        if (m.m[2]) {
+            select.selecting = false;
+        }
 
-    if (select.selecting) {
-        upgrade_buttons(get_upgrades_for_tank(select.selection.tank_type));
-        handle_upgrades();
-    }
+        if (select.selecting) {
+            upgrade_buttons(get_upgrades_for_tank(select.selection.tank_type));
+            handle_upgrades();
+        }
 
-    if (!select.selecting) {
-        o.push(Upgrade_Menu());
+        if (!select.selecting) {
+            o.push(Upgrade_Menu());
+        }
     }
 
     //do all drawing for all things
@@ -252,7 +254,6 @@ function loop() {
     ctx.textAlign = "left";
     diep_text("Total Power: " + Math.floor(total_power) + " / " + total_max_power, 10, 25, 24);
     diep_text("Points: " + Math.floor(pt), 10, 50, 24);
-    diep_text("Remaining Points: " + Math.floor(get_shape_total_hp().hp / 20) + " / " + max_poly_hp / 20, 10, 75, 24);
 
     //reset single-press keys
     kd = new Array(256);
@@ -265,19 +266,79 @@ function loop() {
 
     m.w = 0;
 
-    requestAnimationFrame(loop);
+    if (discriminate("p").length == 0) {
+        switch_to_menu = true;
+    }
+
+    if (!switch_to_menu) {
+        requestAnimationFrame(loop);
+    } else {
+        menu_loop();
+    }
+}
+
+function menu_loop() {
+    ctx.fillStyle = "#EEEEEE";
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    ctx.save();
+    ctx.translate(960, 540);
+    ctx.translate(-pos.x, -pos.y);
+
+    menu_icons.forEach(function (e) {
+        ctx.textAlign = "center";
+        diep_icon(e.x, e.y, 100, 100, 0);
+        diep_text(e.text, e.x + 50, e.y + 30, 12);
+        if (e.unlocked) {
+            diep_text("Unlocked", e.x + 50, e.y + 54, 12);
+            if (click_in_rect(e.x - pos.x + 960, e.y - pos.y + 540, 100, 100)) {
+                load_level(e);
+            }
+        } else {
+            diep_text("Locked", e.x + 50, e.y + 54, 12);
+        }
+        if (e.complete) {
+            diep_text("Complete", e.x + 50, e.y + 78, 12);
+        } else {
+            diep_text("Not Complete", e.x + 50, e.y + 78, 12);
+        }
+    });
+
+    ctx.restore();
+
+    if (switch_to_menu) {
+        requestAnimationFrame(menu_loop);
+    } else {
+        loop();
+    }
 }
 
 
 
 function load_level(level) {
-    l = 0;
-    lvi = 0;
-    level.init();
-    lv = level;
-    loop();
+    if (switch_to_menu) {
+        pos.x = 0;
+        pos.y = 0;
+        scale.factor = 0;
+        o = [];
+        l = 0;
+        lvi = 0;
+        level.lvl.init();
+        lv = level.lvl;
+        lvicon = level
+        switch_to_menu = false;
+    }
 }
 
 
-load_level(lvls[0]);
-//loop();
+function complete_level(level) {
+    lvicon.complete = true;
+    lvicon.unlocks.forEach(function (e) {
+        menu_icons[e].unlocked = true;
+    });
+    switch_to_menu = true;
+}
+
+
+//load_level(lvls[0]);
+menu_loop();

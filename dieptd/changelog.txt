@@ -7,6 +7,14 @@ Sub-topics of major changes are intented
 
 2019-1-1
 
+Added menu main menu with level buttons
+Added a second level.
+Fixed lots of bugs.
+
+Adjusted required points for tutorial level.
+    Slightly altered number of shapes.
+    Now, only half have to be mined.
+
 Bug fixed where towers could be placed for free.
 
 2018-12-31

@@ -86,3 +86,6 @@ var gt = [];
 
 //display fov toggle
 var fov_toggle = true;
+
+//determines whether a level should continue or whether there should be a switch to the menu
+var switch_to_menu = true;
