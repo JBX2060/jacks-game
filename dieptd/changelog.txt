@@ -7,6 +7,8 @@ Sub-topics of major changes are intented
 
 2019-1-1
 
+Added basic info on controls in the main menu.
+
 Added menu main menu with level buttons
 Added a second level.
 Fixed lots of bugs.

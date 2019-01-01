@@ -285,6 +285,14 @@ function menu_loop() {
     ctx.translate(960, 540);
     ctx.translate(-pos.x, -pos.y);
 
+    ctx.textAlign = "center";
+    diep_text("Controls:", 0, -400, 24);
+    diep_text("Use buttons or hotkeys listed on buttons to place/upgrade towers.", 0, -400 + 24, 24);
+    diep_text("Click to select or put down a tower.", 0, -400 + 48, 24);
+    diep_text("Right click to deselect or cancel placement.", 0, -400 + 72, 24);
+    diep_text("X to delete the selected tower.", 0, -400 + 96, 24);
+    diep_text("Drag the mouse to move the view, and use the +- keys or the scroll wheel to zoom.", 0, -400 + 120, 24);
+
     menu_icons.forEach(function (e) {
         ctx.textAlign = "center";
         diep_icon(e.x, e.y, 100, 100, 0);
