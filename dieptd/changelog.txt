@@ -5,6 +5,18 @@ Sub-topics of major changes are intented
 
 
 
+2019-1-2
+
+Added colored icons for levels.
+    Red means locked (cannot play until previous level is complete)
+    Yellow means unlocked, but incomplete.
+    Green means complete.
+Added third level (second if you don't count the tutorial)
+    Your goal is to mine an alpha pentagon.
+    Groups of tanks show up from different directions each time.
+
+Added alpha pentagons.
+
 2019-1-1
 
 Added basic info on controls in the main menu.

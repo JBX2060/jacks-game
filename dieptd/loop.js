@@ -295,7 +295,13 @@ function menu_loop() {
 
     menu_icons.forEach(function (e) {
         ctx.textAlign = "center";
-        diep_icon(e.x, e.y, 100, 100, 0);
+        if (!e.unlocked) {
+            diep_icon(e.x, e.y, 100, 100, 2);
+        } else if (!e.complete) {
+            diep_icon(e.x, e.y, 100, 100, 3);
+        } else {
+            diep_icon(e.x, e.y, 100, 100, 1);
+        }
         diep_text(e.text, e.x + 50, e.y + 30, 12);
         if (e.unlocked) {
             diep_text("Unlocked", e.x + 50, e.y + 54, 12);
@@ -331,6 +337,7 @@ function load_level(level) {
         o = [];
         l = 0;
         lvi = 0;
+        pt = 300;
         level.lvl.init();
         lv = level.lvl;
         lvicon = level

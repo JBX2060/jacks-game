@@ -140,6 +140,28 @@ function Pentagon_Polygon(x, y) {
     return tank;
 }
 
+
+//alpha pentagon polygon
+function Alpha_Pentagon_Polygon(x, y) {
+
+    var tank = new Game_Obj(x, y, function (a) {
+        ctx.lineJoin = "round";
+        ctx.fillStyle = "#768cfc";
+        ctx.strokeStyle = "#5869bd";
+        ctx.beginPath();
+        poly(a.x, a.y, 100, 5, a.t / 100);
+        ctx.fill();
+        ctx.stroke();
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 100);
+    }, function (a) {
+        a.t++;
+    }, "s", 300000);
+
+    tank.t = 0;
+
+    return tank;
+}
+
 //square polygon
 function Green_Square_Polygon(x, y) {
 

@@ -96,5 +96,14 @@ var menu_icons = [
         lvl: lvls[1],
         unlocked: true,
         unlocks: [2]
+    },
+    {
+        x: 600,
+        y: 0,
+        text: "Alpha Pentagon",
+        complete: false,
+        lvl: lvls[2],
+        unlocked: false,
+        unlocks: [3]
     }
 ]

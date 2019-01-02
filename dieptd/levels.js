@@ -222,6 +222,84 @@ var lvls = [
             }
             ctx.restore();
         }
+    }, {
+        init: function () {
+            o.push(Generator_Tower(0, 0));
+            o.push(Alpha_Pentagon_Polygon(300, 300));
+            max_poly_hp = get_shape_total_hp().mhp;
+        },
+        frame: function () {
+            if (between(lvi, 0, 2)) {
+                if (kd[39]) {
+                    lvi++;
+                }
+                if (kd[37]) {
+                    lvi--;
+                }
+            }
+
+
+            var diff = 100 * (1 - (get_shape_total_hp().hp) / max_poly_hp);
+
+            if (l % 1500 == 0) {
+                for (var i = 0; diff > i; i++ ) {
+                    var angle = l + Math.random() / 1.5;
+                    switch (Math.floor(Math.random() * 4)) {
+                        case 0:
+                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 1:
+                            if (diff > 3) {
+                                o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            } else {
+                                o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            }
+                            break;
+                        case 2:
+                            if (diff > 6) {
+                                o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            } else {
+                                o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            }
+                            break;
+                        case 3:
+                            if (diff > 9) {
+                                o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            } else {
+                                o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            }
+                            break;
+                    }
+                }
+            }
+
+
+
+        },
+        draw: function () {
+            var texts = [
+                "There is a type of pentagon known as the Alpha Pentagon.",
+                "It is far larger and far more durable than the regular pentagon, but grants more points.",
+                "The tanks seem to want this alpha pentagon too... Better mine it first!",
+                ""
+            ]
+            ctx.textAlign = "center";
+            diep_text(texts[lvi], 0, -200, 24);
+        
+
+            ctx.textAlign = "left";
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            diep_text("Remaining Points: " + Math.floor((get_shape_total_hp().hp) / 20) + " / " + max_poly_hp / 20, 10, 75, 24);
+            if (get_shape_total_hp().hp <= 0) {
+                ctx.textAlign = "center";
+                diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
+                if (k[13]) {
+                    complete_level(lvicon);
+                }
+            }
+            ctx.restore();
+        }
     }
 ]
 
