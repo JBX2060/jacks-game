@@ -5,7 +5,32 @@ Sub-topics of major changes are intented
 
 
 
+2019-1-6
+
+Added a new level, "Out of Time"
+    This level is similar to Level 1, but enemy spawnrate is determined by both time and shapes mined, rather than only shapes mined.
+    The new time element forces players to put a sizeable portion of their resources into miners, but not enough that their defense is compromised
+
+2019-1-5
+
+Added overlord
+Added drone limits to drone classes
+Did a bunch of code refactoring
+    Replaced all instances of "discrimination" functions with Array.prototype.filter()
+
+2019-1-3
+
+Added game speed control system.
+    The game can be sped up by up to a factor of four.
+    The game can be slowed down by up to a factor of two.
+Nerfed Level 1 enemy spawns.
+    They occur at one third the rate that they normally do, but consist of significantly more tanks.
+    This change was made so players can expand outwards more easily.
+Added drones and overseer.
+
 2019-1-2
+
+Added triplet tower.
 
 Added colored icons for levels.
     Red means locked (cannot play until previous level is complete)

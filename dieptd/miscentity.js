@@ -397,3 +397,68 @@ function Upgrade_Menu(source) {
     return tank;
 
 }
+
+function Drone(x, y, dx, dy, r, discrim, dmg, hp, c1, c2) {
+    if (c1 == undefined) {
+        if (discrim == "e") {
+            c1 = "#f04f54";
+            c2 = "#b33b3f";
+        } else if (discrim == "p") {
+            c1 = "#1db2df";
+            c2 = "#1386a6";
+        }
+    }
+
+     //create "tank"
+     var tank = new Game_Obj(x, y, function (a) {
+        ctx.beginPath();
+        ctx.fillStyle = a.c1;
+        ctx.strokeStyle = a.c2;
+        poly(a.x, a.y, a.r, 3, Math.atan2(a.dy, a.dx));
+        ctx.fill();
+        ctx.stroke();
+    }, function (a) {
+        if (a.discrim == "e") {
+            var closest = find_closest(a, o, "p");
+        } else if (a.discrim == "p") {
+            var closest = find_closest(a, o, "e");
+        }
+
+        if (closest !== false && o[closest]) {
+            var distance = dist_to_obj(a, o[closest]);
+            if (distance < 30) {
+                o[closest].hp -= a.dmg;
+                a.hp -= a.dmg;
+            }
+        }
+
+        a.dx *= 0.9;
+        a.dy *= 0.9;
+        if (m.m[0]) {
+            a.dx += Math.cos(point_towards(a, tmc));
+            a.dy += Math.sin(point_towards(a, tmc));
+        } else if (m.m[2]) {
+            a.dx -= Math.cos(point_towards(a, tmc));
+            a.dy -= Math.sin(point_towards(a, tmc));
+        }
+
+        o.forEach(function (e) {
+            if (e !== a && e.discrim_2 == "drone" && dist_to_obj(e, a) < 30) {
+                a.dx -= Math.cos(point_towards(a, e));
+                a.dy -= Math.sin(point_towards(a, e));
+            }
+        });
+    }, discrim);
+
+    tank.r = r;
+    tank.dx = dx;
+    tank.dy = dy;
+    tank.c1 = c1;
+    tank.c2 = c2;
+    tank.hp = hp;
+    tank.dmg = dmg;
+    tank.bullet = true;
+    tank.discrim_2 = "drone";
+
+    return tank;
+}

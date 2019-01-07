@@ -33,7 +33,7 @@ var lvls = [
         },
         frame: function () {
             if (between(lvi, 0, 21)) {
-                if (kd[39]) {
+                if (kd["ArrowRight"]) {
                     lvi++;
                     if (lvi == 5) {
                         lvi = 4;
@@ -48,20 +48,20 @@ var lvls = [
                         lvi = 14;
                     }
                 }
-                if (kd[37]) {
+                if (kd["ArrowLeft"]) {
                     lvi--;
                     if (lvi == -1) {
                         lvi = 0;
                     }
                 }
             }
-            if (lvi == 4 && discriminate_by_tank_type("Relay_Tower").length > 0) {
+            if (lvi == 4 && o.filter(e => { return e.tank_type == "Relay_Tower"; }).length > 0) {
                 lvi = 5;
             }
-            if (lvi == 7 && discriminate_by_tank_type("Miner_Tower").length > 0) {
+            if (lvi == 7 && o.filter(e => { return e.tank_type == "Miner_Tower"; }).length > 0) {
                 lvi = 8;
             }
-            if (lvi == 11 && discriminate_by_tank_type("Basic_Tower").length > 0) {
+            if (lvi == 11 && o.filter(e => { return e.tank_type == "Basic_Tower"; }).length > 0) {
                 lvi = 12;
             }
             if (lvi == 12) {
@@ -121,7 +121,7 @@ var lvls = [
             if (get_shape_total_hp().hp - max_poly_hp < 0) {
                 ctx.textAlign = "center";
                 diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
-                if (k[13]) {
+                if (k["Enter"]) {
                     complete_level(lvicon);
                 }
             }
@@ -151,18 +151,18 @@ var lvls = [
         },
         frame: function () {
             if (between(lvi, 0, 3)) {
-                if (kd[39]) {
+                if (kd["ArrowRight"]) {
                     lvi++;
                 }
-                if (kd[37]) {
+                if (kd["ArrowLeft"]) {
                     lvi--;
                 }
             }
 
 
-            var diff = 50 * (1 - (get_shape_total_hp().hp / 2) / max_poly_hp);
+            var diff = 120 * (1 - (get_shape_total_hp().hp / 2) / max_poly_hp);
 
-            if (l % 300 == 0) {
+            if (l % 900 == 0) {
                 for (var i = 0; diff > i; i++ ) {
                     var angle = tau * Math.random()
                     switch (Math.floor(Math.random() * 4)) {
@@ -216,7 +216,7 @@ var lvls = [
             if (get_shape_total_hp().hp - max_poly_hp < 0) {
                 ctx.textAlign = "center";
                 diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
-                if (k[13]) {
+                if (k["Enter"]) {
                     complete_level(lvicon);
                 }
             }
@@ -230,10 +230,10 @@ var lvls = [
         },
         frame: function () {
             if (between(lvi, 0, 2)) {
-                if (kd[39]) {
+                if (kd["ArrowRight"]) {
                     lvi++;
                 }
-                if (kd[37]) {
+                if (kd["ArrowLeft"]) {
                     lvi--;
                 }
             }
@@ -294,7 +294,91 @@ var lvls = [
             if (get_shape_total_hp().hp <= 0) {
                 ctx.textAlign = "center";
                 diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
-                if (k[13]) {
+                if (k["Enter"]) {
+                    complete_level(lvicon);
+                }
+            }
+            ctx.restore();
+        }
+    }, {
+        init: function () {
+            o.push(Generator_Tower(0, 0));
+
+            var clump_size = 4000;
+
+            for (var i = 0; 45 > i; i++) {
+                o.push(Square_Polygon(Math.random() * clump_size - clump_size / 2, Math.random() * clump_size - clump_size / 2 ));
+            }
+
+
+            for (var i = 0; 36 > i; i++) {
+                o.push(Triangle_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+            }
+
+
+            for (var i = 0; 12 > i; i++) {
+                o.push(Pentagon_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+            }
+            max_poly_hp = get_shape_total_hp().mhp / 2;
+            lvi = 0;
+            pt = 750;
+        },
+        frame: function () {
+            if (between(lvi, 0, 3)) {
+                if (kd["ArrowRight"]) {
+                    lvi++;
+                }
+                if (kd["ArrowLeft"]) {
+                    lvi--;
+                }   
+            }
+
+
+            var diff = 12 * (1 - (get_shape_total_hp().hp / 2) / max_poly_hp) + l / 4800 + 1;
+
+            if (l % 325 == 0) {
+                for (var i = 0; diff > i; i++ ) {
+                    var angle = tau * Math.random() * 0.1 + l / 700;
+                    switch (Math.floor(Math.random() * 4)) {
+                        case 0:
+                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 1:
+                            o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 2:
+                            o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 3:
+                            o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                    }
+                }
+            }
+
+
+
+        },
+        draw: function () {
+            var texts = [
+                "This is like level one, but with a subtle difference.",
+                "Before, as you mined shapes, more enemy tanks would appear.",
+                "However, now, you'll also encounter more tanks as time goes on, so make sure to mine them quickly!",
+                "Good luck!",
+                ""
+            ]
+            ctx.textAlign = "center";
+            diep_text(texts[lvi], 0, -200, 24);
+        
+
+            ctx.textAlign = "left";
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            diep_text("Remaining Points: " + Math.floor((get_shape_total_hp().hp - max_poly_hp) / 20) + " / " + max_poly_hp / 20, 10, 75, 24);
+            if (get_shape_total_hp().hp - max_poly_hp < 0) {
+                ctx.textAlign = "center";
+                diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
+                if (k["Enter"]) {
                     complete_level(lvicon);
                 }
             }

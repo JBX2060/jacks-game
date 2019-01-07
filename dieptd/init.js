@@ -27,7 +27,7 @@ document.addEventListener("mousemove", function (e) {
     m.x = e.clientX * (1920 / window.innerWidth);
     m.y = e.clientY * (1920 / window.innerWidth);
 
-    if (m.m[0]) {
+    if (m.m[0] && drag_toggle) {
         pos.x += (m.px - m.x) / scale.factor;
         pos.y += (m.py - m.y) / scale.factor;
     }
@@ -49,17 +49,17 @@ document.addEventListener("wheel", function (e) {
 }, false);
 
 //keyboard value storage
-var k = new Array(256);
-var kd = new Array(256);
+var k = {};
+var kd = {};
 
 //keyboard event listeners
 document.addEventListener("keydown", function (e) {
-    k[e.keyCode] = true;
-    kd[e.keyCode] = true;
+    k[e.key] = true;
+    kd[e.key] = true;
 }, false);
 document.addEventListener("keyup", function (e) {
-    k[e.keyCode] = false;
-    kd[e.keyCode] = false;
+    k[e.key] = false;
+    kd[e.key] = false;
 }, false);
 
 //placing info
@@ -89,3 +89,10 @@ var fov_toggle = true;
 
 //determines whether a level should continue or whether there should be a switch to the menu
 var switch_to_menu = true;
+
+//toggle for dragging screen
+var drag_toggle = true;
+
+//gameplay speeds
+var speeds = [0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
+var speed_index = 2;

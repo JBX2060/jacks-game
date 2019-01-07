@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <canvas width="512" height="512" id="canvas"></canvas>
+        <script>
+        
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            var img = new Image();
+            img.src = "test.png";
+
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0);
+                var imgData = ctx.getImageData(0, 0, c.width, c.height);
+                var data = imgData.data;
+
+                var warp = new Uint16Array(c.width * c.height * 2);
+
+                for (var i = 0; warp.length / 2 > i; i++) {
+                    warp[i * 2] = (Math.sin((Math.floor(i / c.width) + (i % c.width)) / 80) * 0.5 + 0.5) * 512;
+                    warp[i * 2 + 1] = Math.abs((512 * 0.9 - Math.floor(i / c.width) * 1.8));
+                }
+
+                var newImgData = new ImageData(512, 512);
+                var newdata = newImgData.data;
+
+                for (var i = 0; warp.length / 2 > i; i++) {
+                    var x = warp[i * 2];
+                    var y = warp[i * 2 + 1];
+                    var px = (x + c.width * y) * 4;
+
+                    newdata[4 * i + 0] = data[px + 0];
+                    newdata[4 * i + 1] = data[px + 1];
+                    newdata[4 * i + 2] = data[px + 2];
+                    newdata[4 * i + 3] = data[px + 3];
+
+                }
+
+                ctx.putImageData(newImgData, 0, 0);
+            }
+        
+        </script>
+    </body>
+</html>

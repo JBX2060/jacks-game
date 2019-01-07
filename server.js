@@ -205,10 +205,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             });
         }
         if (command[0] == "==help") {
-            // bot.sendMessage({
-            //     to: channelID,
-            //     message: "Commands (all commands begin with `==`, and following arguments are separated by spaces): \n `+`: Adds all following numbers together. \n `*`: Multiplies all following numbers together. \n `sqrt`: Returns the square root of the following number. \n `madtanks`: Get the madtanks script! \n End any message with a question mark `?`, and adasbot will search it on StackOverflow! If it finds nothing, your question sucks ass and you should feel bad."
-            // });
             bot.sendMessage({
                 to: channelID,
                 message: splitNewLine([

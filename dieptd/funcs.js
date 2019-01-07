@@ -76,7 +76,7 @@ function find_closest(me, arr, discrim) {
 
     //cycle through array, find minimum distance
     arr.forEach(function (e, i) {
-        if (dist(e.x, e.y, me.x, me.y) < min_dist && e.discrim == discrim) {
+        if (dist(e.x, e.y, me.x, me.y) < min_dist && e.discrim == discrim && e.discrim_2 != "drone") {
             min_dist_index = i;
             min_dist = dist(e.x, e.y, me.x, me.y);
         }
@@ -224,7 +224,7 @@ function request_power(a) {
 //group towers into specific subsets by seeing how they're connected
 function group_towers() {
     
-    var towers = discriminate_by_tank_type("Relay_Tower").concat(discriminate_2("generator"));
+    var towers = o.filter(e => { return e.tank_type == "Relay_Tower" || e.discrim_2 == "generator" })//discriminate_by_tank_type("Relay_Tower").concat(discriminate_2("generator"));
 
     var groups = [];
 
@@ -247,7 +247,7 @@ function group_towers() {
                     }
                 }
             }
-            groups.push({ all: active, gen: discriminate_2("generator", active) });
+            groups.push({ all: active, gen: active.filter(e => { return e.discrim_2 == "generator" }) });
         } else {
             for (var i = 0; towers.length > i; i++) {
                 groups.push([towers[i]]);
@@ -288,7 +288,7 @@ function distrib_power(a, gen, power) {
 
 //determine shape total hp
 function get_shape_total_hp() {
-    var shapes = discriminate("s");
+    var shapes = o.filter(e => { return e.discrim == "s"; });
 
     var hp = 0;
 
@@ -369,10 +369,10 @@ function get_upgrades_for_tank(tank) {
 }
 
 function upgrade_buttons(upgrade_list) {
-    var toprow = "QWERTYUIOP"
+    var toprow = "qwertyuiop";
     if (upgrade_list) {
         upgrade_list.upgrades.forEach(function (e, i) {
-            if (click_in_rect(1920 - upgrade_list.upgrades.length * 110 + 110 * i, 10, 100, 100) || kd[toprow.charCodeAt(i)]) {
+            if (click_in_rect(1920 - upgrade_list.upgrades.length * 110 + 110 * i, 10, 100, 100) || kd[toprow.charAt(i)]) {
                 upgrade(tank_from_string(e, select.selection.x, select.selection.y)());
             }
         });
@@ -380,9 +380,17 @@ function upgrade_buttons(upgrade_list) {
 }
 
 function handle_upgrades() {
-    if (k[88]) {
+    if (k["x"]) {
         pt += select.selection.cost;
         select.selection.hp = -1;
         select.selecting = false;
     }
+}
+
+//tests if clicking inside rectangle (taking transforms into account)
+function transform_click_in_rect(x, y, w, h) {
+    if (m.md[0] && in_rect(x, y, w, h, tmc.x, tmc.y)) {
+        return true;
+    }
+    return false;
 }

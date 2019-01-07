@@ -168,6 +168,96 @@ function Assassin_Tower(x, y) {
     return tank;
 }
 
+//overseer tower
+function Overseer_Tower(x, y) {
+    
+    //create tank
+    var tank = Simpler_Tower(x, y, function (a) {
+        
+        //draw base
+        tank_base(a.x, a.y, 40);
+
+        //draw tank
+        diep_trapezoid_barrel(a.x, a.y, 27, 50, 40, a.angle + tau / 4);
+        diep_trapezoid_barrel(a.x, a.y, 27, 50, 40, a.angle - tau / 4);
+        diep_circle(a.x, a.y, 30, "#1db2df", "#1386a6");
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 30);
+        diep_healthbar(a.x, a.y + 10, a.power, a.power_cap, 30, "#8EFFFB");
+
+    }, function (a) {
+        a.angle = point_towards(a, tmc);
+        if (a.t % 150 == 0 && o.filter(e => { return e.id == a.id; }).length < 8) {
+            o.push(Drone(a.x, a.y, Math.cos(a.angle + tau / 4) * 30, Math.sin(a.angle + tau / 4) * 30, 20, "p", 8, 90));
+            o[o.length - 1].id = a.id;
+            o.push(Drone(a.x, a.y, Math.cos(a.angle - tau / 4) * 30, Math.sin(a.angle - tau / 4) * 30, 20, "p", 8, 90));
+            o[o.length - 1].id = a.id;
+            a.power -= 40;
+        }
+        if (a.hp < a.mhp && a.power >= 0.4) {
+            a.hp += 0.05;
+            a.power -= 0.4;
+        }
+        request_power(a);
+    }, 300, 900);
+
+    tank.tank_type = "Overseer_Tower";
+    tank.cost = 140;
+    tank.power = 0;
+    tank.power_cap = 400;
+    tank.id = set_id();
+
+    //return the tower
+    return tank;
+}
+
+//overseer tower
+function Overlord_Tower(x, y) {
+    
+    //create tank
+    var tank = Simpler_Tower(x, y, function (a) {
+        
+        //draw base
+        tank_base(a.x, a.y, 45);
+
+        //draw tank
+        diep_trapezoid_barrel(a.x, a.y, 32, 56, 45, a.angle);
+        diep_trapezoid_barrel(a.x, a.y, 32, 56, 45, a.angle + tau / 4);
+        diep_trapezoid_barrel(a.x, a.y, 32, 56, 45, a.angle - tau / 4);
+        diep_trapezoid_barrel(a.x, a.y, 32, 56, 45, a.angle - tau / 2);
+        diep_circle(a.x, a.y, 35, "#1db2df", "#1386a6");
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 35);
+        diep_healthbar(a.x, a.y + 10, a.power, a.power_cap, 35, "#8EFFFB");
+
+    }, function (a) {
+        a.angle = point_towards(a, tmc);
+        if (a.t % 150 == 0 && o.filter(e => { return e.id == a.id; }).length < 8) {
+            o.push(Drone(a.x, a.y, Math.cos(a.angle) * 30, Math.sin(a.angle + tau / 4) * 30, 20, "p", 8, 90));
+            o[o.length - 1].id = a.id;
+            o.push(Drone(a.x, a.y, Math.cos(a.angle - tau / 4) * 30, Math.sin(a.angle - tau / 4) * 30, 20, "p", 8, 90));
+            o[o.length - 1].id = a.id;
+            o.push(Drone(a.x, a.y, Math.cos(a.angle + tau / 4) * 30, Math.sin(a.angle + tau / 4) * 30, 20, "p", 8, 90));
+            o[o.length - 1].id = a.id;
+            o.push(Drone(a.x, a.y, Math.cos(a.angle - tau / 2) * 30, Math.sin(a.angle - tau / 4) * 30, 20, "p", 8, 90));
+            o[o.length - 1].id = a.id;
+            a.power -= 70;
+        }
+        if (a.hp < a.mhp && a.power >= 0.4) {
+            a.hp += 0.05;
+            a.power -= 0.4;
+        }
+        request_power(a);
+    }, 300, 900);
+
+    tank.tank_type = "Overlord_Tower";
+    tank.cost = 220;
+    tank.power = 0;
+    tank.power_cap = 400;
+    tank.id = set_id();
+
+    //return the tower
+    return tank;
+}
+
 //ranger tower
 function Ranger_Tower(x, y) {
     
@@ -277,6 +367,47 @@ function Triple_Shot_Tower(x, y) {
 
     tank.tank_type = "Triple_Shot_Tower";
     tank.cost = 90;
+
+    //return the tower
+    return tank;
+}
+
+//triplet tower
+function Triplet_Tower(x, y) {
+    
+    //create tank
+    var tank = Simple_Tower(x, y, function (a) {
+
+        //draw base
+        tank_base(a.x, a.y, 45);
+
+        //draw tank
+        diep_barrel(a.x, a.y, 27, 60, a.angle, 20, 0);
+        diep_barrel(a.x, a.y, 27, 60, a.angle, -20, 0);
+        diep_barrel(a.x, a.y, 27, 70, a.angle);
+        diep_circle(a.x, a.y, 35, "#1db2df", "#1386a6");
+        diep_healthbar(a.x, a.y, a.hp, a.mhp, 35);
+        diep_healthbar(a.x, a.y + 10, a.power, a.power_cap, 35, "#8EFFFB");
+
+    }, function (a) {
+        if (a.hp < a.mhp && a.power >= 0.4) {
+            a.hp += 0.05;
+            a.power -= 0.4;
+        }
+    }, function (a) {
+        if (a.t % 15 == 0) {
+            var off_p = offset_transform(a.x, a.y, 20, 0, a.angle);
+            o.push(Bullet(off_p.x, off_p.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "eb", 5, 15));
+        } else if (a.t % 15 == 5) {
+            var off_p = offset_transform(a.x, a.y, -20, 0, a.angle);
+            o.push(Bullet(off_p.x, off_p.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "eb", 5, 15));
+        } else if (a.t % 15 == 10) {
+            o.push(Bullet(a.x, a.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "eb", 5, 15));
+        }
+    }, 600, 300, 400, 10);
+
+    tank.tank_type = "Triple_Shot_Tower";
+    tank.cost = 120;
 
     //return the tower
     return tank;

@@ -66,12 +66,19 @@ var upgrades = [
         source: "Sniper_Tower",
         upgrades: [
             "Assassin_Tower",
+            "Overseer_Tower"
         ]
     },
     {
         source: "Assassin_Tower",
         upgrades: [
             "Ranger_Tower",
+        ]
+    },
+    {
+        source: "Overseer_Tower",
+        upgrades: [
+            "Overlord_Tower"
         ]
     }
 ]
@@ -105,5 +112,14 @@ var menu_icons = [
         lvl: lvls[2],
         unlocked: false,
         unlocks: [3]
+    },
+    {
+        x: 900,
+        y: 300,
+        text: "Out of Time",
+        complete: false,
+        lvl: lvls[3],
+        unlocked: false,
+        unlocks: [4]
     }
 ]
