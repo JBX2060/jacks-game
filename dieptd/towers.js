@@ -397,16 +397,16 @@ function Triplet_Tower(x, y) {
     }, function (a) {
         if (a.t % 15 == 0) {
             var off_p = offset_transform(a.x, a.y, 20, 0, a.angle);
-            o.push(Bullet(off_p.x, off_p.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "eb", 5, 15));
+            o.push(Bullet(off_p.x, off_p.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "pb", 5, 15));
         } else if (a.t % 15 == 5) {
             var off_p = offset_transform(a.x, a.y, -20, 0, a.angle);
-            o.push(Bullet(off_p.x, off_p.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "eb", 5, 15));
+            o.push(Bullet(off_p.x, off_p.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "pb", 5, 15));
         } else if (a.t % 15 == 10) {
-            o.push(Bullet(a.x, a.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "eb", 5, 15));
+            o.push(Bullet(a.x, a.y, Math.cos(a.angle) * 15, Math.sin(a.angle) * 15, 12, "pb", 5, 15));
         }
     }, 600, 300, 400, 10);
 
-    tank.tank_type = "Triple_Shot_Tower";
+    tank.tank_type = "Triplet_Tower";
     tank.cost = 120;
 
     //return the tower

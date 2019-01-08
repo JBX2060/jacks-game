@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body oncontextmenu="return false;">
+        <canvas width="1920" height="1080" id="canvas" style="position:absolute; top: 0; left: 0; width: 100%;"></canvas>
+        <script>
+            //mouse info
+            var m = { m: [false, false, false], md: [false, false, false], x: 0, y: 0, px: 0, py: 0, w: 0 };
+
+            var pos = { x: 0, y: 0 };
+
+            //mouse move listener
+            document.addEventListener("mousemove", function (e) {
+                m.px = m.x;
+                m.py = m.y;
+                m.x = e.clientX * (1920 / window.innerWidth);
+                m.y = e.clientY * (1920 / window.innerWidth);
+
+                if (m.m[0]) {
+                    pos.x += (m.px - m.x) / scale.factor;
+                    pos.y += (m.py - m.y) / scale.factor;
+                }
+            }, false);
+
+            //scale control
+            var scale = {
+                factor: 1,
+                log: 0,
+                d: 0
+            }
+
+            var tmc = { x: 0, y: 0 };
+
+            //mose down and up listeners
+            document.addEventListener("mousedown", function (e) {
+                m.m[e.which - 1] = true;
+                m.md[e.which - 1] = true;
+            }, false);
+            document.addEventListener("mouseup", function (e) {
+                m.m[e.which - 1] = false;
+                m.md[e.which - 1] = false;
+            }, false);
+
+            //mouse wheel listener
+            document.addEventListener("wheel", function (e) {
+                m.w = e.deltaY / 100;
+            }, false);
+
+            //keyboard value storage
+            var k = {};
+            var kd = {};
+
+            //keyboard event listeners
+            document.addEventListener("keydown", function (e) {
+                k[e.key] = true;
+                kd[e.key] = true;
+            }, false);
+            document.addEventListener("keyup", function (e) {
+                k[e.key] = false;
+                kd[e.key] = false;
+            }, false);
+
+            //canvas and context
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            var o = [];
+
+            function dist(x, y) {
+                return Math.sqrt(x * x + y * y);
+            }
+
+            function rand(x) {
+                return Math.random() * x;
+            }
+
+            function nrand(x) {
+                return rand(x) - x / 2;
+            }
+
+            function clamp(value, min, max) {
+                return Math.min(Math.max(value, min), max)
+            }
+
+            function point_towards(a, b) {
+                return Math.atan2(b.y - a.y, b.x - a.x);
+            }
+
+            function set_dir(a, dir, mag) {
+                a.dx = Math.cos(dir) * mag;
+                a.dy = Math.sin(dir) * mag;
+            }
+
+            function add_dir(a, dir, mag) {
+                a.dx += Math.cos(dir) * mag;
+                a.dy += Math.sin(dir) * mag;
+            }
+
+            //tests if inside rectangle
+            function in_rect(x, y, w, h, point_x, point_y) {
+                if (between(point_x, x, x + w) && between(point_y, y, y + h)) {
+                    return true;
+                }
+                return false;
+            }
+
+            function Point(x, y, r, t) {
+                this.x = x;
+                this.y = y;
+                this.dx = 0//rand(10) - 5;
+                this.dy = 0//rand(10) - 5;
+                this.r = r;
+                this.t = t;
+                this.brightness = rand(30) + 10;
+                this.move = function (a) {
+                    this.x += this.dx;
+                    this.y += this.dy;
+                    this.dx *= 0.999;
+                    this.dy *= 0.999;
+                    o.forEach(function (e) {
+                        if (a !== e) {
+                            add_dir(e, point_towards(e, a), a.t * 0.003);
+                        }
+                        if (dist(a.x - e.x, a.y - e.y) < a.r + e.r && a !== e) {
+                            var dir = point_towards(a, e);
+                            var dist2 = dist(e.dx, e.dy) * e.r * e.r / a.r / a.r * 0.95;
+                            set_dir(e, dir, dist(a.dx, a.dy) * a.r * a.r / e.r / e.r * 0.95);
+                            var dir = point_towards(e, a);
+                            set_dir(a, dir, dist2);
+                        }
+                    });
+                    // if (this.x < this.r - 10000) {
+                    //     this.x = this.r - 10000;
+                    //     this.dx *= -1;
+                    // }
+                    // if (this.y < this.r - 10000) {
+                    //     this.y = this.r - 10000;
+                    //     this.dy *= -1;
+                    // }
+                    // if (this.x > 10000 - this.r) {
+                    //     this.x = 10000 - this.r;
+                    //     this.dx *= -1;
+                    // }
+                    // if (this.y > 10000 - this.r) {
+                    //     this.y = 10800 - this.r;
+                    //     this.dy *= -1;
+                    // }
+                    if (m.m[0]) {
+                        add_dir(this, point_towards(this, tmc), clamp(-250000 / Math.pow(dist(this.x - tmc.x, this.y - tmc.y), 2), -6, 0));
+                    }
+                    if (m.m[2]) {
+                        add_dir(this, point_towards(this, tmc), clamp(250000 / Math.pow(dist(this.x - tmc.x, this.y - tmc.y), 2), 0, 6));
+                    }
+                }
+                this.draw = function () {
+                    if (Math.sign(this.t) == 1) {
+                        ctx.strokeStyle = "hsl(0, " + (100 * Math.abs(this.t)) + "%, " + this.brightness + "%)";
+                    } else {
+                        ctx.strokeStyle = "hsl(180, " + (100 * Math.abs(this.t)) + "%, " + this.brightness + "%)";
+                    }
+                    ctx.lineWidth = this.r * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x - this.dx / 2, this.y - this.dy / 2);
+                    ctx.lineTo(this.x + this.dx / 2, this.y + this.dy / 2);
+                    ctx.stroke();
+                }
+            }
+
+            for (var i = 0; 300 > i; i++) {
+                o.push(new Point(rand(1920), rand(1080), rand(20) + 5, rand(4) - 1));
+            }
+
+
+            function loop() {
+
+                                
+                    //handle scaling
+                scale.factor = Math.pow(2, scale.log);
+
+                scale.d -= Math.sign(m.w) / 60;
+
+                scale.log += scale.d;
+                scale.d *= 0.9;
+
+                tmc.x = m.x;
+                tmc.y = m.y;
+                tmc.x -= 960;
+                tmc.y -= 540;
+                tmc.x /= scale.factor;
+                tmc.y /= scale.factor;
+                tmc.x += pos.x;
+                tmc.y += pos.y;
+
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, c.width, c.height);
+
+                ctx.save();
+                ctx.translate(960, 540);
+                ctx.scale(scale.factor, scale.factor);
+                ctx.translate(-pos.x, -pos.y);
+
+
+                ctx.lineCap = "round";
+                // ctx.fillStyle = "#FFFFFF";
+                // ctx.fillRect(0, 0, c.width, c.height);
+
+                o.forEach(function (e) {
+                    e.move(e);
+                });
+
+                o.forEach(function (e) {
+                    e.draw();
+                })
+                
+                m.w = 0;
+
+                ctx.restore();
+                requestAnimationFrame(loop);
+            }
+            loop();
+        </script>
+    </body>
+</html>

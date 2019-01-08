@@ -372,6 +372,14 @@ function menu_loop() {
         }
     });
 
+    diep_icon(-300, 0, 100, 100, 2);
+    diep_text("Unlock All", -250, 55, 20);
+    if (transform_click_in_rect(-300, 0, 100, 100)) {
+        menu_icons.forEach(function (e) {
+            e.unlocked = true;
+        });
+    }
+
     ctx.restore();
 
     if (switch_to_menu) {

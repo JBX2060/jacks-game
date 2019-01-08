@@ -101,7 +101,27 @@ function splitNewLine(arr) {
     return str;
 }
 
+var hardcoded_ships = [
+    ["<@424660914785091595>", "<@455973509399838731>"],
+    ["<@319626295724081153>", "<@421913609459728384>"],
+    ["test", "test"]
+]
+
+function hardcoded_100(arr) {
+    var return_this = false
+    hardcoded_ships.forEach(function (e) {
+        if ((arr[1] == e[0] && arr[2] == e[1]) || (arr[1] == e[1] && arr[2] == e[0])) {
+            return_this = true;
+        }
+    });
+    return return_this;
+}
+
 bot.on('message', function (user, userID, channelID, message, evt) {
+    // bot.sendMessage({
+    //     to: "358671241059762177",
+    //     message: "^"
+    // });
     if (/^==/.test(message)) {
         var command = message.split(" ");
         if (command[0] == "==+") {
@@ -215,7 +235,8 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     "`madtanks`: Get the madtanks script (turns diep tanks into madman emojis).",
                     "`balance`: Check your adasbucks balance.",
                     "`addmessage`: Adds a message to the global message board, which can be found here: http://50.39.110.171:42069/discordbot/index.html",
-                    "`stackoverflow`: Searches for the following text on stackoverflow."
+                    "`stackoverflow`: Searches for the following text on stackoverflow.",
+                    "`ship`: Ships two or more users (or really any text phrases)."
                 ])
             });
         }
@@ -233,6 +254,32 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     message: "Access denied."
                 });
             }
+        }
+        if (command[0] == "==ship") {
+            if (command.length >= 3) {
+            var ship_score = 0;
+                for (var i2 = 1; command.length > i2; i2++) {
+                    for (var i = 0; command[i2].length > i; i++) {
+                        ship_score += command[i2].charCodeAt(i);
+                    }
+                }
+            }
+            if (hardcoded_100(command)) {
+                ship_score = 100;
+            } else {
+                ship_score %= 100;
+            }
+            var shipmsg = "";
+            for (var i = 1; command.length > i; i++) {
+                shipmsg += command[i];
+                if (i != command.length - 1) {
+                    shipmsg += " x ";
+                }
+            }
+            bot.sendMessage({
+                to: channelID,
+                message: shipmsg + ": \nScore: " + ship_score + "%"
+            });
         }
     }
     if (false && /\x3f$/.test(message) && channelID != 358671241059762177) {

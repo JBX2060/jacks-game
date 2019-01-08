@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    </head>
+    <body>
+        <canvas width=1920 height=1080 id="canvas2" style="object-fit:contain; width: 100%; height: 100%; position:absolute; top:0px; left:0px; z-index: -1"></canvas>
+        <canvas width=1920 height=1080 id="canvas3" style="object-fit:contain; width: 100%; height: 100%; position:absolute; top:0px; left:0px; z-index: 2"></canvas>
+        <canvas width=1920 height=1080 id="canvas" style="object-fit:contain; width: 100%; height: 100%; position:absolute; top:0px; left:0px;"></canvas>
+        <script src="http://50.39.110.171:42069/diepbullethell/1.js"></script>
+        <script src="http://50.39.110.171:42069/diepbullethell/2.js"></script>
+        <script src="http://50.39.110.171:42069/diepbullethell/20.js"></script>
+        <script src="http://50.39.110.171:42069/diepbullethell/levels.js"></script>
+        <script>
+            console.log(lvls);
+            //counters
+            var i = 0;
+            var i2 = 0;
+            var i3 = 0;
+
+            //loop counter
+            var li = 0;
+
+            //level counter
+            var lvi = 0;
+
+            //canvas and context
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            //canvas and context
+            var c2 = document.getElementById("canvas2");
+            var ctx2 = c2.getContext("2d");
+
+            //canvas and context
+            var c3 = document.getElementById("canvas3");
+            var ctx3 = c3.getContext("2d");
+            
+            //the player
+            var p = { x: 960, y: 540, hp: 100, dir: 0, dx: 0, dy: 0, shoot: 0, side: "p", r: 24, mhp: 100 };
+
+            //boss info
+            var b = { x: 0, y: 0 };
+
+            //all objects on screen
+            var o = [];
+
+            //makes rotations easier
+            var tau = Math.PI * 2;
+
+            //distance function
+            function dist(x, y, x2, y2) {
+                return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
+            }
+
+            //rotate image function
+            function rotateImg(context, img, x, y, w, h, dir) {
+                context.save();
+                context.translate(x, y);
+                context.rotate(dir);
+                context.drawImage(img, -w / 2, -h / 2, w, h);
+                context.restore();
+            }
+
+            //make bullet
+            function bullet(x, y, dir, v, draw, hp, side, r, dmg, dmgSpd) {
+                this.type = "bullet";
+                this.x = x;
+                this.y = y;
+                this.dir = dir;
+                this.v = v;
+                this.draw = draw;
+                this.hp = hp;
+                this.side = side;
+                this.r = r;
+                this.dmg = dmg;
+                this.dmgSpd = dmgSpd;
+                this.move = function() {
+                    this.x += Math.cos(this.dir) * this.v;
+                    this.y += Math.sin(this.dir) * this.v;
+                    this.hp--;
+                }
+                this.collide = function(target) {
+                    if (dist(target.x, target.y, this.x, this.y) < this.r + target.r) {
+                        if (this.side != target.side) {
+                            this.dmg -= this.dmgSpd;
+                            target.hp -= this.dmgSpd;
+                        } else {
+                            if (this.type == "tank" && target.type == "tank") {
+                                this.dx += Math.cos(Math.atan2(this.y - target.y, this.x - target.x)) * -5;
+                                this.dy += Math.sin(Math.atan2(this.y - target.y, this.x - target.x)) * -5;
+                            }
+                        }
+                    }
+                    if (this.dmg <= 0) {
+                        this.hp = -1;
+                    }
+                }
+            }
+
+            //make tank
+            function tank(x, y, hp, draw, dir, behavior, r, side) {
+                this.type = "tank";
+                this.x = x;
+                this.y = y;
+                this.hp = hp;
+                this.draw = draw;
+                this.dir = dir;
+                this.behavior = behavior;
+                this.dx = 0;
+                this.dy = 0;
+                this.timer = 0;
+                this.r = r;
+                this.side = side;
+                this.mhp = hp;
+                this.collide = function(target) {
+                    if (dist(target.x, target.y, this.x, this.y) < this.r + target.r) {
+                        if (this.side == target.side && this != target) {
+                            if (this.type == "tank" && target.type == "tank") {
+                                this.dx += Math.cos(Math.atan2(this.y - target.y, this.x - target.x)) * 1;
+                                this.dy += Math.sin(Math.atan2(this.y - target.y, this.x - target.x)) * 1;
+                            }
+                        } else {
+                            if (this.type == "tank" && target.type == "tank" && this != target) {
+                                this.hp -= 10;
+                                target.hp -= 10;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //make death animation
+            function deathAnimation(obj) {
+                this.type = "death";
+                this.draw = obj.draw;
+                this.draw2 = function() {
+                    ctx.globalAlpha = this.timer / 10;
+                    this.draw();
+                    ctx.globalAlpha = 1;
+                    this.timer--;
+                    if (this.timer <= 0) {
+                        this.hp = -1;
+                    }
+                    this.x += this.dx;
+                    this.y += this.dy;
+                }
+                if (isNaN(obj.dx) || isNaN(obj.dy)) {
+                    this.dx = Math.cos(obj.dir) * obj.v;
+                    this.dy = Math.sin(obj.dir) * obj.v;
+                } else {
+                    this.dx = obj.dx;
+                    this.dy = obj.dy;
+                }
+                this.dir = obj.dir
+                this.x = obj.x;
+                this.y = obj.y;
+                this.timer = 10;
+                this.hp = 999999;
+            }
+
+            //diep circle
+            function dCircle(x, y, r, scheme, context) {
+                if (context == undefined) {
+                    scheme.set();
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.lineWidth = 4;
+                    ctx.fill();
+                    ctx.stroke();
+                } else {
+                    scheme.set(context);
+                    context.beginPath();
+                    context.arc(x, y, r, 0, Math.PI * 2);
+                    context.lineWidth = 4;
+                    context.fill();
+                    context.stroke();
+                }
+            }
+            
+            //diep barrel
+            function dBarrel(x, y, width, height, xOffset, yOffset, dir, scheme) {
+                scheme.set();
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(dir);
+                ctx.beginPath();
+                ctx.moveTo(yOffset, width / -2 + xOffset);
+                ctx.lineTo(height + yOffset, width / -2 + xOffset);
+                ctx.lineTo(height + yOffset, width / 2 + xOffset);
+                ctx.lineTo(yOffset, width / 2 + xOffset);
+                ctx.closePath();
+                ctx.lineWidth = 4;
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            //diep trap
+            function dTrap(x, y, size, dir, scheme, context) {
+                if (context == undefined) {
+                    scheme.set();
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(dir);
+                    ctx.beginPath();
+                    for (var ii = 0; 3 > ii; ii++) {
+                        ctx.lineTo(Math.cos(tau / 6 * ii * 2 + dir) * size, Math.sin(tau / 6 * ii * 2 + dir) * size);
+                        ctx.lineTo(Math.cos(tau / 6 * (ii * 2 + 1) + dir) * size * 0.4, Math.sin(tau / 6 * (ii * 2 + 1) + dir) * size * 0.4);
+                    }
+                    ctx.closePath();
+                    ctx.lineWidth = 4;
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.restore();
+                } else {
+                    scheme.set(context);
+                    context.save();
+                    context.translate(x, y);
+                    context.rotate(dir);
+                    context.beginPath();
+                    for (var ii = 0; 3 > ii; ii++) {
+                        context.lineTo(Math.cos(tau / 6 * ii * 2 + dir) * size, Math.sin(tau / 6 * ii * 2 + dir) * size);
+                        context.lineTo(Math.cos(tau / 6 * (ii * 2 + 1) + dir) * size * 0.4, Math.sin(tau / 6 * (ii * 2 + 1) + dir) * size * 0.4);
+                    }
+                    context.closePath();
+                    context.lineWidth = 4;
+                    context.fill();
+                    context.stroke();
+                    context.restore();
+                }
+            }
+
+            //health bar
+            function hBar(obj) {
+                ctx.beginPath();
+                ctx.moveTo(obj.x - obj.r * 1.2, obj.y + obj.r + 12);
+                ctx.lineTo(obj.x + obj.r * 1.2, obj.y + obj.r + 12);
+                ctx.strokeStyle = "#565656";
+                ctx.lineWidth = 10;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(obj.x - obj.r * 1.2, obj.y + obj.r + 12);
+                ctx.lineTo(obj.x - obj.r * 1.2 + obj.r * 2.4 * (obj.hp / obj.mhp), obj.y + obj.r + 12);
+                ctx.strokeStyle = "#78E482";
+                ctx.lineWidth = 6;
+                ctx.stroke();
+            }
+
+            //polygon
+            function polygon(x, y, sides, radius, offset) {
+                for (var ii = 0; sides > ii; ii++) {
+                    ctx.lineTo(x + Math.cos(tau / sides * ii + offset) * radius, y + Math.sin(tau / sides * ii + offset) * radius);
+                }
+            }
+
+            function dText(text, x, y, size) {
+                ctx3.strokeStyle = "#565656";
+                ctx3.fillStyle = "#FFFFFF";
+                ctx3.lineWidth = 4;
+                if (size == undefined) {
+                    ctx3.font = "18px Ubuntu";
+                } else {
+                    ctx3.font = size + "px Ubuntu";
+                }
+                ctx3.strokeText(text, x, y);
+                ctx3.fillText(text, x, y);
+            }
+
+            //color schemes
+            function cScheme(center, border) {
+                this.center = center;
+                this.border = border;
+                this.set = function(context) {
+                    if (context == undefined) {
+                        ctx.fillStyle = this.center;
+                        ctx.strokeStyle = this.border;
+                    } else {
+                        context.fillStyle = this.center;
+                        context.strokeStyle = this.border;
+                    }
+                }
+            }
+
+            //offsets stuff
+            function offset(obj, x, y, dir) {
+                if (dir == undefined) {
+                    return { x: Math.cos(obj.dir + tau / 4) * x + Math.cos(obj.dir) * y, y: Math.sin(obj.dir + tau / 4) * x + Math.sin(obj.dir) * y };
+                } else {
+                    return { x: Math.cos(obj.dir + tau / 4 + dir) * x + Math.cos(obj.dir + dir) * y, y: Math.sin(obj.dir + tau / 4 + dir) * x + Math.sin(obj.dir + dir) * y };
+                }
+            }
+            
+            //diep blue color scheme
+            var diepBlue = new cScheme("#00AFDE", "#0083A5");
+
+            //diep grey color scheme
+            var diepGrey = new cScheme("#989898", "#717171");
+
+            //diep red color scheme
+            var diepRed = new cScheme("#F55057", "#B63D43");
+            
+            //small bullet texture
+            var smallBullet = document.createElement('canvas');
+            smallBullet.width = 24;
+            smallBullet.height = 24;
+            dCircle(12, 12, 10, diepRed, smallBullet.getContext("2d"));
+
+            //small trap texture
+            var smallTrap = document.createElement('canvas');
+            smallTrap.width = 50;
+            smallTrap.height = 50;
+            dTrap(25, 25, 15, 0, diepRed, smallTrap.getContext("2d")); 
+
+            //mouse data
+            var m = { x: 0, y: 0, m: [false, false, false] };
+            
+            //resize
+            var winSize = { x: window.innerWidth, y: window.innerHeight };
+            window.addEventListener('resize', function (e) {
+                winSize = { x: window.innerWidth, y: window.innerHeight };
+            }, false);
+
+            //mouse move input
+            document.addEventListener('mousemove', function (e) {
+                if (winSize.x >= winSize.y * (16 / 9)) {
+                    m.x = (e.clientX - (winSize.x - winSize.y * (16 / 9)) / 2) * (1920 / (winSize.y * (16 / 9)));
+                    m.y = e.clientY * (1920 / (winSize.y * (16 / 9)));
+                } else {
+                    m.y = (e.clientY - (winSize.y - winSize.x * (9 / 16)) / 2) * (1080 / (winSize.x * (9 / 16)));
+                    m.x = e.clientX * (1080 / (winSize.x * (9 / 16)));
+                }
+            }, false);
+
+            //mouse click input
+            document.addEventListener('mousedown', function (e) {
+                m.m[e.which - 1] = true;
+            }, false);
+
+            document.addEventListener('mouseup', function (e) {
+                m.m[e.which - 1] = false;
+            }, false);
+
+            //keys
+            var k = [];
+            
+            //keyboard input
+            document.addEventListener('keydown', function (e) {
+                k[e.keyCode] = true;
+            }, false);
+            
+            document.addEventListener('keyup', function (e) {
+                k[e.keyCode] = false;
+            }, false);
+            
+            //simple movement towards the player
+            function simpleMoveBehavior1(obj, spd, friction) {
+                obj.dir = Math.atan2(p.y - obj.y, p.x - obj.x);
+                obj.dx += Math.cos(Math.atan2(p.y - obj.y, p.x - obj.x)) * spd;
+                obj.dy += Math.sin(Math.atan2(p.y - obj.y, p.x - obj.x)) * spd;
+                obj.x += obj.dx;
+                obj.y += obj.dy;
+                obj.dx *= friction;
+                obj.dy *= friction;
+            }
+
+            //background
+            ctx2.fillStyle = "#CCCCCC";
+            ctx2.fillRect(0, 0, c.width, c.height)
+            ctx2.lineWidth = 1;
+
+            ctx2.beginPath();
+            ctx2.strokeStyle = "#C3C3C3";
+            for (i = 0; Math.ceil(c.width / 40 + 1) > i; i++) {
+                ctx2.lineTo(2 * i * 20, -10);
+                ctx2.lineTo(2 * i * 20, c.height + 10);
+                ctx2.lineTo((2 * i + 1) * 20, c.height + 10);
+                ctx2.lineTo((2 * i + 1) * 20, -10);
+            }
+            ctx2.stroke();
+
+            ctx2.beginPath();
+            ctx2.strokeStyle = "#C3C3C3";
+            for (i = 0; Math.ceil(c.height / 40 + 1) > i; i++) {
+                ctx2.lineTo(-10, 2 * i * 20);
+                ctx2.lineTo(c.width + 10, 2 * i * 20);
+                ctx2.lineTo(c.width + 10, (2 * i + 1) * 20);
+                ctx2.lineTo(-10, (2 * i + 1) * 20);
+            }
+            ctx2.stroke();
+
+            ctx2.lineWidth = 4;
+            
+            //loop function that is triggered every frame
+            function loop() {
+                if (p.hp <= 0 ) {
+                    p.x = 960;
+                    p.y = 540;
+                    p.hp = 100;
+                    o = [];
+                    li = 0;
+                }
+                //background
+                ctx.clearRect(0, 0, c.width, c.height);
+                ctx3.clearRect(0, 0, c.width, c.height);
+
+                li++;
+                for (i = 0; lvls[lvi].patterns.length > i; i++) {
+                    if (li >= lvls[lvi].patterns[i].start && li <= lvls[lvi].patterns[i].end) {
+                        lvls[lvi].patterns[i].func();
+                    }
+                }
+
+                //set canvas settings
+                ctx.lineCap = "round";
+
+                //set player direction
+                p.dir = Math.atan2(m.y - p.y, m.x - p.x);
+                
+                //move if key input
+                if (k[87] || k[38]) {
+                    p.dy += -0.7;
+                }
+                if (k[83] || k[40]) {
+                    p.dy += 0.7;
+                }
+                if (k[68] || k[39]) {
+                    p.dx += 0.7;
+                }
+                if (k[65] || k[37]) {
+                    p.dx += -0.7;
+                }
+                if (!k[16]) {
+                    p.x += p.dx;
+                    p.y += p.dy;
+                } else {
+                    p.x += p.dx / 2;
+                    p.y += p.dy / 2;
+                }
+                p.dx *= 0.9;
+                p.dy *= 0.9;
+
+                //fire bullets from player
+                if (m.m[0] && p.shoot <= 0) {
+                    p.shoot = 12;
+                    o.push(new bullet(p.x, p.y, p.dir, 12, function() { dCircle(this.x, this.y, 10, diepBlue); }, 100, "p", 12, 8, 5));
+                }
+                p.shoot--;
+
+                //update bullets every frame
+                for (i = 0; o.length > i; i++) {
+                    if (o[i].type == "bullet") {
+                        o[i].draw();
+                        o[i].move();
+                        o[i].collide(p);
+                        for (i2 = 0; o.length > i2; i2++) {
+                            o[i].collide(o[i2]);
+                        }
+                    }
+                }
+
+                //update tanks every frame
+                for (i = 0; o.length > i; i++) {
+                    if (o[i].type == "tank") {
+                        for (i2 = 0; o.length > i2; i2++) {
+                        o[i].collide(o[i2]);
+                        }
+                        o[i].draw();
+                        o[i].behavior();
+                    }
+                    if (o[i].type == "death") {
+                        o[i].draw2();
+                    }
+                }
+
+                //draw player
+                dBarrel(p.x, p.y, 20, 44, 0, 0, p.dir, diepGrey);
+                dCircle(p.x, p.y, 24, diepBlue);
+                hBar(p);
+
+                //kill off "dead" objects
+                for (i = 0; o.length > i; i++) {
+                    if (o[i].hp <= 0) {
+                        if (o[i].type != "death") {
+                            o.push(new deathAnimation(o[i]));
+                        }
+                        o.splice(i, 1);
+                    }
+                }
+
+                //repeat loop
+                requestAnimationFrame(loop);
+            }
+            
+            //initially call loop function
+            loop();
+        </script>
+    </body>
+</html>

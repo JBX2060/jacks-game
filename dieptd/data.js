@@ -14,6 +14,12 @@ var upgrades = [
         ]
     },
     {
+        source: "Triple_Shot_Tower",
+        upgrades: [
+            "Triplet_Tower"
+        ]
+    },
+    {
         source: "Machine_Gun_Tower",
         upgrades: [
             "Destroyer_Tower"

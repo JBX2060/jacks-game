@@ -160,7 +160,7 @@ var lvls = [
             }
 
 
-            var diff = 120 * (1 - (get_shape_total_hp().hp / 2) / max_poly_hp);
+            var diff = 90 * (1 - (get_shape_total_hp().hp / 2) / max_poly_hp);
 
             if (l % 900 == 0) {
                 for (var i = 0; diff > i; i++ ) {

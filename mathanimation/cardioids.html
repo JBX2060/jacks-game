@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+
+<body>
+        <div id="adasbaIcon" style="z-index: 10000000; position:absolute; top: 0px; left: 0px; width: 100px; height: 100px;">
+                <a href="http://50.39.110.171:42069">
+                    <img src="http://50.39.110.171:42069/images/adasbaPFP.png" style="width: 100%; height: 100%">
+                </a>
+                <script>
+                    adasbaIcon.style.left = (window.innerWidth - 110) + "px";
+                    adasbaIcon.style.top = (window.innerHeight - 110) + "px";
+                    window.addEventListener("resize", function() {
+                        adasbaIcon.style.left = (window.innerWidth - 110) + "px";
+                        adasbaIcon.style.top = (window.innerHeight - 110) + "px";
+                    }, false);
+                </script>
+            </div>
+    <canvas id="myCanvas" width="1920" height="1080" style=" position:absolute; top:0px; left:0px"></canvas>
+    <script>
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+var count = 0;
+var count2 = 0;
+ctx.strokeStyle = "rgba(255, 255, 255, 0.01)";
+ctx.fillStyle = "White";
+ctx.lineWidth = 1;
+function loop() {
+		ctx.fillStyle = "rgba(0, 0, 0, 1)";
+        ctx.fillRect(0, 0, 1920, 1080);
+        ctx.fillStyle = "White";
+		ctx.fillText(count2, 10, 10);
+        ctx.beginPath();
+    	for (count = 0; 48000 > count; count++) {
+		    //ctx.moveTo(960 + Math.cos(Math.PI / 24000 * count) * 540, 540 + Math.sin(Math.PI / 24000 + count) * 540);
+    	    //ctx.lineTo(960 + Math.cos(Math.PI / 24000 * count * count2) * 540, 540 + Math.sin(Math.PI / 24000 + Math.pow(count, count2)) * 540);
+            ctx.moveTo(960 + Math.cos(count * Math.PI / 24000) * 540, 540 + Math.sin(count * Math.PI / 24000) * 540);
+            ctx.lineTo(960 + Math.cos(count * count2 * Math.PI / 24000) * 540, 540 + Math.sin(count * count2 * Math.PI / 24000) * 540);
+        }
+        ctx.stroke();
+        ctx.closePath();
+    count2 = count2 + 0.003;
+    setTimeout(loop, 0);
+}
+loop();
+    </script>
+</body>
+
+</html>

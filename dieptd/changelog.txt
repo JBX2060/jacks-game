@@ -7,6 +7,11 @@ Sub-topics of major changes are intented
 
 2019-1-6
 
+Added button which auto-unlocks all levels (may remove later)
+Nerfed level 1 enemy spawnrate again.
+    The big bursts of enemies overwhelmed defenses.
+Fixed bug with triplet tower, now you can upgrade to it (it also no longer fires red bullets)
+
 Added a new level, "Out of Time"
     This level is similar to Level 1, but enemy spawnrate is determined by both time and shapes mined, rather than only shapes mined.
     The new time element forces players to put a sizeable portion of their resources into miners, but not enough that their defense is compromised

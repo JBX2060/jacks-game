@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html>
+
+
+<body>
+                <div id="adasbaIcon" style="z-index: 10000000; position:absolute; top: 0px; left: 0px; width: 100px; height: 100px;">
+                                <a href="http://50.39.110.171:42069">
+                                    <img src="http://50.39.110.171:42069/images/adasbaPFP.png" style="width: 100%; height: 100%">
+                                </a>
+                                <script>
+                                    adasbaIcon.style.left = (window.innerWidth - 110) + "px";
+                                    adasbaIcon.style.top = (window.innerHeight - 110) + "px";
+                                    window.addEventListener("resize", function() {
+                                        adasbaIcon.style.left = (window.innerWidth - 110) + "px";
+                                        adasbaIcon.style.top = (window.innerHeight - 110) + "px";
+                                    }, false);
+                                </script>
+                            </div>
+                <canvas width="4096px" height="1024px" id="myCanvas" style="position:absolute; top:0px; left:0px"></canvas>
+<button onclick="animSpd()" style="position:absolute; top:0px; left:0px">Update animation</button>
+<button onclick="makeDefaults()" style="position:absolute; top:0px; left:120px">Restore Defaults</button>
+<button id="lineRemove" onclick="toggleLineRemoval()" style="position:absolute; top:0px; left:240px">Small Line Removal [DISABLED]</button>
+<input id="animSpeed" placeholder="Animation Speed" style="position:absolute; top:20px; left:0px">
+<input id="totItrs" placeholder="Iterations" style="position:absolute; top:40px; left:0px">
+<input id="bgColor" placeholder="Background Color" style="position:absolute; top:60px; left:0px">
+<input id="lineLength" placeholder="Starting Line Length" style="position:absolute; top:80px; left:0px">
+<input id="angl1" placeholder="Angle 1" style="position:absolute; top:100px; left:0px">
+<input id="angl2" placeholder="Angle 2" style="position:absolute; top:120px; left:0px">
+<input id="lineWidth1" placeholder="Line Width Multiplier" style="position:absolute; top:140px; left:0px">
+<textarea id="branchFunct" width="300px" height="300px" style="position:absolute; top:160px; left:0px"></textarea>
+<p style="position:absolute; top:200px; left:0px; color:white">Helpful hints:<br>
+"angle" is a variable that just increments based on the animation speed.<br>
+branch(direction, magnitude) makes branches from the tree.<br>
+"mP.x" and "mP.y" are mouse coordinates on the screen.</p>
+<script>
+const tau = Math.PI * 2;
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d", {alpha: false});
+var lines = [[{ x: 256, y: 512, dir: tau / -4, mag: 150}]];
+var cLines = [{ x: 256, y: 512, dir: tau / -4, mag: 150}];
+var cLines2 = [];
+var t1 = 0;
+var t2 = 0;
+var t3 = 0;
+var multi = 0;
+var angle = Math.random() * 10000;
+var offset = tau / 2
+var offset2 = tau / 3
+var animation = 0.001
+var timer = 0;
+var bgCol = "hsla(0, 0%, 0%, 0.03)";
+var olSize = 250;
+var ang1 = tau / 6;
+var ang2 = tau / -6;
+var removeLines = 0;
+var lwMulti = 1;
+var branchScript = "branch(-1 * Math.sqrt(3) * angle + tau / 7, Math.sin(1.6 * angle * Math.PI * Math.sqrt(13)) / 5 + 0.65); branch(((mP.x / 120) - 4) * tau / 4, Math.sin(angle * 30) / 5 + 0.65);"
+function noEval(evaluate) {
+        return new Function (evaluate)();
+}
+function toggleLineRemoval() {
+        if (document.getElementById("lineRemove").innerHTML == "Small Line Removal [DISABLED]") {
+                removeLines = 1;
+        }
+        if (document.getElementById("lineRemove").innerHTML == "Small Line Removal [ENABLED]") {
+                removeLines = 0;
+        }
+        if (removeLines == 0) {
+                document.getElementById("lineRemove").innerHTML = "Small Line Removal [DISABLED]";
+        }
+        if (removeLines == 1) {
+                document.getElementById("lineRemove").innerHTML = "Small Line Removal [ENABLED]";
+        }
+}
+function makeDefaults() {
+        document.getElementById("animSpeed").value = 0.001;
+        document.getElementById("totItrs").value = 13;
+        document.getElementById("bgColor").value = "hsla(0, 0%, 0%, 0.03)";
+        document.getElementById("lineLength").value = 250;
+        document.getElementById("angl1").value = tau / 6;
+        document.getElementById("angl2").value = tau / -6;
+        document.getElementById("lineWidth1").value = 1;
+        document.getElementById("branchFunct").value = "branch(-1 * Math.sqrt(3) * angle + tau / 7, Math.sin(1.6 * angle * Math.PI * Math.sqrt(13)) / 5 + 0.65); branch(((mP.x / 120) - 4) * tau / 4, Math.sin(angle * 30) / 5 + 0.65);";
+}
+function animSpd() {
+        animation = Number(document.getElementById("animSpeed").value);
+    itr = Number(document.getElementById("totItrs").value);
+    bgCol = document.getElementById("bgColor").value;
+    olSize = Number(document.getElementById("lineLength").value);
+    ang1 = Number(document.getElementById("angl1").value);
+    ang2 = Number(document.getElementById("angl2").value);
+    lwMulti = document.getElementById("lineWidth1").value;
+    branchScript = document.getElementById("branchFunct").value;
+}
+function fR(num) {
+        return num | 0;
+}
+var mP = { x: 0, y: 0 };
+c.addEventListener("mousemove", function() {
+        mP.x = window.event.clientX;
+    mP.y = window.event.clientY;
+}, false)
+var itr = 13;
+var brNum = 2;
+function branch(off, mg) {
+        if (removeLines == 0) {
+                cLines2.push({ x: cLines[t2].x + Math.cos(cLines[t2].dir) * cLines[t2].mag, y: cLines[t2].y + Math.sin(cLines[t2].dir) * cLines[t2].mag, dir: cLines[t2].dir + off, mag: cLines[t2].mag * mg});
+                lines[t3 + 1].push({ x: cLines[t2].x + Math.cos(cLines[t2].dir) * cLines[t2].mag, y: cLines[t2].y + Math.sin(cLines[t2].dir) * cLines[t2].mag, dir: cLines[t2].dir + off, mag: cLines[t2].mag * mg });
+        } else if (cLines[t2].mag * mg > 2) {
+                cLines2.push({ x: cLines[t2].x + Math.cos(cLines[t2].dir) * cLines[t2].mag, y: cLines[t2].y + Math.sin(cLines[t2].dir) * cLines[t2].mag, dir: cLines[t2].dir + off, mag: cLines[t2].mag * mg});
+                lines[t3 + 1].push({ x: cLines[t2].x + Math.cos(cLines[t2].dir) * cLines[t2].mag, y: cLines[t2].y + Math.sin(cLines[t2].dir) * cLines[t2].mag, dir: cLines[t2].dir + off, mag: cLines[t2].mag * mg });
+        }
+}
+window.addEventListener("resize", function() {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+}, false)
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+function loop() {
+lines = [[{ x: window.innerWidth / 2, y: window.innerHeight / 2 + olSize, dir: tau / -4, mag: olSize}]];
+cLines = [{ x: window.innerWidth / 2, y: window.innerHeight / 2 + olSize, dir: tau / -4, mag: olSize}];
+cLines2 = [];
+for (t3 = 0; itr > t3; t3++) {
+        lines.push([]);
+        for (t2 = 0; cLines.length > t2; t2++) {
+                //branch(Math.sqrt(7) * angle - tau / 3, Math.sin(3 * angle * Math.PI) / 7 + 0.75);
+        //branch(angle + tau / 2, Math.cos(4 * angle) / 4 + 0.76);
+        //branch(-1 * Math.sqrt(5) * angle - tau / 4, Math.sin(5 * angle * Math.sqrt(2)) / 6 + 0.76);
+        //branch(-1 * Math.sqrt(3) * angle + tau / 7, Math.sin(1.6 * angle * Math.PI * Math.sqrt(13)) / 5 + 0.65);
+        //branch(((mP.x / 120) - 4) * tau / 4, Math.sin(angle * 30) / 5 + 0.65);        
+        //branch(((mP.y / 120) - 4) * tau / 4, Math.sin(angle * 30 + tau / 2) / 5 + 0.65);
+        //branch(ang1, mP.x / 1000);
+        //branch(ang2, mP.y / 1000);
+        noEval(branchScript);
+        }
+    cLines = cLines2.concat();
+    cLines2 = [];
+}
+ctx.fillStyle = bgCol;
+ctx.fillRect(0, 0, c.width, c.height);
+for (t2 = itr; -1 < t2; t2--) {
+ctx.beginPath();
+        ctx.lineWidth = Math.round(Math.sqrt((itr - t2 + 2) * 1)) * lwMulti;
+        ctx.strokeStyle = "hsl(" + (t2 * (15 * Math.sin(angle * 12) + 14) - 130 + angle * 400) + ", 100%, " + Math.abs(((angle * 1000 + (t2 * 100 / itr)) % 200) - 100) +"%)";
+        for (t1 = 0; lines[t2].length > t1; t1++) {
+                ctx.moveTo(fR(t2 * 0 + lines[t2][t1].x), fR(lines[t2][t1].y));
+            ctx.lineTo(fR(t2 * 0 + lines[t2][t1].x + Math.cos(lines[t2][t1].dir) * lines[t2][t1].mag), fR(lines[t2][t1].y + Math.sin(lines[t2][t1].dir) * lines[t2][t1].mag));
+        }
+    ctx.stroke();
+ctx.closePath();
+    
+}
+multi = Math.sqrt(2) / 2.3;
+angle = angle + animation
+timer++;
+}
+setInterval(loop, 0);
+</script>
+</body>
+
+
+</html>
