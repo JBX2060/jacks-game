@@ -6,6 +6,7 @@
     "author": "adasba",
     "dependencies": {
         "discord.io": "github:woor/discord.io#gateway_v6",
+        "discord.js": "^11.4.2",
         "express": "^4.16.4",
         "fs": "0.0.1-security",
         "request": "^2.88.0",

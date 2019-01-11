@@ -385,6 +385,110 @@ var lvls = [
             ctx.restore();
         }
     }
-]
+];
 
 lv = lvls[0];
+
+
+
+var special_levels = [
+    {
+        init: function () {
+            o.push(Generator_Tower(0, 0));
+
+            var clump_size = 8000;
+
+            for (var i = 0; 180 > i; i++) {
+                o.push(Square_Polygon(Math.random() * clump_size - clump_size / 2, Math.random() * clump_size - clump_size / 2 ));
+            }
+
+
+            for (var i = 0; 144 > i; i++) {
+                o.push(Triangle_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+            }
+
+
+            for (var i = 0; 48 > i; i++) {
+                o.push(Pentagon_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+            }
+            //max_poly_hp = get_shape_total_hp().mhp / 2;
+            lvi = 0;
+            pt = 750;
+        },
+        frame: function () {
+            if (between(lvi, 0, 3)) {
+                if (kd["ArrowRight"]) {
+                    lvi++;
+                }
+                if (kd["ArrowLeft"]) {
+                    lvi--;
+                }   
+            }
+
+
+            var diff = l / 1800 + Math.pow(1.1, l / 1800);
+
+            if (l % 400 == 0) {
+                for (var i = 0; diff > i; i++ ) {
+                    var angle = tau * Math.random() * 0.15 + l / 1200;
+                    switch (Math.floor(Math.random() * 4)) {
+                        case 0:
+                            o.push(Basic_Tank(12000 * Math.cos(angle), 12000 * Math.sin(angle)));
+                            break;
+                        case 1:
+                            o.push(Twin_Tank(12000 * Math.cos(angle), 12000 * Math.sin(angle)));
+                            break;
+                        case 2:
+                            o.push(Triple_Shot_Tank(12000 * Math.cos(angle), 12000 * Math.sin(angle)));
+                            break;
+                        case 3:
+                            o.push(Triplet_Tank(12000 * Math.cos(angle), 12000 * Math.sin(angle)));
+                            break;
+                    }
+                }
+            }
+
+
+            if (o.filter(e => { return e.discrim == "s"; }).length < 50) {
+                var clump_size = 8000;
+
+                var choose = Math.random() * 93
+
+                if (45 > choose) {
+                    o.push(Square_Polygon(Math.random() * clump_size - clump_size / 2, Math.random() * clump_size - clump_size / 2 ));
+                } else if (81 > choose) {
+                    o.push(Triangle_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+                } else {
+                    o.push(Pentagon_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+                }
+            }
+
+
+        },
+        draw: function () {
+            var texts = [
+                "Welcome to endless mode.",
+                "Survive for as long as you can.",
+                "That's all you need to do.",
+                "Have fun!",
+                ""
+            ]
+            ctx.textAlign = "center";
+            diep_text(texts[lvi], 0, -200, 24);
+        
+
+            ctx.textAlign = "left";
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            diep_text("Time Survived: " + Math.round(l / 60) + " Seconds", 10, 75, 24);
+            // if (get_shape_total_hp().hp - max_poly_hp < 0) {
+            //     ctx.textAlign = "center";
+            //     diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
+            //     if (k["Enter"]) {
+            //         complete_level(lvicon);
+            //     }
+            // }
+            ctx.restore();
+        }
+    }
+];

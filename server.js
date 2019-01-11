@@ -52,15 +52,15 @@ app.listen(42069, function () {
 
 
 //DISCORD BOT (feel free to remove everything below this if you just want my portfolio, idk why you'd want it though lmao)
-var Discord = require('discord.io');
+var Discord = require('discord.js');
 var request = require('request');
 var auth = require('./auth.json');
 var userdata = require('./discordbot/userdata.json');
 var messageboard = require('./discordbot/messageboard.json');
-var bot = new Discord.Client({
-   token: auth.token,
-   autorun: true
-});
+var bot = new Discord.Client();
+
+bot.login(auth.token);
+
 bot.on('ready', function (evt) {
     console.log("test");
 });
@@ -117,13 +117,29 @@ function hardcoded_100(arr) {
     return return_this;
 }
 
-bot.on('message', function (user, userID, channelID, message, evt) {
-    // bot.sendMessage({
-    //     to: "358671241059762177",
-    //     message: "^"
-    // });
-    if (/^==/.test(message)) {
-        var command = message.split(" ");
+
+var collects = [];
+
+var collect_chance = 0.001
+
+
+function botloop() {
+
+    if (Math.random() < collect_chance) {
+        collects.push({
+            channel: "358671241059762177",
+            amount: Math.ceil(Math.random() * 100)
+        });
+        bot.channels.get(collects[collects.length - 1].channel).send('Something has appeared worth ' + collects[collects.length - 1].amount + ' adasbucks! Type `==collect` to collect it!');
+    }
+    
+}
+
+//setInterval(botloop, 1000);
+
+bot.on('message', function (message) {
+    if (/^==/.test(message.content)) {
+        var command = message.content.split(" ");
         if (command[0] == "==+") {
             var sum = 0;
 
@@ -131,10 +147,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 sum += Number(command[i]);
             }
 
-            bot.sendMessage({
-                to: channelID,
-                message: "Those numbers add up to " + sum
-            });
+            message.channel.send("Those numbers add up to " + sum);
         }
         if (command[0] == "==*") {
             var product = 1;
@@ -143,10 +156,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 product *= Number(command[i]);
             }
 
-            bot.sendMessage({
-                to: channelID,
-                message: "Those numbers multiply to " + product
-            });
+            message.channel.send("Those numbers multiply to " + product);
         }
         if (command[0] == "==sqrt") {
             var sqrt = 0;
@@ -155,10 +165,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 sqrt = Math.sqrt(Number(command[1]));
             }
 
-            bot.sendMessage({
-                to: channelID,
-                message: "The square root of that number is " + sqrt
-            });
+            message.channel.send("The square root of that number is " + sqrt);
         }
         if (command[0] == "==madtanks") {
             var sqrt = 0;
@@ -167,24 +174,54 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 sqrt = Math.sqrt(Number(command[1]));
             }
 
-            bot.sendMessage({
-                to: channelID,
-                message: 'Paste the following code into your browser console to turn all diep tanks into madman emojis: \n \n `var ctx=document.getElementById("canvas").getContext("2d");var madman=new Image();madman.src="https://discordemoji.com/assets/emoji/Themadman.png";ctx.arc=function(x,y,r){ctx.drawImage(madman,x-r,y-r,r*2,r*2)}`'
-            });
+            message.channel.send('Paste the following code into your browser console to turn all diep tanks into madman emojis: \n \n `var ctx=document.getElementById("canvas").getContext("2d");var madman=new Image();madman.src="https://discordemoji.com/assets/emoji/Themadman.png";ctx.arc=function(x,y,r){ctx.drawImage(madman,x-r,y-r,r*2,r*2)}`');
         }
         if (command[0] == "==balance") {
-            if (userdata[userID] !== undefined) {
-                bot.sendMessage({
-                    to: channelID,
-                    message: "<@" + userID + ">'s balance: " + userdata[userID]
-                });
+            userdata = require('./discordbot/userdata.json');
+            console.log(userdata[message.author.id] === undefined);
+            if (userdata[message.author.id] !== undefined) {
+                message.channel.send("<@" + message.author.id + ">'s balance: " + userdata[message.author.id])
             } else {
-                writeToBalance(userID, 0);
-                bot.sendMessage({
-                    to: channelID,
-                    message: "<@" + userID + ">'s balance: " + userdata[userID]
-                });
+                writeToBalance(message.author.id, 1);
+                message.channel.send("<@" + message.author.id + ">'s balance: " + userdata[message.author.id])
             }
+        }
+        if (command[0] == "==work") {
+            userdata = require('./discordbot/userdata.json');
+            console.log(userdata[message.author.id] === undefined);
+            if (userdata[message.author.id] !== undefined) {
+                writeToBalance(message.author.id, ++userdata[message.author.id])
+                message.channel.send("<@" + message.author.id + ">'s balance is now: " + userdata[message.author.id])
+            } else {
+                message.channel.send("You don't have an account! Type `==balance` to get an account.")
+            }
+        }
+        if (command[0] == "==collect") {
+            var index_to_remove = false;
+            collects.forEach(function (e, i) {
+                if (e.channel == message.channel.id) {
+                    index_to_remove = i;
+                    userdata = require('./discordbot/userdata.json');
+                    if (userdata[message.author.id] !== undefined) {
+                        userdata[message.author.id] += e.amount;
+                        writeToBalance(message.author.id, userdata[message.author.id])
+                        message.channel.send("<@" + message.author.id + "> successfully collected the... thing... I guess? Their balance is now: " + userdata[message.author.id])
+                    } else {
+                        message.channel.send("You don't have an account! Type `==balance` to get an account.")
+                    }
+                    return;
+                }
+            });
+            collects.splice(index_to_remove, 1);
+        }
+        if (command[0] == "==say") {
+            var cmd2 = "";
+
+            for (var i = 1; command.length > i; i++) {
+                cmd2 += command[i] + " ";
+            }
+
+            message.channel.send(cmd2);
         }
         if (command[0] == "==addmessage") {
             var cmd2 = "";
@@ -193,15 +230,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 cmd2 += command[i] + " ";
             }
             if (writeToMessageBoard(cmd2)) {
-                bot.sendMessage({
-                    to: channelID,
-                    message: "Successfully added."
-                });
+                message.channel.send("Successfully Added");
             } else {
-                bot.sendMessage({
-                    to: channelID,
-                    message: "You're doing this too fast. Wait " + Math.round(10 -  (new Date().getTime() - msgBoardCoolDown) / 1000) + " seconds."
-                });
+                message.channel.send("You're doing this too fast. Wait " + Math.round(10 -  (new Date().getTime() - msgBoardCoolDown) / 1000) + " seconds.");
             }
         }
         if (command[0] == "==stackoverflow") {
@@ -212,33 +243,25 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             }
             request({ url: 'https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&q=' + cmd2 + '&site=stackoverflow', gzip: true }, function (error, response, body) {
                 if (JSON.parse(body).items.length > 0) {
-                    bot.sendMessage({
-                        to: channelID,
-                        message: "<@" + userID + "> " + JSON.parse(body).items[0].link
-                    });
+                    message.channel.send("<@" + message.author.id + "> " + JSON.parse(body).items[0].link);
                 } else {
-                    bot.sendMessage({
-                        to: channelID,
-                        message: "<@" + userID + "> " + "Found nothing on StackOverflow."
-                    });
+                    message.channel.send("<@" + message.author.id + "> " + "Found nothing on StackOverflow.");
                 }
             });
         }
         if (command[0] == "==help") {
-            bot.sendMessage({
-                to: channelID,
-                message: splitNewLine([
-                    "Commands (all commands begin with `==`, and following arguments are separated by spaces):",
-                    "`+`: Adds all following numbers together.",
-                    "`*`: Multiplies all following numbers together.",
-                    "`sqrt`: Returns the square root of the following number.",
-                    "`madtanks`: Get the madtanks script (turns diep tanks into madman emojis).",
-                    "`balance`: Check your adasbucks balance.",
-                    "`addmessage`: Adds a message to the global message board, which can be found here: http://50.39.110.171:42069/discordbot/index.html",
-                    "`stackoverflow`: Searches for the following text on stackoverflow.",
-                    "`ship`: Ships two or more users (or really any text phrases)."
-                ])
-            });
+            message.channel.send(splitNewLine([
+                "Commands (all commands begin with `==`, and following arguments are separated by spaces):",
+                "`+`: Adds all following numbers together.",
+                "`*`: Multiplies all following numbers together.",
+                "`sqrt`: Returns the square root of the following number.",
+                "`madtanks`: Get the madtanks script (turns diep tanks into madman emojis).",
+                "`balance`: Check your adasbucks balance.",
+                "`addmessage`: Adds a message to the global message board, which can be found here: http://50.39.110.171:42069/discordbot/index.html",
+                "`stackoverflow`: Searches for the following text on stackoverflow.",
+                "`ship`: Ships two or more users (or really any text phrases).",
+                "`say`: Says the following text."
+            ]));
         }
         if (command[0] == "==eval") {
             var cmd2 = "";
@@ -246,13 +269,10 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             for (var i = 1; command.length > i; i++) {
                 cmd2 += command[i] + " ";
             }
-            if (userID == 192454337958641664) {
+            if (message.author.id == 192454337958641664) {
                 eval(cmd2);
             } else {
-                bot.sendMessage({
-                    to: channelID,
-                    message: "Access denied."
-                });
+                message.channel.send("<@192454337958641664> you do it");
             }
         }
         if (command[0] == "==ship") {
@@ -276,10 +296,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     shipmsg += " x ";
                 }
             }
-            bot.sendMessage({
-                to: channelID,
-                message: shipmsg + ": \nScore: " + ship_score + "%"
-            });
+            message.channel.send(shipmsg + ": \nScore: " + ship_score + "%");
         }
     }
     if (false && /\x3f$/.test(message) && channelID != 358671241059762177) {
@@ -287,12 +304,12 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             if (JSON.parse(body).items.length > 0) {
                 bot.sendMessage({
                     to: channelID,
-                    message: "<@" + userID + "> " + JSON.parse(body).items[0].link
+                    message: "<@" + message.author.id + "> " + JSON.parse(body).items[0].link
                 });
             } else {
                 bot.sendMessage({
                     to: channelID,
-                    message: "<@" + userID + "> " + "Found nothing on StackOverflow. Your question sucks ass."
+                    message: "<@" + message.author.id + "> " + "Found nothing on StackOverflow. Your question sucks ass."
                 });
             }
           });

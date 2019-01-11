@@ -117,8 +117,8 @@
                 this.move = function (a) {
                     this.x += this.dx;
                     this.y += this.dy;
-                    this.dx *= 0.999;
-                    this.dy *= 0.999;
+                    //this.dx *= 0.999;
+                    //this.dy *= 0.999;
                     o.forEach(function (e) {
                         if (a !== e) {
                             add_dir(e, point_towards(e, a), a.t * 0.003);

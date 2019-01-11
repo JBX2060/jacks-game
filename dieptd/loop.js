@@ -380,6 +380,12 @@ function menu_loop() {
         });
     }
 
+    diep_icon(-600, 0, 100, 100, 2);
+    diep_text("Endless", -550, 55, 20);
+    if (transform_click_in_rect(-600, 0, 100, 100)) {
+        load_level({ lvl: special_levels[0] });
+    }
+
     ctx.restore();
 
     if (switch_to_menu) {

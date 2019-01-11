@@ -5,6 +5,13 @@ Sub-topics of major changes are intented
 
 
 
+2019-1-9
+
+Added endless mode.
+    Mine as many resources as you want (shapes respawn).
+    Enemies will attack endlessly, growing in number exponentially as time goes on. (growth is linear plus exponential)
+    Currently no way to exit it other than suicide (removing all towers). This may be changed in the future.
+
 2019-1-6
 
 Added button which auto-unlocks all levels (may remove later)
