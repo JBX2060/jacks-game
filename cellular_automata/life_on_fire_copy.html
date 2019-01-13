@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            canvas {
+                width: 100%;
+                image-rendering: pixelated;
+                margin: 0px;
+            }
+
+            body {
+                margin: 0px;
+                background: #000000
+            }
+        </style>
+    </head>
+    <body>
+        <canvas width="256" height="256" id="canvas"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            var v = new Uint8ClampedArray(c.width * c.height);
+
+            var life = new Uint8ClampedArray(c.width * c.height * 0.25);
+
+            var m = {
+                x: 0,
+                y: 0,
+                px: 0,
+                py: 0
+            }
+
+            document.addEventListener("mousemove", function (e) {
+                m.px = m.x;
+                m.py = m.y;
+                m.x = e.clientX * (c.width / window.innerWidth);
+                m.y = e.clientY * (c.width / window.innerWidth);
+            }, false);
+
+            function for_rect(x, y, f) {
+                for (var i = 0; x > i; i++) {
+                    for (var i2 = 0; y > i2; i2++) {
+                        f(i, i2);
+                    }
+                }
+            }
+
+            var t = 0;
+
+            function loop() {
+
+                var life2 = new Uint8ClampedArray(c.width * c.height * 0.25);
+                for (var i = 0; life.length > i; i++) {
+                    var neighbors = 0;
+                    for_rect(3, 3, function (x, y) {
+                        if (life[x + c.width * 0.5 * y + i - c.width * 0.5 - 1] && !(x == 1 && y == 1)) {
+                            neighbors++;
+                        }
+                    });
+                    if (neighbors == 3) {
+                        life2[i] = 1;
+                    } else if (neighbors != 2) {
+                        life2[i] = 0;
+                    }
+                }
+                life = life2//new Uint8ClampedArray(life2);
+                //console.log(life);
+
+
+                var posx = m.px;
+                var posy = m.py;
+                var i = 0;
+                while (Math.pow(posx - m.x, 2) + Math.pow(posy - m.y, 2) > 1 && i < 600) {
+                    i++;
+                    for_rect(3, 3, function (x, y) {
+                        //v[Math.round(posx) + c.width * Math.round(posy) + x + c.width * y] = 255;
+                    });
+                    for_rect(2, 2, function (x, y) {
+                        life[Math.round(0.5 * posx) + c.width * 0.25 * Math.round(posy)] = 1;
+                    });
+                    posx -= Math.cos(Math.atan2(posy - m.y, posx - m.x)) * 0.5;
+                    posy -= Math.sin(Math.atan2(posy - m.y, posx - m.x)) * 0.5;
+                }
+                
+                for (var i = 0; v.length > i; i++) {
+                    var r = Math.floor(Math.random() * 5 - 2);
+                    if (v[i - c.width + r] < 232) {
+                        v[i - c.width + r] = v[i] - 1;
+                    }
+                    v[i] -= Math.random() * 8;
+                }
+
+                var d2 = new ImageData(c.width, c.height);
+                var d = d2.data;
+                
+                for (var i = 0; d.length > i; i += 4) {
+                    d[i + 0] = v[i / 4] * 2;
+                    d[i + 1] = v[i / 4] * 2 - 256;
+                    d[i + 2] = v[i / 4] * 4 - 768;
+                    var x = (i / 4) % c.width;
+                    var y = Math.floor((i / 4) / c.width);
+                    if (life[Math.floor(x * 0.5) + y * 0.25 * c.width]) {
+                        d[i + 0] = 0;
+                        d[i + 1] = 255;
+                    }
+                    d[i + 3] = 255
+                }
+                
+                ctx.putImageData(d2, 0, 0);
+                
+                t++;
+                //setTimeout(loop, 200);
+                requestAnimationFrame(loop);
+            }
+
+            loop();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            canvas {
+                image-rendering: pixelated;
+                margin: 0px;
+            }
+
+            body {
+                margin: 0px;
+                background: #000000;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas width="340" height="192" id="canvas"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            var v = new Uint8ClampedArray(c.width * c.height);
+
+            var life = new Uint8ClampedArray(c.width * c.height * 0.25);
+
+            var m = {
+                x: 0,
+                y: 0,
+                px: 0,
+                py: 0
+            }
+
+            document.addEventListener("mousemove", function (e) {
+                m.px = m.x;
+                m.py = m.y;
+                m.x = e.clientX * (c.height / window.innerHeight);
+                m.y = e.clientY * (c.height  / window.innerHeight);
+            }, false);
+
+            //mouse info
+            var m = { m: [false, false, false], md: [false, false, false], x: 0, y: 0, px: 0, py: 0, w: 0 };
+
+            //mose down and up listeners
+            document.addEventListener("mousedown", function (e) {
+                m.m[e.which - 1] = true;
+                m.md[e.which - 1] = true;
+            }, false);
+            document.addEventListener("mouseup", function (e) {
+                m.m[e.which - 1] = false;
+                m.md[e.which - 1] = false;
+            }, false);
+
+
+            function for_rect(x, y, f) {
+                for (var ix = 0; x > ix; ix++) {
+                    for (var iy = 0; y > iy; iy++) {
+                        f(ix, iy);
+                    }
+                }
+            }
+
+            var t = 0;
+
+            function generate_life(x, y, posx, posy) {
+                life[Math.round(0.5 * posx) + c.width * 0.5 * Math.round(0.5 * posy) + x + y * c.width * 0.5] = 255;
+            }
+
+            function loop() {
+                c.style.height = window.innerHeight + "px";
+                
+                if (t % 2 == 0) {
+                    var life2 = new Uint8ClampedArray(life);
+                    for (var i = 0; life.length > i; i++) {
+                        var neighbors = 0;
+                        var min = 255;
+                        for (var x = -1; 2 > x; x++) {
+                            for (var y = -1; 2 > y; y++) {
+                                if (life[x + c.width * 0.5 * y + i] > 0 && !(x == 0 && y == 0)) {
+                                    neighbors++;
+                                    if (life[x + c.width * 0.5 * y + i] < min) {
+                                        min = life[x + c.width * 0.5 * y + i];
+                                    }
+                                }
+                            }
+                        }
+                        if (neighbors == 3) {
+                            life2[i] = min;
+                        } else if (!(neighbors == 3 || neighbors == 2)) {
+                            life2[i] = 0;
+                        }
+                        if (life2[i]) {
+                            life2[i]--;
+                        }
+                    }
+                    life = new Uint8ClampedArray(life2)
+                }
+
+
+                var posx = m.px;
+                var posy = m.py;
+                var i = 0;
+                while (Math.pow(posx - m.x, 2) + Math.pow(posy - m.y, 2) > 1 && i < 600 && m.m[0]) {
+                    i++;
+                    generate_life(0, 0, posx, posy);
+                    posx -= Math.cos(Math.atan2(posy - m.y, posx - m.x)) * 0.5;
+                    posy -= Math.sin(Math.atan2(posy - m.y, posx - m.x)) * 0.5;
+                }
+                
+                for (var i = 0; life.length > i; i++) {
+                    if (life[i] > 0) {
+                        var x2 = (i) % (c.width / 2);   
+                        var y2 = Math.floor(i / (c.width / 2));
+                        for_rect(6, 6, function (x, y) {
+                            v[x2 * 2 + y2 * 2 * c.width + x + y * c.width - c.width * 2 - 2] = 235 + Math.random() * 20;
+                        });
+                    }
+                }
+
+                for (var i = 0; v.length > i; i++) {
+                    var r = Math.floor(Math.random() * 5 - 1.75);
+                    if (v[i - c.width + r] < 238) {
+                        v[i - c.width + r] = v[i] - 1;
+                    }
+                    v[i] -= Math.random() * 8;
+                }
+
+                var d2 = new ImageData(c.width, c.height);
+                var d = d2.data;
+                
+                for (var i = 0; d.length > i; i += 4) {
+                    d[i + 0] = v[i / 4] * 2;
+                    d[i + 1] = v[i / 4] * 2 - 256;
+                    d[i + 2] = v[i / 4] * 4 - 768;
+                    var x = (i / 4) % c.width;
+                    var y = Math.floor((i / 4) / c.width);
+                    if (life[Math.floor(x * 0.5) + Math.floor(y * 0.5) * c.width * 0.5] > 0) {
+                        d[i + 0] = (256 - life[Math.floor(x * 0.5) + Math.floor(y * 0.5) * c.width * 0.5]) * 2;
+                        d[i + 1] = (256 - life[Math.floor(x * 0.5) + Math.floor(y * 0.5) * c.width * 0.5]) * 2 - 256;
+                        d[i + 2] = (256 - life[Math.floor(x * 0.5) + Math.floor(y * 0.5) * c.width * 0.5]) * 4 - 768;
+                    }
+                    d[i + 3] = 255;
+                }
+                
+                ctx.putImageData(d2, 0, 0);
+                
+                t++;
+                requestAnimationFrame(loop);
+            }
+
+            loop();
+        </script>
+    </body>
+</html>

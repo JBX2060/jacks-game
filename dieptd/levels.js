@@ -490,5 +490,44 @@ var special_levels = [
             // }
             ctx.restore();
         }
+    },
+    {
+        init: function () {
+            o.push(Generator_Tower(0, 0));
+
+            lvi = 0;
+            pt = 2147483647;
+        },
+        frame: function () {
+            if (between(lvi, 0, 3)) {
+                if (kd["ArrowRight"]) {
+                    lvi++;
+                }
+                if (kd["ArrowLeft"]) {
+                    lvi--;
+                }   
+            }
+
+
+
+        },
+        draw: function () {
+            var texts = [
+                "This is sandbox mode.",
+                "There aren't any rules here, and you have virtually infinite money.",
+                "You can even spawn tanks and shapes!",
+                "Try messing around with it.",
+                ""
+            ]
+            ctx.textAlign = "center";
+            diep_text(texts[lvi], 0, -200, 24);
+        
+
+            ctx.textAlign = "left";
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            ctx.restore();
+        }
     }
 ];
