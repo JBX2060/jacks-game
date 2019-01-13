@@ -96,3 +96,24 @@ var drag_toggle = true;
 //gameplay speeds
 var speeds = [0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 var speed_index = 2;
+
+//entity list
+var e_list = [
+    "Basic_Tank",
+    "Twin_Tank",
+    "Triple_Shot_Tank",
+    "Triplet_Tank",
+    "Square_Polygon",
+    "Triangle_Polygon",
+    "Pentagon_Polygon",
+    "Alpha_Pentagon_Polygon"
+];
+
+var sbx_dropdown = document.getElementById("entities");
+
+e_list.forEach(function (e) {
+    var elem = document.createElement("option");
+    elem.value = e;
+    elem.innerHTML = e;
+    sbx_dropdown.appendChild(elem);
+});

@@ -5,7 +5,14 @@ var lvi = 0;
 var lv = undefined;
 var lvicon = undefined;
 
+//max polygon hitpoints
 var max_poly_hp;
+
+//sandbox select
+sbx_select = "Basic_Tank";
+
+//is sbx menu open?
+sbx_menu_open = false;
 
 //all levels
 var lvls = [
@@ -508,7 +515,19 @@ var special_levels = [
                 }   
             }
 
+            if (kd[" "]) {
+                o.push(tank_from_string(sbx_dropdown.value, tmc.x, tmc.y)());
+            }
 
+            if (kd["z"]) {
+                sbx_menu_open = !sbx_menu_open;
+            }
+
+            if (sbx_menu_open) {
+                sbx_dropdown.style.display = "block";
+            } else {
+                sbx_dropdown.style.display = "none";
+            }
 
         },
         draw: function () {
@@ -526,7 +545,8 @@ var special_levels = [
             ctx.textAlign = "left";
             ctx.save();
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-
+            diep_text("Press SPACE to place non-tower objects.", 10, 75, 24);
+            diep_text("press Z to open the placement menu.", 10, 100, 24);
             ctx.restore();
         }
     }
