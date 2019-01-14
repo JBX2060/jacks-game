@@ -391,6 +391,128 @@ var lvls = [
             }
             ctx.restore();
         }
+    }, {
+        init: function () {
+            o.push(Generator_Tower(0, 0));
+
+            var clump_size = 3000;
+
+            for (var i = 0; 40 > i; i++) {
+                o.push(Square_Polygon(Math.random() * clump_size - clump_size / 2, Math.random() * clump_size - clump_size / 2 ));
+            }
+
+
+            for (var i = 0; 32 > i; i++) {
+                o.push(Triangle_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+            }
+
+
+            for (var i = 0; 10 > i; i++) {
+                o.push(Pentagon_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+            }
+            max_poly_hp = get_shape_total_hp().mhp / 2;
+            lvi = 0;
+            pt = 750;
+        },
+        frame: function () {
+            if (between(lvi, 0, 5)) {
+                if (kd["ArrowRight"]) {
+                    lvi++;
+                }
+                if (kd["ArrowLeft"]) {
+                    lvi--;
+                }   
+            }
+
+
+            var diff = 10 * (1 - (get_shape_total_hp().hp / 2) / max_poly_hp) + l / 7200 + 1;
+
+            if (l % 1300 == 0) {
+                for (var i = 0; diff > i; i++ ) {
+                    var angle = tau * Math.random() / 3;
+                    switch (Math.floor(Math.random() * 4)) {
+                        case 0:
+                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 1:
+                            o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 2:
+                            o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 3:
+                            o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                    }
+                }
+                for (var i = 0; diff > i; i++ ) {
+                    var angle = tau * Math.random() / 3 + tau / 3;
+                    switch (Math.floor(Math.random() * 4)) {
+                        case 0:
+                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 1:
+                            o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 2:
+                            o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 3:
+                            o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                    }
+                    o[o.length - 1].team = "orange";
+                }
+                for (var i = 0; diff > i; i++ ) {
+                    var angle = tau * Math.random() / 3 + 2 * tau / 3;
+                    switch (Math.floor(Math.random() * 4)) {
+                        case 0:
+                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 1:
+                            o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 2:
+                            o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                        case 3:
+                            o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
+                            break;
+                    }
+                    o[o.length - 1].team = "purple";
+                }
+            }
+
+
+
+        },
+        draw: function () {
+            var texts = [
+                "You're going to meet some new enemies today!",
+                "Orange and purple tanks have decided to team up with the red tanks we're all familiar with.",
+                "Orange tanks have a thick layer of armor that reduces the damage of each bullet by the same amount.",
+                "Purple tanks are also armored. All bullets do the same damage to them.",
+                "Certain towers will be effective against certain types of tanks.",
+                "It's your job to find out which ones do the job.",
+                ""
+            ]
+            ctx.textAlign = "center";
+            diep_text(texts[lvi], 0, -200, 24);
+        
+
+            ctx.textAlign = "left";
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            diep_text("Remaining Points: " + Math.floor((get_shape_total_hp().hp - max_poly_hp) / 20) + " / " + max_poly_hp / 20, 10, 75, 24);
+            if (get_shape_total_hp().hp - max_poly_hp < 0) {
+                ctx.textAlign = "center";
+                diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
+                if (k["Enter"]) {
+                    complete_level(lvicon);
+                }
+            }
+            ctx.restore();
+        }
     }
 ];
 
@@ -517,6 +639,7 @@ var special_levels = [
 
             if (kd[" "]) {
                 o.push(tank_from_string(sbx_dropdown.value, tmc.x, tmc.y)());
+                o[o.length - 1].team = sbx_team_dropdown.value;
             }
 
             if (kd["z"]) {
@@ -525,8 +648,9 @@ var special_levels = [
 
             if (sbx_menu_open) {
                 sbx_dropdown.style.display = "block";
+                sbx_team_dropdown.style.display = "block";
             } else {
-                sbx_dropdown.style.display = "none";
+                sbx_team_dropdown.style.display = "none";
             }
 
         },

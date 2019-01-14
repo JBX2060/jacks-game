@@ -7,10 +7,25 @@ Sub-topics of major changes are intented
 
 2019-1-13
 
+Added teams to sandbox mode.
+    Players can now spawn purple and orange tanks.
+Nerfed enemies for "Cross-Teamers" level.
+
+Added new level, "Cross-Teamers"
+    Similar to "Out of Time", but has three streams of three different types of tanks.
+    The first level to branch off (rather than continue linearly)
+Adds two new types of tanks.
+    Orange Tanks
+        10 damage is subtracted from each bullet that hits an orange tank
+    Purple tanks
+        Each bullet that hits a purple tank does 10 damage.
+    This was suggested by u/Teal_Knight on Reddit.
+
 Added sandbox mode.
     Infinite money.
     You can spawn shapes and enemies.
     Basically do whatever you want.
+    This was suggested by u/AC5230 on Reddit.
 
 2019-1-9
 

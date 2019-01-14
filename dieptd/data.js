@@ -117,7 +117,7 @@ var menu_icons = [
         complete: false,
         lvl: lvls[2],
         unlocked: false,
-        unlocks: [3]
+        unlocks: [3, 4]
     },
     {
         x: 900,
@@ -126,6 +126,15 @@ var menu_icons = [
         complete: false,
         lvl: lvls[3],
         unlocked: false,
-        unlocks: [4]
+        unlocks: [5]
+    },
+    {
+        x: 900,
+        y: -300,
+        text: "Cross-Teamers",
+        complete: false, //4
+        lvl: lvls[4],
+        unlocked: false,
+        unlocks: [6]
     }
 ]

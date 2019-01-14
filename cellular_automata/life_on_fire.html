@@ -90,7 +90,7 @@
                             life2[i] = 0;
                         }
                         if (life2[i]) {
-                            life2[i]--;
+                            life2[i] -= 1;
                         }
                     }
                     life = new Uint8ClampedArray(life2)
@@ -118,7 +118,7 @@
                 }
 
                 for (var i = 0; v.length > i; i++) {
-                    var r = Math.floor(Math.random() * 5 - 1.75);
+                    var r = Math.floor(Math.random() * 3 - 0.75);
                     if (v[i - c.width + r] < 238) {
                         v[i - c.width + r] = v[i] - 1;
                     }

@@ -42,8 +42,9 @@ function Bullet(x, y, dx, dy, r, discrim, dmg, hp, c1, c2) {
             if (a.discrim != "powerb" && a.discrim != "hpb") {
                 var distance = dist_to_obj(a, o[closest]);
                 if (distance < 30) {
-                    o[closest].hp -= a.dmg;
-                    a.hp -= a.dmg;
+                    // o[closest].hp -= a.dmg;
+                    // a.hp -= a.dmg;
+                    handle_damage(a, o[closest]);
                     if (a.discrim == "mb") {
                         pt += a.dmg / 20;
                     }

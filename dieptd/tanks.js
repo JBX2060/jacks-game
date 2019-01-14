@@ -4,9 +4,10 @@ function Basic_Tank(x, y) {
     //create tank
     var tank = new Game_Obj(x, y, function (a) {
 
+        var tank_hue = handle_tank_color(a);
         //draw the tank
         diep_barrel(a.x, a.y, 16, 40, a.angle);
-        diep_circle(a.x, a.y, 20, "#f04f54", "#b33b3f");
+        diep_circle(a.x, a.y, 20, tank_hue[0], tank_hue[1]);
         diep_healthbar(a.x, a.y, a.hp, a.mhp, 20);
     }, function (a) {
 
@@ -34,10 +35,11 @@ function Twin_Tank(x, y) {
     //create tank
     var tank = new Game_Obj(x, y, function (a) {
 
+        var tank_hue = handle_tank_color(a);
         //draw the tank
         diep_barrel(a.x, a.y, 20, 40, a.angle, 14, 0);
         diep_barrel(a.x, a.y, 20, 40, a.angle, -14, 0);
-        diep_circle(a.x, a.y, 25, "#f04f54", "#b33b3f");
+        diep_circle(a.x, a.y, 25, tank_hue[0], tank_hue[1]);
         diep_healthbar(a.x, a.y, a.hp, a.mhp, 25);
     }, function (a) {
 
@@ -71,11 +73,12 @@ function Triple_Shot_Tank(x, y) {
     //create tank
     var tank = new Game_Obj(x, y, function (a) {
 
+        var tank_hue = handle_tank_color(a);
         //draw the tank
         diep_barrel(a.x, a.y, 27, 60, a.angle);
         diep_barrel(a.x, a.y, 27, 60, a.angle + tau / 8);
         diep_barrel(a.x, a.y, 27, 60, a.angle - tau / 8);
-        diep_circle(a.x, a.y, 30, "#f04f54", "#b33b3f");
+        diep_circle(a.x, a.y, 30, tank_hue[0], tank_hue[1]);
         diep_healthbar(a.x, a.y, a.hp, a.mhp, 30);
     }, function (a) {
 
@@ -105,11 +108,12 @@ function Triplet_Tank(x, y) {
     //create tank
     var tank = new Game_Obj(x, y, function (a) {
 
+        var tank_hue = handle_tank_color(a);
         //draw the tank
         diep_barrel(a.x, a.y, 27, 60, a.angle, 20, 0);
         diep_barrel(a.x, a.y, 27, 60, a.angle, -20, 0);
         diep_barrel(a.x, a.y, 27, 70, a.angle);
-        diep_circle(a.x, a.y, 35, "#f04f54", "#b33b3f");
+        diep_circle(a.x, a.y, 35, tank_hue[0], tank_hue[1]);
         diep_healthbar(a.x, a.y, a.hp, a.mhp, 35);
     }, function (a) {
 

@@ -394,3 +394,33 @@ function transform_click_in_rect(x, y, w, h) {
     }
     return false;
 }
+
+//gets tank colors from teams
+function handle_tank_color(a) {
+    switch (a.team) {
+        case "orange":
+            return ["#DC7913", "#A3560C"];
+        case "purple":
+            return ["#be7ff5", "#8f5fb7"];
+        default:
+            return ["#f04f54", "#b33b3f"];
+    }
+}
+
+//deal with bullet damage
+function handle_damage(a, b) {
+    switch (b.team) {
+        case "orange":
+            b.hp -= (a.hp - 10);
+            a.hp = -1;
+            break;
+        case "purple":
+            b.hp -= 10;
+            a.hp = -1;
+            break;
+        default:
+            a.hp -= a.dmg;
+            b.hp -= a.dmg;
+            break;
+    }
+}

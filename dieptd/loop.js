@@ -304,6 +304,7 @@ function loop() {
 
 function menu_loop() {
     sbx_dropdown.style.display = "none";
+    sbx_team_dropdown.style.display = "none";
     drag_toggle = true;
 
     //handle scaling

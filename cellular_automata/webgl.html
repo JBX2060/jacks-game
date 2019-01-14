@@ -1,18 +1,10 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <style>
-            canvas {
-                width: 1080px;
-                height: 1080px;
-            }
-        </style>
-    </head>
+    <head></head>
     <body>
-        <canvas width="512" height="512" id="canvas"></canvas>
+        <canvas width="1024" height="1024" id="canvas"></canvas>
         <script>
             var c = document.getElementById("canvas");
-            c.style.imageRendering = "pixelated";
             var gl = c.getContext("webgl");
 
             var vertexShaderS = `
@@ -38,20 +30,8 @@
 
             uniform float time;
 
-            float rand(vec2 co){
-                return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-            }
-
             void main() {
-                if (gl_FragCoord.y > 1.0) {
-                    gl_FragColor = vec4(texture2D(u_texture, vec2(v_texcoord.x * 0.5 + 0.5 + floor(rand(v_texcoord * time) * 3.0) * (2.0 / 1024.0) - (2.0 / 1024.0), v_texcoord.y * -0.5 + (1.0 / 512.0) + 0.5)).r - (1.0 / 64.0) * floor(rand(v_texcoord * time) * 3.0), 0.0, 0.0, 1.0);
-                    gl_FragColor.g = (gl_FragColor.r - 0.5) * 2.0;
-                    gl_FragColor.b = (gl_FragColor.r - 0.75) * 1.5;
-                } else {
-                    //if (gl_FragCoord.x > 31.0 && gl_FragCoord.x < 33.0) {
-                        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-                    //}
-                }
+                gl_FragColor = vec4(texture2D(u_texture, v_texcoord * -0.5 + sin(time / 8.0) / 50.0 + 0.5).b, texture2D(u_texture, v_texcoord * -0.5 + sin(time / 15.0) / 50.0 + 0.5).r, texture2D(u_texture, v_texcoord * -0.5 + sin(time / 20.0) / 50.0 + 0.5).g, 1.0);
             }
             `;
 
@@ -205,10 +185,6 @@
 
 
             var t = 0;
-
-            document.addEventListener("mousemove", function (e) {
-                t = e.clientX * e.clientY;
-            }, false);
 
 
             function loop() {

@@ -109,6 +109,13 @@ var e_list = [
     "Alpha_Pentagon_Polygon"
 ];
 
+//team list
+t_list = [
+    "red",
+    "orange",
+    "purple"
+];
+
 var sbx_dropdown = document.getElementById("entities");
 
 e_list.forEach(function (e) {
@@ -116,4 +123,13 @@ e_list.forEach(function (e) {
     elem.value = e;
     elem.innerHTML = e;
     sbx_dropdown.appendChild(elem);
+});
+
+var sbx_team_dropdown = document.getElementById("teams");
+
+t_list.forEach(function (e) {
+    var elem = document.createElement("option");
+    elem.value = e;
+    elem.innerHTML = e;
+    sbx_team_dropdown.appendChild(elem);
 });
