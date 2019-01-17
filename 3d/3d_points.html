@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            canvas {
+                top: 0px;
+                left: 0px;
+                position: absolute;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas width="1920" height="1080" id="canvas"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            var ptypes = 48;
+
+            var pop = 500;
+
+            var table_1 = [];
+
+            var table_2 = [];
+
+            var o = [];
+
+            var lsp = [];
+
+            var k = {};
+
+            var kd = {};
+
+            var m = { m: [false, false, false], md: [false, false, false], x: 0, y: 0, px: 0, py: 0, w: 0, dx: 0, dy: 0 };
+
+            document.addEventListener("mousemove", function (e) {
+                m.px = m.x;
+                m.py = m.y;
+                m.x = e.clientX * (1920 / window.innerWidth);
+                m.y = e.clientY * (1920 / window.innerWidth);
+                m.dx = e.movementX;
+                m.dy = e.movementY;
+            }, false);
+
+            document.addEventListener("mousedown", function (e) {
+                m.m[e.which - 1] = true;
+                m.md[e.which - 1] = true;
+            }, false);
+            document.addEventListener("mouseup", function (e) {
+                m.m[e.which - 1] = false;
+                m.md[e.which - 1] = false;
+            }, false);
+
+            document.addEventListener("keydown", function(e) {
+                k[e.key] = true;
+                kd[e.key] = true;
+            }, false);
+            document.addEventListener("keyup", function(e) {
+                k[e.key] = false;
+                kd[e.key] = false;
+            }, false);
+
+            window.addEventListener("resize", function (e) {
+                c.width = window.innerWidth;
+                c.height = window.innerHeight;
+            }, false);
+            
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+
+            c.requestPointerLock = c.requestPointerLock || c.mozRequestPointerLock || c.webkitRequestPointerLock;
+            c.requestPointerLock();
+
+            document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
+            document.exitPointerLock();
+
+            c.onclick = function () {
+                c.requestPointerLock();
+            };
+
+            function rand(x) {
+                return Math.random() * x;
+            }
+
+            function dist(a, b, c) {
+                return Math.sqrt(a * a + b * b + c * c);
+            }
+
+            function dist_to(a, b) {
+                return dist(a.x - b.x, a.y - b.y, a.z - b.z);
+            }
+
+            function force(x, y, v) {
+                var lx = x.x - y.x;
+                var ly = x.y - y.y;
+                var lz = x.z - y.z;
+                var d = dist(lx, ly, lz);
+                lx *= 1 / d * v;
+                ly *= 1 / d * v;
+                lz *= 1 / d * v;
+                y.dx += lx;
+                y.dy += ly;
+                y.dz += lz;
+            }
+
+            for (var i = 0; ptypes > i; i++) {
+                table_1.push([]);
+                table_2.push([]);
+                for (var i2 = 0; ptypes > i2; i2++) {
+                    table_1[i].push(Math.random() * 2 - 1);
+                    table_2[i].push(Math.random() * -1 - 0.5);
+                }
+            }
+
+            view = {
+                x: 0,
+                y: 0,
+                z: 0,
+                dx: 0,
+                dy: 0,
+                dz: 0,
+                dirdx: 0,
+                dirdy: 0
+            };
+
+            function Point(x, y, z, t, id) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.dx = 0;
+                this.dy = 0;
+                this.dz = 0;
+                this.t = t;
+                this.id = id;
+                this.draw = function() {
+                    var lx = this.x - view.x;
+                    var ly = this.y - view.y;
+                    var lz = this.z - view.z;
+                    ctx.strokeStyle = "hsl(" + (360 * this.t / ptypes) + ", 100%, 50%)";
+                    ctx.lineWidth = Math.abs(1.5 * c.height / lz);
+                    ctx.beginPath();
+                    if (lz > 3 && lsp[this.id] && dist(lsp[this.id].x - c.width / 2, lsp[this.id].y - c.height / 2, 1) < dist(c.width, c.height, 1)) {
+                        ctx.moveTo(lsp[this.id].x, lsp[this.id].y);
+                        lsp[this.id] = {
+                            x: c.height * lx / lz + c.width / 2,
+                            y: c.height * ly / lz + c.height / 2
+                        }
+                        ctx.lineTo(lsp[this.id].x, lsp[this.id].y);
+                    } else {
+                        lsp[this.id] = {
+                            x: c.height * lx / lz + c.width / 2,
+                            y: c.height * ly / lz + c.height / 2
+                        }
+                    }
+                    ctx.stroke();
+                }
+                this.action = function() {
+                    this.x += this.dx;
+                    this.y += this.dy;
+                    this.z += this.dz;
+                    this.dx *= 0.97;
+                    this.dy *= 0.97;
+                    this.dz *= 0.97;
+                    for (var i = 0; o.length > i; i++) {
+                        if (this !== o[i]) {
+                            force(this, o[i], 0.1 * table_1[this.t][o[i].t] / dist_to(this, o[i]));
+                            force(this, o[i], 0.4 * table_2[this.t][o[i].t] / Math.pow(dist_to(this, o[i]), 2));
+                        }
+                    }
+                }
+            }
+
+            for (var i = 0; pop > i; i++) {
+                o.push(new Point(rand(100) - 50, rand(100) - 50, rand(100) + 100, Math.floor(rand(ptypes)), i));
+            }
+
+            function loop() {
+                ctx.fillStyle = "#00000044";
+                ctx.fillRect(0, 0, c.width, c.height);
+
+                ctx.lineCap = "round";
+
+                o.forEach(function(e) {
+                    e.action();
+                });
+
+                o.sort(function(a, b) {
+                    return b.z - a.z;
+                })
+
+                o.forEach(function(e) {
+                    e.draw();
+                });
+
+                if (k["w"]) {
+                    view.dz += 0.5;
+                }
+                if (k["a"]) {
+                    view.dx -= 0.5;
+                }
+                if (k["s"]) {
+                    view.dz -= 0.5;
+                }
+                if (k["d"]) {
+                    view.dx += 0.5;
+                }
+                if (k["Shift"]) {
+                    view.dy += 0.5;
+                }
+                if (k[" "]) {
+                    view.dy -= 0.5;
+                }
+                view.dirdx += m.dx / 1200;
+                view.dirdy += m.dy / 1200;
+                m.dx = 0;
+                m.dy = 0;
+                
+            o.forEach(function (e) {
+                lx = e.x - view.x;
+                ly = e.z - view.z;
+                var dir = Math.atan2(ly, lx);
+                var mag = dist(lx, ly, 1);
+                dir += view.dirdx;
+                e.x = Math.cos(dir) * mag + view.x;
+                e.z = Math.sin(dir) * mag + view.z;
+            });
+            o.forEach(function (e) {
+                lx = e.y - view.y;
+                ly = e.z - view.z;
+                var dir = Math.atan2(ly, lx);
+                var mag = dist(lx, ly, 1);
+                dir += view.dirdy;
+                e.y = Math.cos(dir) * mag + view.y;
+                e.z = Math.sin(dir) * mag + view.z;
+            });
+                
+                view.x += view.dx;
+                view.y += view.dy;
+                view.z += view.dz;
+                view.dx *= 0.9;
+                view.dy *= 0.9;
+                view.dz *= 0.9;
+                view.dirdx *= 0.8;
+                view.dirdy *= 0.8;
+
+                requestAnimationFrame(loop);
+            }
+            loop();
+        </script>
+    </body>
+</html>
