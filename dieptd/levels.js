@@ -557,21 +557,22 @@ var special_levels = [
 
             var diff = l / 1800 + Math.pow(1.1, l / 1800);
 
-            if (l % 400 == 0) {
-                for (var i = 0; diff > i; i++ ) {
+            if (l % 2000 == 0) {
+                for (var i = 0; 5 * diff > i; i++ ) {
+                    var clump_size = 10000 + Math.random() * 6000;
                     var angle = tau * Math.random() * 0.15 + l / 1200;
                     switch (Math.floor(Math.random() * 4)) {
                         case 0:
-                            o.push(Basic_Tank(12000 * Math.cos(angle), 12000 * Math.sin(angle)));
+                            o.push(Basic_Tank(clump_size * Math.cos(angle), clump_size * Math.sin(angle)));
                             break;
                         case 1:
-                            o.push(Twin_Tank(12000 * Math.cos(angle), 12000 * Math.sin(angle)));
+                            o.push(Twin_Tank(clump_size * Math.cos(angle), clump_size * Math.sin(angle)));
                             break;
                         case 2:
-                            o.push(Triple_Shot_Tank(12000 * Math.cos(angle), 12000 * Math.sin(angle)));
+                            o.push(Triple_Shot_Tank(clump_size * Math.cos(angle), clump_size * Math.sin(angle)));
                             break;
                         case 3:
-                            o.push(Triplet_Tank(12000 * Math.cos(angle), 12000 * Math.sin(angle)));
+                            o.push(Triplet_Tank(clump_size * Math.cos(angle), clump_size * Math.sin(angle)));
                             break;
                     }
                 }

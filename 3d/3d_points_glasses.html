@@ -17,16 +17,16 @@
                 left: 0px;
                 position: absolute;
                 z-index: 2;
-                background: #FFFFFF11;
+                background: #FFFFFF22;
                 border: 1px solid #FFFFFF88;
                 color: #FFFFFF;
                 padding: 16px;
                 padding-top: 0px;
             }
-            input, button, textarea, select, option {
-                background: #FFFFFF11;
+            input, button, textarea {
+                background: #FFFFFF22;
                 border: 1px solid #FFFFFF88;
-                color: #AAAAAA;
+                color: #FFFFFF;
             }
             p {
                 margin-bottom: 0px;
@@ -49,12 +49,6 @@
             <p>Repel Table:</p>
             <textarea id="repel_table"></textarea>
             <p>Leave tables blank for random</p>
-            <p>Draw Style:</p>
-            <select id="draw_style">
-                <option value="lines">Lines</option>
-                <option value="dots">Dots</option>
-                <option value="3d_anaglyph">3D Anaglyph (3D Glasses)</option>
-            </select>
             <br>
             <br>
             <button onclick="reset();">Reset Simulation</button>
@@ -68,8 +62,7 @@
                 document.getElementById("start_clump_size"),
                 document.getElementById("force_distance_limit"),
                 document.getElementById("attract_table"),
-                document.getElementById("repel_table"),
-                document.getElementById("draw_style")
+                document.getElementById("repel_table")
             ];
             var controls = document.getElementById("controls");
 
@@ -84,7 +77,6 @@
             var fdl = 30;
             var table_1 = [];
             var table_2 = [];
-            var draw_style = 0;
 
             //all ingame objects
             var o = [];
@@ -216,59 +208,26 @@
                 this.draw = function() {
 
                     //relative position
-                    var lx = this.x - view.x;
+                    var lx = this.x - view.x - 3;
                     var ly = this.y - view.y;
                     var lz = this.z - view.z;
 
-                    switch (draw_style) {
-                        case 1:
-                            //set color and size on screen
-                            ctx.fillStyle = "hsl(" + (360 * this.t / ptypes) + ", 100%, 50%)";
-                            ctx.lineWidth = Math.abs(1.5 * c.height / lz);
+                    //set color and size on screen
+                    //ctx.fillStyle = "hsl(" + (360 * this.t / ptypes) + ", 100%, 50%)";
 
-                            //draw path
-                            ctx.beginPath();
-                            if (lz > 3) {
-                                ctx.arc(c.height * lx / lz + c.width / 2, c.height * ly / lz + c.height / 2, Math.abs(2 * c.height / lz), 0, Math.PI * 2);
-                            }
-                            ctx.fill();
-                            break;
-                        case 2:
-                            if (lz > 3) {
-                                ctx.fillStyle = "#00BBFFAA";
-                                ctx.beginPath();
-                                ctx.arc(c.height * lx / lz + c.width / 2, c.height * ly / lz + c.height / 2, Math.abs(2 * c.height / lz), 0, Math.PI * 2);
-                                ctx.fill();
-                                lx += 6;
-                                ctx.fillStyle = "#FF0000AA";
-                                ctx.beginPath();
-                                ctx.arc(c.height * lx / lz + c.width / 2, c.height * ly / lz + c.height / 2, Math.abs(2 * c.height / lz), 0, Math.PI * 2);
-                                ctx.fill();
-                            }
-                            break;
-                        default:
-                            //set color and size on screen
-                            ctx.strokeStyle = "hsl(" + (360 * this.t / ptypes) + ", 100%, 50%)";
-                            ctx.lineWidth = Math.abs(2 * c.height / lz);
-
-                            //draw path
-                            ctx.beginPath();
-                            if (lz > 3 && lsp[this.id] && dist(lsp[this.id].x - c.width / 2, lsp[this.id].y - c.height / 2, 1) < dist(c.width, c.height, 1)) {
-                                ctx.moveTo(lsp[this.id].x, lsp[this.id].y);
-                                lsp[this.id] = {
-                                    x: c.height * lx / lz + c.width / 2,
-                                    y: c.height * ly / lz + c.height / 2
-                                }
-                                ctx.lineTo(lsp[this.id].x, lsp[this.id].y);
-                            } else {
-                                lsp[this.id] = {
-                                    x: c.height * lx / lz + c.width / 2,
-                                    y: c.height * ly / lz + c.height / 2
-                                }
-                            }
-                            ctx.stroke();
-                            break;
+                    //draw path
+                    if (lz > 3) {
+                        ctx.fillStyle = "#00BBFFAA";
+                        ctx.beginPath();
+                        ctx.arc(c.height * lx / lz + c.width / 2, c.height * ly / lz + c.height / 2, Math.abs(2.5 * c.height / lz), 0, Math.PI * 2);
+                        ctx.fill();
+                        lx += 6;
+                        ctx.fillStyle = "#FF0000AA";
+                        ctx.beginPath();
+                        ctx.arc(c.height * lx / lz + c.width / 2, c.height * ly / lz + c.height / 2, Math.abs(2.5 * c.height / lz), 0, Math.PI * 2);
+                        ctx.fill();
                     }
+
                 }
                 this.action = function() {
 
@@ -349,9 +308,6 @@
 
             //loop function
             function loop() {
-
-                //set drawing style
-                draw_style = inputs[6].selectedIndex;
 
                 //fill canvas
                 ctx.fillStyle = "#000000FF";

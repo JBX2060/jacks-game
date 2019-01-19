@@ -428,8 +428,7 @@ function Drone(x, y, dx, dy, r, discrim, dmg, hp, c1, c2) {
         if (closest !== false && o[closest]) {
             var distance = dist_to_obj(a, o[closest]);
             if (distance < 30) {
-                o[closest].hp -= a.dmg;
-                a.hp -= a.dmg;
+                handle_damage(a, o[closest]);
             }
         }
 

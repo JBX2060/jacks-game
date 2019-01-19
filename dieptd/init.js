@@ -113,7 +113,9 @@ var e_list = [
 t_list = [
     "red",
     "orange",
-    "purple"
+    "purple",
+    "yellow",
+    "green"
 ];
 
 var sbx_dropdown = document.getElementById("entities");

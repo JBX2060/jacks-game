@@ -24,17 +24,46 @@ function in_fov(a, b) {
 
 //simple point to and move towards function
 function simple_move_behavior(a, v, discrim, minrange) {
-    var closest = find_closest(a, o, discrim);
-    if (closest !== false) {
-        if (dist_to_obj(a, o[closest]) > minrange) {
-            a.angle = point_towards(a, o[closest]);
-            a.dx += Math.cos(a.angle) * v;
-            a.dy += Math.sin(a.angle) * v;
-        } else if (dist_to_obj(a, o[closest]) < minrange - 10) {
-            a.angle = point_towards(a, o[closest]);
-            a.dx -= Math.cos(a.angle) * v;
-            a.dy -= Math.sin(a.angle) * v;
+    if (a.team == "green") {
+        var arr = o.filter(e => { return e.tank_type == "Relay_Tower" });
+        var closest = find_closest(a, arr, discrim);
+        if (closest !== false) {
+            if (dist_to_obj(a, arr[closest]) > minrange) {
+                a.angle = point_towards(a, arr[closest]);
+                a.dx += Math.cos(a.angle) * v;
+                a.dy += Math.sin(a.angle) * v;
+            } else if (dist_to_obj(a, arr[closest]) < minrange - 10) {
+                a.angle = point_towards(a, arr[closest]);
+                a.dx -= Math.cos(a.angle) * v;
+                a.dy -= Math.sin(a.angle) * v;
+            }
         }
+    } else {
+        var closest = find_closest(a, o, discrim);
+        if (closest !== false) {
+            if (dist_to_obj(a, o[closest]) > minrange) {
+                a.angle = point_towards(a, o[closest]);
+                a.dx += Math.cos(a.angle) * v;
+                a.dy += Math.sin(a.angle) * v;
+            } else if (dist_to_obj(a, o[closest]) < minrange - 10) {
+                a.angle = point_towards(a, o[closest]);
+                a.dx -= Math.cos(a.angle) * v;
+                a.dy -= Math.sin(a.angle) * v;
+            }
+        }
+    }
+    if (a.team == "yellow") {
+        var attract = o.filter(e => { return e.team == "yellow" });
+        attract.forEach(function (e) {
+            if (a !== e) {
+                var temp_dist = dist_to_obj(a, e);
+                var temp_dir = point_towards(a, e);
+                a.dx += clamp(1000 * Math.cos(temp_dir) / Math.pow(temp_dist, 1.5), -1, 1);
+                a.dy += clamp(1000 * Math.sin(temp_dir) / Math.pow(temp_dist, 1.5), -1, 1);
+                a.dx += clamp(-4000 * Math.cos(temp_dir) / Math.pow(temp_dist, 2), -2, 2);
+                a.dy += clamp(-4000 * Math.sin(temp_dir) / Math.pow(temp_dist, 2), -2, 2);
+            }
+        });
     }
 }
 
@@ -402,6 +431,10 @@ function handle_tank_color(a) {
             return ["#DC7913", "#A3560C"];
         case "purple":
             return ["#be7ff5", "#8f5fb7"];
+        case "yellow":
+            return ["#ffe46b", "#bfae4e"];
+        case "green":
+            return ["#00e06c", "#00a851"];
         default:
             return ["#f04f54", "#b33b3f"];
     }

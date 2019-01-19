@@ -5,6 +5,18 @@ Sub-topics of major changes are intented
 
 
 
+2019-1-19
+
+Drones no longer treat orange and purple tanks as they would red tanks.
+Added two new types of tanks.
+    Yellow Tanks
+        These tanks attract each other, forming tight bunches. If they spawn spread out, they'll always form tight clumps.
+    Green Tanks
+        Green Tanks exclusively target relays. This makes them dangerous since they take out the power supplies of towers, which usually aren't well defended.
+Improvements made to endless mode.
+    Tanks spawn less often, and in larger bunches. This reduces the need for micromanagement, though micro is still necessary.
+    New tank types and teams may be introduced to later stages of endless mode.
+
 2019-1-13
 
 Added teams to sandbox mode.
