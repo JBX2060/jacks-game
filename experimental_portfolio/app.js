@@ -1,48 +1,58 @@
+function req(url, callback) {
+    var request = new XMLHttpRequest();
+    request.open("GET", url);
+    request.send();
+    request.onload = function () { callback(request) };
+}
+
 const adasba = `
-    <div class="vline l1"></div>
-    <div class="vline l2"></div>
-    <div class="hline l3"></div>
-    <div class="vline l1 l1-1"></div>
-    <div class="vline l2 l1-2"></div>
-    <div class="hline l3 l1-3"></div>
-    <div class="vline l1 l2-1"></div>
-    <div class="vline l2 l2-2"></div>
-    <div class="dline1 l4"></div>
-    <div class="dline2 l5 l2-3"></div>
-    <div class="vline l1 l3-1"></div>
-    <div class="vline l2 l3-1"></div>
-    <div class="hline l6"></div>
-    <div class="vline l1 l3-2"></div>
-    <div class="vline l2 l3-2"></div>
-    <div class="hline l6 l1-3"></div>
-    <div class="vline l1 l4-2"></div>
-    <div class="vline l2 l4-1"></div>
-    <div class="hline l7"></div>
-    <div class="hline l7 l1-3"></div>
-    <div class="hline l7 l2-3"></div>
-    <div class="vline l1 l5-1"></div>
-    <div class="hline l8 l1-3"></div>
-    <div class="vline l2 l5-1"></div>
-    <div class="dline1 l10"></div>
-    <div class="dline2 l11 l2-3"></div>
-    <div class="vline l1 l6-1"></div>
-    <div class="vline l2 l6-1"></div>
-    <div class="hline l9"></div>
-    <div class="vline l1 l6-2"></div>
-    <div class="vline l2 l6-2"></div>
-    <div class="hline l9 l1-3"></div>
-    <div class="hbar"></div>
-    <p class="title-text">Experimental Portfolio</p>
+<div class="vline l1"></div>
+<div class="vline l2"></div>
+<div class="hline l3"></div>
+<div class="vline l1 l1-1"></div>
+<div class="vline l2 l1-2"></div>
+<div class="hline l3 l1-3"></div>
+<div class="vline l1 l2-1"></div>
+<div class="vline l2 l2-2"></div>
+<div class="dline1 l4"></div>
+<div class="dline2 l5 l2-3"></div>
+<div class="vline l1 l3-1"></div>
+<div class="vline l2 l3-1"></div>
+<div class="hline l6"></div>
+<div class="vline l1 l3-2"></div>
+<div class="vline l2 l3-2"></div>
+<div class="hline l6 l1-3"></div>
+<div class="vline l1 l4-2"></div>
+<div class="vline l2 l4-1"></div>
+<div class="hline l7"></div>
+<div class="hline l7 l1-3"></div>
+<div class="hline l7 l2-3"></div>
+<div class="vline l1 l5-1"></div>
+<div class="hline l8 l1-3"></div>
+<div class="vline l2 l5-1"></div>
+<div class="dline1 l10"></div>
+<div class="dline2 l11 l2-3"></div>
+<div class="vline l1 l6-1"></div>
+<div class="vline l2 l6-1"></div>
+<div class="hline l9"></div>
+<div class="vline l1 l6-2"></div>
+<div class="vline l2 l6-2"></div>
+<div class="hline l9 l1-3"></div>
+<div class="hbar"></div>
+<p class="title-text">Experimental Portfolio</p>
 `;
+
 
 const arrows = `
     <div id="arrows">
         <div class="vline2 a1 aleft"></div>
         <div class="dline1 a2 aleft"></div>
         <div class="dline2 a3 aleft"></div>
+        <div class="arrow-triangle atriangle1"></div>
         <div class="vline2 a4 aright"></div>
         <div class="dline1 a5 aright"></div>
         <div class="dline2 a6 aright"></div>
+        <div class="arrow-triangle atriangle2"></div>
         <div class="hline a7 aright"></div>
     </div>
     <div class="hbar2"></div>
@@ -64,4 +74,37 @@ var e2 = adasba2.children;
 for (var i = 0; 32 > i; i++) {
     e[i].style.animationDelay = (0.06 * i) + "s";
     e2[i].style.animationDelay = (0.06 * i) + "s";
+}
+
+var allArrows = document.getElementsByClassName("arrow-triangle");
+var introcontainer = document.getElementById("introcontainer");
+var maincontainer = document.getElementById("maincontainer");
+
+for (var i = 0; 4 > i; i++) {
+    allArrows[i].onclick = function () {
+        maincontainer.style.animationPlayState = "running";
+    	introcontainer.style.animationPlayState = "running";
+        setTimeout(function () {
+            adasba1.innerHTML = "";
+            adasba2.innerHTML = "";
+            adasba3.innerHTML = "";
+            adasba4.innerHTML = "";
+        }, 1200);
+    }
+}
+
+var pos = 0;
+
+var scrollsection = document.getElementById("scrolling-section");
+var arrowleft = document.getElementById("arrowleft");
+var arrowright = document.getElementById("arrowright");
+
+arrowleft.onclick = function () {
+    pos++;
+    scrollsection.style.transform = "translate(" + (100 * pos) + "vw, 0vw)";
+}
+
+arrowright.onclick = function () {
+    pos--;
+    scrollsection.style.transform = "translate(" + (100 * pos) + "vw, 0vw)";
 }
