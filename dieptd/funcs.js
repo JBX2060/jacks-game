@@ -457,3 +457,20 @@ function handle_damage(a, b) {
             break;
     }
 }
+
+function simple_random_four_tanks(radius, angle) {
+    switch (Math.floor(Math.random() * 4)) {
+        case 0:
+            o.push(Basic_Tank(radius * Math.cos(angle), radius * Math.sin(angle)));
+            break;
+        case 1:
+            o.push(Twin_Tank(radius * Math.cos(angle), radius * Math.sin(angle)));
+            break;
+        case 2:
+            o.push(Triple_Shot_Tank(radius * Math.cos(angle), radius * Math.sin(angle)));
+            break;
+        case 3:
+            o.push(Triplet_Tank(radius * Math.cos(angle), radius * Math.sin(angle)));
+            break;
+    }
+}

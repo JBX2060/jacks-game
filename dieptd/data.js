@@ -117,23 +117,32 @@ var menu_icons = [
         complete: false,
         lvl: lvls[2],
         unlocked: false,
-        unlocks: [3, 4]
+        unlocks: [3]
     },
     {
         x: 900,
-        y: 300,
+        y: 0,
         text: "Out of Time",
         complete: false,
         lvl: lvls[3],
         unlocked: false,
-        unlocks: [5]
+        unlocks: [4]
     },
     {
-        x: 900,
-        y: -300,
+        x: 1200,
+        y: 0,
         text: "Cross-Teamers",
         complete: false, //4
         lvl: lvls[4],
+        unlocked: false,
+        unlocks: [5]
+    },
+    {
+        x: 1500,
+        y: 0,
+        text: "New Strategy",
+        complete: false, 
+        lvl: lvls[5],
         unlocked: false,
         unlocks: [6]
     }

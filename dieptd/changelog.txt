@@ -5,7 +5,19 @@ Sub-topics of major changes are intented
 
 
 
-2019-1-19
+2019-01-20
+
+Added a new level: New Strategy
+    Might be the hardest level in the game so far.
+    The goal is to survive for twenty minutes (rather than mine a certain amount).
+    The player is attacked by waves of green and yellow tanks, which rotate as time goes on at roughly 90 degree angles.
+    Resources (polygons) are spread differently.
+        Resources are spread out far more than in previous levels (more relays needed, vulnerability to green tanks).
+        Resources are also relatively easy to mine fully.
+Changes to level progression
+    Removed branching. I might add branching somewhere else, but I didn't think it fit in.
+
+2019-01-19
 
 Drones no longer treat orange and purple tanks as they would red tanks.
 Added two new types of tanks.
@@ -17,7 +29,7 @@ Improvements made to endless mode.
     Tanks spawn less often, and in larger bunches. This reduces the need for micromanagement, though micro is still necessary.
     New tank types and teams may be introduced to later stages of endless mode.
 
-2019-1-13
+2019-01-13
 
 Added teams to sandbox mode.
     Players can now spawn purple and orange tanks.
@@ -39,7 +51,7 @@ Added sandbox mode.
     Basically do whatever you want.
     This was suggested by u/AC5230 on Reddit.
 
-2019-1-9
+2019-01-9
 
 Added endless mode.
     Mine as many resources as you want (shapes respawn).
@@ -47,7 +59,7 @@ Added endless mode.
     
     Currently no way to exit it other than suicide (removing all towers). This may be changed in the future.
 
-2019-1-6
+2019-01-6
 
 Added button which auto-unlocks all levels (may remove later)
 Nerfed level 1 enemy spawnrate again.
@@ -58,14 +70,14 @@ Added a new level, "Out of Time"
     This level is similar to Level 1, but enemy spawnrate is determined by both time and shapes mined, rather than only shapes mined.
     The new time element forces players to put a sizeable portion of their resources into miners, but not enough that their defense is compromised
 
-2019-1-5
+2019-01-5
 
 Added overlord
 Added drone limits to drone classes
 Did a bunch of code refactoring
     Replaced all instances of "discrimination" functions with Array.prototype.filter()
 
-2019-1-3
+2019-01-3
 
 Added game speed control system.
     The game can be sped up by up to a factor of four.
@@ -75,7 +87,7 @@ Nerfed Level 1 enemy spawns.
     This change was made so players can expand outwards more easily.
 Added drones and overseer.
 
-2019-1-2
+2019-01-2
 
 Added triplet tower.
 
@@ -89,7 +101,7 @@ Added third level (second if you don't count the tutorial)
 
 Added alpha pentagons.
 
-2019-1-1
+2019-01-1
 
 Added basic info on controls in the main menu.
 

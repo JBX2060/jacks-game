@@ -1,0 +1,474 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+
+html, body {
+    background: #3A3A3A;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Ubuntu;
+    z-index: -20000;
+}
+
+.vline, .hline, .dline1, .dline2 {
+    animation-timing-function: cubic-bezier(0.15, 0.9, 0.85, 0.1);
+    animation-duration: 0.6s;
+    animation-fill-mode: both;
+}
+@keyframes fadein {
+    from {
+        opacity: 0.0;
+    }
+    to {
+        opacity: 1.0;
+    }
+}
+
+
+.vline {
+    width: 1vh;
+    height: 10.5vh;
+    background: #EEEEEE;
+    position: absolute;
+}
+
+.vline2 {
+    width: 1vh;
+    height: 20vh;
+    background: #EEEEEE;
+    position: absolute;
+}
+
+.hline {
+    width: 10.5vh;
+    height: 1vh;
+    background: #EEEEEE;
+    position: absolute;
+}
+
+.dline1 {
+    width: 15.1421vh;
+    height: 1vh;
+    background: #EEEEEE;
+    position: absolute;
+    transform-origin: bottom left;
+    transform: rotate(45deg);
+}
+
+.dline2 {
+    width: 15.1421vh;
+    height: 1vh;
+    background: #EEEEEE;
+    position: absolute;
+    transform-origin: top left;
+    transform: rotate(-45deg);
+}
+
+.l1 {
+    animation-name: l1, fadein;
+    left: calc(50% - 42.5vh);
+}
+@keyframes l1 {
+    from {
+        top: 110vh;
+    }
+    to {
+        top: 49.5vh;
+    }
+}
+
+.l2 {
+    animation-name: l2, fadein;
+    left: calc(50% - 42.5vh);
+}
+@keyframes l2 {
+    from {
+        top: -10vh;
+    }
+    to {
+        top: 40vh;
+    }
+}
+
+.l3 {
+    animation-name: l3, fadein;
+    top: 40vh;
+}
+@keyframes l3 {
+    from {
+        left: -10vh;
+    }
+    to {
+        left: calc(50% - 42.5vh);
+    }
+}
+
+.l4 {
+    animation-name: l4, fadein;
+    top: 39.5vh;
+}
+@keyframes l4 {
+    from {
+        top: calc(39.5vh - (50vw - 20vh));
+        left: -10vh;
+    }
+    to {
+        top: 39vh;
+        left: calc(50% - 27.5vh);
+    }
+}
+
+.l5 {
+    animation-name: l5, fadein;
+    top: 39vh;
+}
+@keyframes l5 {
+    from {
+        top: calc(60.25vh + (50vw - 20vh));
+        left: -10vh;
+    }
+    to {
+        top: 60vh;
+        left: calc(50% - 27.5vh);
+    }
+}
+
+.l6 {
+    animation-name: l6, fadein;
+    top: 40vh;
+}
+@keyframes l6 {
+    from {
+        left: -10vh;
+    }
+    to {
+        left: calc(50% - 12.5vh);
+    }
+}
+
+.l7 {
+    animation-name: l7, fadein;
+    top: 40vh;
+}
+@keyframes l7 {
+    from {
+        left: calc(100% + 10vh);
+    }
+    to {
+        left: calc(50% + 2.5vh);
+    }
+}
+
+.l8 {
+    animation-name: l8, fadein;
+    top: 40vh;
+}
+@keyframes l8 {
+    from {
+        left: calc(100% + 10vh);
+    }
+    to {
+        left: calc(50% + 17.5vh);
+    }
+}
+
+.l9 {
+    animation-name: l9, fadein;
+    top: 40vh;
+}
+@keyframes l9 {
+    from {
+        left: calc(100% + 10vh);
+    }
+    to {
+        left: calc(50% + 32.5vh);
+    }
+}
+
+.l10 {
+    animation-name: l10, fadein;
+    top: 39.5vh;
+}
+@keyframes l10 {
+    from {
+        top: calc(39.5vh + (50vw + 27.5vh));
+        left: calc(100vw + 10vh);
+    }
+    to {
+        top: 39vh;
+        left: calc(50vw + 17.5vh);
+    }
+}
+
+.l11 {
+    animation-name: l11, fadein;
+    top: 39vh;
+}
+@keyframes l11 {
+    from {
+        top: calc(60.25vh - (50vw + 27.5vh));
+        left: calc(100vw + 10vh);
+    }
+    to {
+        top: 60vh;
+        left: calc(50vw + 17.5vh);
+    }
+}
+
+.l1-1 {
+    left: calc(50% - 32.5vh);
+}
+.l1-2 {
+    left: calc(50% - 32.5vh);
+}
+.l1-3 {
+    top: 49.5vh;
+}
+
+.l2-1 {
+    left: calc(50% - 27.5vh);
+}
+.l2-2 {
+    left: calc(50% - 27.5vh);
+}
+.l2-3 {
+    top: 59vh;
+}
+
+.l3-1 {
+    left: calc(50% - 12.5vh);
+}
+.l3-2 {
+    left: calc(50% - 2.5vh);
+}
+
+.l4-1 {
+    left: calc(50% + 2.5vh);
+}
+.l4-2 {
+    left: calc(50% + 12.5vh);
+}
+
+.l5-1 {
+    left: calc(50% + 17.5vh);
+}
+.l5-2 {
+    left: calc(50% + 27.5vh);
+}
+
+.l6-1 {
+    left: calc(50% + 32.5vh);
+}
+.l6-2 {
+    left: calc(50% + 42.5vh);
+}
+
+.hbar {
+    background: #EEEEEE;
+    position: absolute;
+    top: 63vh;
+    left: 50vw;
+    height: 1vh;
+    
+    animation: 0.5s hbar cubic-bezier(0.19, 1, 0.22, 1) 2.5s;
+    animation-fill-mode: both;
+}
+@keyframes hbar {
+    from {
+        width: 0vw;
+        left: 50vw;
+    }
+    to {
+        width: 50vw;
+        left: 25.5vw;
+    }
+}
+
+.title-text {
+    position: absolute;
+    color: #EEEEEE;
+    background: none;
+    top: 58vh;
+    left: 0;
+    right: 0;
+    font-size: 8vh;
+    text-align: center;
+
+    animation: 0.7s fadein ease 3.6s;
+    animation-fill-mode: both;
+}
+
+
+
+#adasba1 {
+    position: relative;
+    animation: moveup1, arrowfilter;
+    animation-delay: 3s, 5s;
+    animation-duration: 1s;
+    animation-fill-mode: both;
+}
+@keyframes moveup1 {
+    from {
+        top: 0vh;
+    }
+    to {
+        top: -10vh;
+    }
+}
+
+#adasba2 {
+    position: relative;
+    top: 1vh;
+    left: 1vh;
+    animation: moveup2, arrowfilter;
+    animation-delay: 3s, 5s;
+    animation-duration: 1s;
+    animation-fill-mode: both;
+}
+@keyframes moveup2 {
+    from {
+        top: 1vh;
+    }
+    to {
+        top: -9vh;
+    }
+}
+
+
+
+#adasba2 *, #adasba4 * {
+    background: #222222;
+    color: #222222;
+}
+
+#adasba2 p, #adasba4 p {
+    color: #222222;
+    background: none;
+}
+
+#adasba3 {
+    z-index: 2;
+    position: relative;
+    animation: 1s adown ease 6.5s;
+    animation-fill-mode: both;
+}
+@keyframes adown {
+    from {
+        top: -10vh;
+    }
+    to {
+        top: 10vh;
+    }
+}
+#adasba4 {
+    z-index: 2;
+    position: relative;
+    left: 1vh;
+    animation: 1s adown2 ease 6.5s;
+    animation-fill-mode: both;
+}
+@keyframes adown2 {
+    from {
+        top: -9vh;
+    }
+    to {
+        top: 11vh;
+    }
+}
+
+.a1 {
+    top: 40vh;
+}
+.a2 {
+    top: 39vh;
+}
+.a3 {
+    top: 60vh;
+}
+.a4 {
+    top: 40vh;
+}
+.a5 {
+    top: 39vh;
+}
+.a6 {
+    top: 60vh;
+}
+.a7 {
+    top: 49.5vh;
+}
+
+.aleft {
+    animation: 1s aleft ease 5.5s;
+    animation-fill-mode: both;
+}
+@keyframes aleft {
+    from {
+        left: calc(50% - 27.5vh);
+    }
+    to {
+        left: calc(50% - 12.5vh);
+    }
+}
+
+.aright {
+    animation: 1s aright ease 5.5s;
+    animation-fill-mode: both;
+}
+@keyframes aright {
+    from {
+        left: calc(50% + 17.5vh);
+    }
+    to {
+        left: calc(50% + 2.5vh);
+    }
+}
+
+#arrows {
+    animation: 0s fadein linear 4s;
+    animation-fill-mode: both;
+}
+
+@keyframes arrowfilter {
+    from {
+        opacity: 1.0;
+    }
+    to {
+        opacity: 0.0;
+    }
+}
+
+
+.hbar2 {
+    background: #EEEEEE;
+    position: absolute;
+    top: 35vh;
+    left: 50vw;
+    height: 1vh;
+    
+    animation: 0.5s hbar2 cubic-bezier(0.19, 1, 0.22, 1) 6.5s;
+    animation-fill-mode: both;
+}
+@keyframes hbar2 {
+    from {
+        width: 0vw;
+        left: 50vw;
+    }
+    to {
+        width: 20vw;
+        left: 40.5vw;
+    }
+}
+
+.title-text-2 {
+    position: absolute;
+    color: #EEEEEE;
+    background: none;
+    top: 14vh;
+    left: 0;
+    right: 0;
+    font-size: 8vh;
+    text-align: center;
+
+    animation: 0.7s fadein ease 7.5s;
+    animation-fill-mode: both;
+}

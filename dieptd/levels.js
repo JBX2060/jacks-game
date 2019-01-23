@@ -346,20 +346,7 @@ var lvls = [
             if (l % 325 == 0) {
                 for (var i = 0; diff > i; i++ ) {
                     var angle = tau * Math.random() * 0.1 + l / 700;
-                    switch (Math.floor(Math.random() * 4)) {
-                        case 0:
-                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 1:
-                            o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 2:
-                            o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 3:
-                            o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                    }
+                    simple_random_four_tanks(4000, angle);
                 }
             }
 
@@ -430,55 +417,16 @@ var lvls = [
             if (l % 1300 == 0) {
                 for (var i = 0; diff > i; i++ ) {
                     var angle = tau * Math.random() / 3;
-                    switch (Math.floor(Math.random() * 4)) {
-                        case 0:
-                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 1:
-                            o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 2:
-                            o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 3:
-                            o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                    }
+                    simple_random_four_tanks(4000, angle);
                 }
                 for (var i = 0; diff > i; i++ ) {
                     var angle = tau * Math.random() / 3 + tau / 3;
-                    switch (Math.floor(Math.random() * 4)) {
-                        case 0:
-                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 1:
-                            o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 2:
-                            o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 3:
-                            o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                    }
+                    simple_random_four_tanks(4000, angle);
                     o[o.length - 1].team = "orange";
                 }
                 for (var i = 0; diff > i; i++ ) {
                     var angle = tau * Math.random() / 3 + 2 * tau / 3;
-                    switch (Math.floor(Math.random() * 4)) {
-                        case 0:
-                            o.push(Basic_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 1:
-                            o.push(Twin_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 2:
-                            o.push(Triple_Shot_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                        case 3:
-                            o.push(Triplet_Tank(4000 * Math.cos(angle), 4000 * Math.sin(angle)));
-                            break;
-                    }
+                    simple_random_four_tanks(4000, angle);
                     o[o.length - 1].team = "purple";
                 }
             }
@@ -505,6 +453,89 @@ var lvls = [
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             diep_text("Remaining Points: " + Math.floor((get_shape_total_hp().hp - max_poly_hp) / 20) + " / " + max_poly_hp / 20, 10, 75, 24);
             if (get_shape_total_hp().hp - max_poly_hp < 0) {
+                ctx.textAlign = "center";
+                diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
+                if (k["Enter"]) {
+                    complete_level(lvicon);
+                }
+            }
+            ctx.restore();
+        }
+    },
+    {
+        init: function () {
+            o.push(Generator_Tower(0, 0));
+
+            var clump_size = 6000;
+
+            for (var i = 0; 20 > i; i++) {
+                o.push(Square_Polygon(Math.random() * clump_size - clump_size / 2, Math.random() * clump_size - clump_size / 2 ));
+            }
+
+
+            for (var i = 0; 16 > i; i++) {
+                o.push(Triangle_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+            }
+
+
+            for (var i = 0; 5 > i; i++) {
+                o.push(Pentagon_Polygon(Math.random() * clump_size - clump_size / 2 , Math.random() * clump_size - clump_size / 2 ));
+            }
+            max_poly_hp = get_shape_total_hp().mhp / 2;
+            lvi = 0;
+            pt = 750;
+        },
+        frame: function () {
+            if (between(lvi, 0, 5)) {
+                if (kd["ArrowRight"]) {
+                    lvi++;
+                }
+                if (kd["ArrowLeft"]) {
+                    lvi--;
+                }   
+            }
+
+
+            var diff = l / 650;
+
+            if (l % 3200 == 3199) {
+                o.push(Diep_Alert("Enemies are approaching!"));
+                for (var i = 0; diff > i; i++ ) {
+                    var angle = tau * Math.random() / 3 + l / 2000;
+                    var mag = 5000 + 3000 * Math.random();
+                    simple_random_four_tanks(mag, angle);
+                    o[o.length - 1].team = "green";
+                }
+                for (var i = 0; diff > i; i++ ) {
+                    var angle = tau * Math.random() / 3 + l / 2000;
+                    var mag = 5000 + 3000 * Math.random();
+                    simple_random_four_tanks(mag, angle);
+                    o[o.length - 1].team = "yellow";
+                }
+            }
+
+
+
+        },
+        draw: function () {
+            var texts = [
+                "The enemy tanks are coming up with some new strategies.",
+                "They'll be sending yellow and green tanks against you.",
+                "Yellow tanks form tightly-packed groups, punching holes through your defenses.",
+                "Green tanks ignore your defenses entirely. They exclusively target relays.",
+                "You'll also see some new types of tanks, like snipers.",
+                "The enemies don't seem to have many resources this time though, so they should be gone after 20 minutes.",
+                ""
+            ];
+            ctx.textAlign = "center";
+            diep_text(texts[lvi], 0, -200, 24);
+        
+
+            ctx.textAlign = "left";
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            diep_text("Remaining Time: " + (1200 - Math.floor(l / 60)) + " Seconds", 10, 75, 24);
+            if (l / 60 > 1200) {
                 ctx.textAlign = "center";
                 diep_text("Level Complete! Press ENTER to continue!", 960, 270, 48);
                 if (k["Enter"]) {

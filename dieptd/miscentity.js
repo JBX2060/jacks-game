@@ -462,3 +462,21 @@ function Drone(x, y, dx, dy, r, discrim, dmg, hp, c1, c2) {
 
     return tank;
 }
+
+function Diep_Alert(msg) {
+    
+    var tank = new Game_Obj(960, 440, function (a) {
+        ctx.textAlign = "center";
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        diep_text(msg, a.x, a.y, 24);
+        ctx.restore();
+    }, function (a) {
+        a.y++;
+        a.hp--;
+    });
+
+    tank.hp = 200;
+
+    return tank;
+}

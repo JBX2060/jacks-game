@@ -48,13 +48,15 @@
             <textarea id="attract_table"></textarea>
             <p>Repel Table:</p>
             <textarea id="repel_table"></textarea>
-            <p>Leave tables blank for random</p>
             <p>Draw Style:</p>
             <select id="draw_style">
                 <option value="lines">Lines</option>
                 <option value="dots">Dots</option>
                 <option value="3d_anaglyph">3D Anaglyph (3D Glasses)</option>
             </select>
+            <p>Count Table:</p>
+            <textarea id="count_table"></textarea>
+            <p>Leave tables blank for random</p>
             <br>
             <br>
             <button onclick="reset();">Reset Simulation</button>
@@ -69,7 +71,8 @@
                 document.getElementById("force_distance_limit"),
                 document.getElementById("attract_table"),
                 document.getElementById("repel_table"),
-                document.getElementById("draw_style")
+                document.getElementById("draw_style"),
+                document.getElementById("count_table")
             ];
             var controls = document.getElementById("controls");
 
@@ -304,8 +307,19 @@
                 lsp = [];
 
                 //add objects
-                for (var i = 0; pop > i; i++) {
-                    o.push(new Point(rand(clump) - clump / 2, rand(clump) - clump / 2, rand(clump) + clump, Math.floor(rand(ptypes)), i));
+                if (inputs[7].value == "") {
+                    for (var i = 0; pop > i; i++) {
+                        o.push(new Point(rand(clump) - clump / 2, rand(clump) - clump / 2, rand(clump) + clump, Math.floor(rand(ptypes)), i));
+                    }
+                } else {
+                    var i3 = 0;
+                    var popcode = JSON.parse(inputs[7].value);
+                    for (var i = 0; popcode.length > i; i++) {
+                        for (var i2 = 0; popcode[i] > i2; i2++) {
+                            o.push(new Point(rand(clump) - clump / 2, rand(clump) - clump / 2, rand(clump) + clump, i, i3));
+                            i3++;
+                        }
+                    }
                 }
 
                 //empty force tables
