@@ -109,3 +109,20 @@
 a {
     color: #FFFFFF;
 }
+
+#navicons {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 90vh;
+    height: 4vh;
+}
+.navicon {
+    width: 2vw;
+    height: 2vw;
+    margin-left: 2vh;
+    margin-right: 2vh;
+    padding: 0px;
+    background: #EEEEEE;
+    transition: background 0.4s;
+}

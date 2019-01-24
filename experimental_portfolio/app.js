@@ -108,3 +108,33 @@ arrowright.onclick = function () {
     pos--;
     scrollsection.style.transform = "translate(" + (100 * pos) + "vw, 0vw)";
 }
+
+var allsections = document.querySelectorAll("#scrolling-section .scrollmenu");
+var sectionnav = document.getElementById("navicons");
+
+sectionnav.style.width = allsections.length * 8 + "vw";
+sectionnav.style.left = (50 - allsections.length * 4) + "vw";
+
+for (var i = 0; allsections.length > i; i++) {
+    var elem = document.createElement("div");
+    elem.onclick = new Function(
+    `   pos = ` + -i + `;
+        scrollsection.style.transform = "translate(" + (100 * pos) + "vw, 0vw)";`
+    )
+    elem.className = "navicon";
+    sectionnav.appendChild(elem);
+}
+
+var navs = sectionnav.children;
+
+function loop100ms() {
+    for (var i = 0; navs.length > i; i++) {
+        if (i == -pos) {
+            navs[i].style.background = "#EEEEEE";
+        } else if (navs[i].style.background != "#777777") {
+            navs[i].style.background = "#777777";
+        }
+    }
+}
+
+setInterval(loop100ms, 100)
