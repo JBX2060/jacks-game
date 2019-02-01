@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+        </style>
+    </head>
+    <body>
+        <canvas width="512" height="512" id="canvas"></canvas>
+        <script type="application/javascript" src="../adasba_init.js"></script>
+        <script>
+            //canvas stuff
+            a_canv();
+            
+            //quadtree function (generate quadtree from x and y values)
+            function quadtree(data, maxdepth, w, h, x, y) {
+
+                //set coords to top left if not specified
+                if (x == undefined) {
+                    x = 0;
+                    y = 0;
+                }
+                
+                //create quadtree data array
+                var arr = [];
+                
+                //test if within quadtree rect
+                data.forEach(function (e) {
+                    if (inRect(x, y, w, h, e.x, e.y)) {
+                        arr.push(e);
+                    }
+                });
+                
+                //if there's more than one child, split into four arrays
+                if (arr.length > 1 && maxdepth > 0) {
+                    var arr2 = Array(4);
+                    arr2[0] = quadtree(arr, maxdepth - 1, w / 2, h / 2, x, y);
+                    arr2[1] = quadtree(arr, maxdepth - 1, w / 2, h / 2, x + w / 2, y);
+                    arr2[2] = quadtree(arr, maxdepth - 1, w / 2, h / 2, x, y + h / 2);
+                    arr2[3] = quadtree(arr, maxdepth - 1, w / 2, h / 2, x + w / 2, y + h / 2);
+                    arr = arr2;
+                }
+                
+                //return array containing child or arrays
+                return arr;
+            }
+
+            //function for drawing the quadtree
+            function drawQuadtree(q, w, h, x, y) {
+
+                //set coords to top left if not specified
+                if (x == undefined) {
+                    x = 0;
+                    y = 0;
+                }
+                
+                //draw rectangle
+                ctx.strokeRect(x, y, w, h);
+
+                //if array contains child nodes, repeat this process
+                if (q.length == 4 && Array.isArray(q[0])) {
+                    drawQuadtree(q[0], w / 2, h / 2, x, y);
+                    drawQuadtree(q[1], w / 2, h / 2, x + w / 2, y);
+                    drawQuadtree(q[2], w / 2, h / 2, x, y + h / 2);
+                    drawQuadtree(q[3], w / 2, h / 2, x + w / 2, y + h / 2);
+                }
+            }
+            
+            //points
+            var o = [];
+            
+            //loop function (triggered every frame)
+            function loop() {
+
+                //add point if clicking
+                if (m.md[0]) {
+                    o.push({ x: m.x, y: m.y });
+                }
+
+                //create quadtree from points
+                var quad = quadtree(o, 10, 512, 512);
+                
+                //draw quadtree
+                drawQuadtree(quad, 512, 512, 0, 0);
+
+                //draw points
+                for (var i = 0; o.length > i; i++) {
+                    ctx.fillRect(o[i].x - 3, o[i].y - 3, 6, 6);
+                }
+                
+                //reset mouse so points aren't spammed every frame
+                m.md[0] = false;
+                
+                //repeat loop
+                requestAnimationFrame(loop);
+            }
+
+            //initial loop call
+            loop();
+        </script>
+    </body>
+</html>

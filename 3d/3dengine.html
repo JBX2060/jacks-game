@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            * {
+                font-family: monospace;
+            }
+            canvas {
+                top: 0px;
+                left: 0px;
+                position: absolute;
+                z-index: 1;
+            }
+            .controls {
+                top: 0px;
+                left: 0px;
+                position: absolute;
+                z-index: 2;
+                background: #FFFFFF11;
+                border: 1px solid #FFFFFF88;
+                color: #FFFFFF;
+                padding: 16px;
+                padding-top: 0px;
+            }
+            input, button, textarea, select, option {
+                background: #FFFFFF11;
+                border: 1px solid #FFFFFF88;
+                color: #AAAAAA;
+            }
+            p {
+                margin-bottom: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas width="1920" height="1080" id="canvas"></canvas>
+        <script>
+            //define canvas and canvas context
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            //all ingame objects
+            var o = [];
+
+            //keys and keys down
+            var k = {};
+            var kd = {};
+
+            //mouse info
+            var m = { m: [false, false, false], md: [false, false, false], x: 0, y: 0, px: 0, py: 0, w: 0, dx: 0, dy: 0 };
+
+            //set viewport
+            var view = {
+                x: 0,
+                y: 0,
+                z: 0,
+                dx: 0,
+                dy: 0,
+                dz: 0,
+                dirdx: 0,
+                dirdy: 0,
+                rpos: [{ x: 1, y: 0, z: 0 }, { x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 1 }],
+                rpos2: [{ x: 1, y: 0, z: 0 }, { x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 1 }]
+            };
+
+            //when the mouse moves
+            document.addEventListener("mousemove", function (e) {
+                m.px = m.x;
+                m.py = m.y;
+                m.x = e.clientX * (1920 / window.innerWidth);
+                m.y = e.clientY * (1920 / window.innerWidth);
+                m.dx = e.movementX;
+                m.dy = e.movementY;
+            }, false);
+
+            //when the mouse is clicked
+            document.addEventListener("mousedown", function (e) {
+                m.m[e.which - 1] = true;
+                m.md[e.which - 1] = true;
+            }, false);
+            document.addEventListener("mouseup", function (e) {
+                m.m[e.which - 1] = false;
+                m.md[e.which - 1] = false;
+            }, false);
+
+            //when a key is pressed
+            document.addEventListener("keydown", function(e) {
+                k[e.key] = true;
+                kd[e.key] = true;
+            }, false);
+            document.addEventListener("keyup", function(e) {
+                k[e.key] = false;
+                kd[e.key] = false;
+            }, false);
+
+            //when the window is resized
+            window.addEventListener("resize", function (e) {
+                c.width = window.innerWidth;
+                c.height = window.innerHeight;
+            }, false);
+
+            //set canvas size to window size
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+
+            //pointer lock stuff
+            c.requestPointerLock = c.requestPointerLock || c.mozRequestPointerLock || c.webkitRequestPointerLock;
+            c.requestPointerLock();
+
+            document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
+            document.exitPointerLock();
+
+            c.onclick = function () {
+                c.requestPointerLock();
+            };
+
+            //point on screen
+            function Point(x, y, z, t, id) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.dx = 0;
+                this.dy = 0;
+                this.dz = 0;
+                this.t = t;
+                this.id = id;
+                this.draw = function() {
+
+                    //relative position
+                    var lx = this.x - view.x;
+                    var ly = this.y - view.y;
+                    var lz = this.z - view.z;
+
+                    var lx2 = view.rpos[0].x * lx + view.rpos[1].x * ly + view.rpos[2].x * lz;
+                    var ly2 = view.rpos[0].y * lx + view.rpos[1].y * ly + view.rpos[2].y * lz;
+                    var lz2 = view.rpos[0].z * lx + view.rpos[1].z * ly + view.rpos[2].z * lz;
+
+                    lx = lx2;
+                    ly = ly2;
+                    lz = lz2;
+
+                    //set color and size on screen
+                    ctx.fillStyle = "hsl(" + this.t + ", 100%, 50%)";
+                    ctx.lineWidth = Math.abs(1.5 * c.height / lz);
+
+                    //draw path
+                    ctx.beginPath();
+                    if (lz > 3) {
+                        ctx.arc(c.height * lx / lz + c.width / 2, c.height * ly / lz + c.height / 2, Math.abs(2 * c.height / lz), 0, Math.PI * 2);
+                    }
+                    ctx.fill();
+                }
+                this.action = function() {}
+            }
+
+            for (var i = 0; 200 > i; i++) {
+                o.push(new Point(rand(1000), rand(1000), rand(1000), rand(360), i));
+            }
+
+            //random number from 0 to x
+            function rand(x) {
+                return Math.random() * x;
+            }
+
+            //distance
+            function dist(a, b, c) {
+                return Math.sqrt(a * a + b * b + c * c);
+            }
+
+            function vReplace(a, b) {
+                return {
+                    x: b[0].x * a.x + b[1].x * a.y + b[2].x * a.z,
+                    y: b[0].y * a.x + b[1].y * a.y + b[2].y * a.z,
+                    z: b[0].z * a.x + b[1].z * a.y + b[2].z * a.z
+                };
+            }
+
+            //loop function
+            function loop() {
+
+                //fill canvas
+                ctx.fillStyle = "#000000FF";
+                ctx.fillRect(0, 0, c.width, c.height);
+
+                //make line caps round
+                ctx.lineCap = "round";
+
+                //move, do forces, etc.
+                o.forEach(function(e) {
+                    e.action();
+                });
+
+                //sort points so closer ones appear in front
+                // o.sort(function(a, b) {
+                //     return b.z - a.z;
+                // })
+
+                //draw particles
+                o.forEach(function(e) {
+                    e.draw();
+                });
+
+                //toggle menu
+                if (kd["x"]) {
+                    if (controls.style.display == "none") {
+                        controls.style.display = "block";
+                    } else {
+                        controls.style.display = "none";
+                    }
+                }
+
+                //movement
+                if (k["w"]) {
+                    view.dx += view.rpos[2].x * -0.5;
+                    view.dy += view.rpos[2].y * -0.5;
+                    view.dz += view.rpos[2].z * 0.5;
+                }
+                if (k["a"]) {
+                    view.dx -= 0.5;
+                }
+                if (k["s"]) {
+                    view.dz -= 0.5;
+                }
+                if (k["d"]) {
+                    view.dx += 0.5;
+                }
+                if (k["Shift"]) {
+                    view.dy += 0.5;
+                }
+                if (k[" "]) {
+                    view.dy -= 0.5;
+                }
+                view.dirdx += m.dx / 1200;
+                view.dirdy += m.dy / 1200;
+                m.dx = 0;
+                m.dy = 0;
+
+                //handle rotation
+                view.rpos.forEach(function (e) {
+                    var lx = e.x;
+                    var ly = e.z;
+                    var dir = Math.atan2(ly, lx);
+                    var mag = dist(lx, ly, 0);
+                    dir += view.dirdx;
+                    e.x = Math.cos(dir) * mag;
+                    e.z = Math.sin(dir) * mag;
+
+                    lx = e.y;
+                    ly = e.z;
+                    dir = Math.atan2(ly, lx);
+                    mag = dist(lx, ly, 0);
+                    dir += view.dirdy;
+                    e.y = Math.cos(dir) * mag;
+                    e.z = Math.sin(dir) * mag;
+                });
+                view.rpos2.forEach(function (e) {
+                    var lx = e.x;
+                    var ly = e.z;
+                    var dir = Math.atan2(ly, lx);
+                    var mag = dist(lx, ly, 0);
+                    dir -= view.dirdx;
+                    e.x = Math.cos(dir) * mag;
+                    e.z = Math.sin(dir) * mag;
+
+                    lx = e.y;
+                    ly = e.z;
+                    dir = Math.atan2(ly, lx);
+                    mag = dist(lx, ly, 0);
+                    dir -= view.dirdy;
+                    e.y = Math.cos(dir) * mag;
+                    e.z = Math.sin(dir) * mag;
+                });
+
+                //handle velocity
+                // view.x += view.dx;
+                // view.y += view.dy;
+                // view.z += view.dz;
+                //var vec = vReplace({ x: view.dx, y: view.dy, z: view.dz }, view.rpos2);
+                //o[100].x = view.x + (vec.x + 1) * 50;
+                //o[100].y = view.y + (vec.y + 1) * 50;
+                //o[100].z = view.z + (vec.z + 1) * 50;
+                view.x += view.dx//vec.x;
+                view.y += view.dy//vec.y;
+                view.z += view.dz//vec.z;
+                view.dx *= 0.9;
+                view.dy *= 0.9;
+                view.dz *= 0.9;
+                view.dirdx *= 0.8;
+                view.dirdy *= 0.8;
+
+                //reset key down
+                kd = {};
+                if (l % 10 == 0) {
+                    console.log(view.rpos[2]);
+                }
+                
+                l++;
+
+                //repeat loop
+                requestAnimationFrame(loop);
+            }
+            
+            var l = 0;
+
+            //initial loop call
+            loop();
+        </script>
+    </body>
+</html>
