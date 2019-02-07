@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <p id="progress"></p>
+        <canvas id="canvas" width="8192" height="8192"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+            
+            var tc = 0;
+            function tree(x, y, d, m, rule, depth) {
+                var len = Math.pow(rule.length, depth) * 20;
+                var depth5 = depth * 5;
+                var arr = new Float32Array(depth * 5 + 5);
+                arr[0] = x;
+                arr[1] = y;
+                arr[2] = d;
+                arr[3] = m;
+                arr[4] = 0;
+                var ci = 0;
+                for (var i = 0; len > i; i += 5) {
+                    tc++;
+                    var w = Math.cos(arr[ci + 2]) * arr[ci + 3];
+                    var h = Math.sin(arr[ci + 2]) * arr[ci + 3];
+                	if (ci < depth5) {
+                        if (arr[ci + 4] < 2) {
+                            arr[ci + 5] = arr[ci] + w;
+                            arr[ci + 6] = arr[ci + 1] + h;
+                            arr[ci + 7] = arr[ci + 2] + rule[arr[ci + 4]][0];
+                            arr[ci + 8] = arr[ci + 3] * rule[arr[ci + 4]][1];
+                            arr[ci + 9] = 0;
+                            arr[ci + 4]++;
+                            ci += 5;
+                        } else {
+                            ci -= 5;
+                        }
+                    } else {
+                        var index = ~~(arr[ci + 1] + h) * 4 * c.width + ~~(arr[ci] + w) * 4;
+                        if (dt[index] < 255) {
+                            dt[index] += 32;
+                        } else if (dt[index + 1] < 255) {
+                            dt[index + 1] += 32;
+                        } else {
+                            dt[index + 2] += 32;
+                        }
+                        ci -= 5;
+                    }
+                }
+                console.log(arr);
+            }
+            var t = {
+                x: 1024 * 4,
+                y: 1648 * 4,
+                d: -Math.PI / 2,
+                m: 460 * 4,
+                rule: [[-4 * Math.PI / 9, 0.75], [4 * Math.PI / 9, 0.75]],
+                depth: 29
+            };
+            var l = 0;
+            var data, dt;
+            ctx.fillRect(0, 0, c.width, c.width);
+            data = ctx.getImageData(0, 0, c.width, c.width);
+            dt = data.data;
+            
+            tree(t.x, t.y, t.d, t.m, t.rule, t.depth);
+            var progress = document.getElementById("progress");
+            ctx.putImageData(data, 0, 0);
+        </script>
+    </body>
+</html>

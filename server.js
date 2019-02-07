@@ -138,180 +138,188 @@ function botloop() {
 //setInterval(botloop, 1000);
 
 bot.on('message', function (message) {
-    if (/^==/.test(message.content)) {
-        var command = message.content.split(" ");
-        if (command[0] == "==+") {
-            var sum = 0;
+    var msgc = message.content;
 
-            for (var i = 1; command.length > i; i++) {
-                sum += Number(command[i]);
-            }
+    // if (/d[0-9]+/.test(msgc) && !message.author.bot) {
+    //     for (var i = 0; /d[0-9]+/.match(msgc).length > i; i++) {
+    //         message.channel.send("Rolled " + /d[0-9]+/.match(msgc)[i] + " and got `" + Math.ceil(Number(/d[0-9]+/.match(msgc)[i].slice(1)) * Math.random()) + "`");
+    //     }
+    // }
 
-            message.channel.send("Those numbers add up to " + sum);
-        }
-        if (command[0] == "==*") {
-            var product = 1;
+    // if (/^==/.test(message.content)) {
+    //     var command = message.content.split(" ");
+    //     if (command[0] == "==+") {
+    //         var sum = 0;
 
-            for (var i = 1; command.length > i; i++) {
-                product *= Number(command[i]);
-            }
+    //         for (var i = 1; command.length > i; i++) {
+    //             sum += Number(command[i]);
+    //         }
 
-            message.channel.send("Those numbers multiply to " + product);
-        }
-        if (command[0] == "==sqrt") {
-            var sqrt = 0;
+    //         message.channel.send("Those numbers add up to " + sum);
+    //     }
+    //     if (command[0] == "==*") {
+    //         var product = 1;
 
-            if (command[1]) {
-                sqrt = Math.sqrt(Number(command[1]));
-            }
+    //         for (var i = 1; command.length > i; i++) {
+    //             product *= Number(command[i]);
+    //         }
 
-            message.channel.send("The square root of that number is " + sqrt);
-        }
-        if (command[0] == "==madtanks") {
-            var sqrt = 0;
+    //         message.channel.send("Those numbers multiply to " + product);
+    //     }
+    //     if (command[0] == "==sqrt") {
+    //         var sqrt = 0;
 
-            if (command[1]) {
-                sqrt = Math.sqrt(Number(command[1]));
-            }
+    //         if (command[1]) {
+    //             sqrt = Math.sqrt(Number(command[1]));
+    //         }
 
-            message.channel.send('Paste the following code into your browser console to turn all diep tanks into madman emojis: \n \n `var ctx=document.getElementById("canvas").getContext("2d");var madman=new Image();madman.src="https://discordemoji.com/assets/emoji/Themadman.png";ctx.arc=function(x,y,r){ctx.drawImage(madman,x-r,y-r,r*2,r*2)}`');
-        }
-        if (command[0] == "==balance") {
-            userdata = require('./discordbot/userdata.json');
-            console.log(userdata[message.author.id] === undefined);
-            if (userdata[message.author.id] !== undefined) {
-                message.channel.send("<@" + message.author.id + ">'s balance: " + userdata[message.author.id])
-            } else {
-                writeToBalance(message.author.id, 1);
-                message.channel.send("<@" + message.author.id + ">'s balance: " + userdata[message.author.id])
-            }
-        }
-        if (command[0] == "==work") {
-            userdata = require('./discordbot/userdata.json');
-            console.log(userdata[message.author.id] === undefined);
-            if (userdata[message.author.id] !== undefined) {
-                writeToBalance(message.author.id, ++userdata[message.author.id])
-                message.channel.send("<@" + message.author.id + ">'s balance is now: " + userdata[message.author.id])
-            } else {
-                message.channel.send("You don't have an account! Type `==balance` to get an account.")
-            }
-        }
-        if (command[0] == "==collect") {
-            var index_to_remove = false;
-            collects.forEach(function (e, i) {
-                if (e.channel == message.channel.id) {
-                    index_to_remove = i;
-                    userdata = require('./discordbot/userdata.json');
-                    if (userdata[message.author.id] !== undefined) {
-                        userdata[message.author.id] += e.amount;
-                        writeToBalance(message.author.id, userdata[message.author.id])
-                        message.channel.send("<@" + message.author.id + "> successfully collected the... thing... I guess? Their balance is now: " + userdata[message.author.id])
-                    } else {
-                        message.channel.send("You don't have an account! Type `==balance` to get an account.")
-                    }
-                    return;
-                }
-            });
-            collects.splice(index_to_remove, 1);
-        }
-        if (command[0] == "==say") {
-            var cmd2 = "";
+    //         message.channel.send("The square root of that number is " + sqrt);
+    //     }
+    //     if (command[0] == "==madtanks") {
+    //         var sqrt = 0;
 
-            for (var i = 1; command.length > i; i++) {
-                cmd2 += command[i] + " ";
-            }
+    //         if (command[1]) {
+    //             sqrt = Math.sqrt(Number(command[1]));
+    //         }
 
-            message.channel.send(cmd2);
-        }
-        if (command[0] == "==addmessage") {
-            var cmd2 = "";
+    //         message.channel.send('Paste the following code into your browser console to turn all diep tanks into madman emojis: \n \n `var ctx=document.getElementById("canvas").getContext("2d");var madman=new Image();madman.src="https://discordemoji.com/assets/emoji/Themadman.png";ctx.arc=function(x,y,r){ctx.drawImage(madman,x-r,y-r,r*2,r*2)}`');
+    //     }
+    //     if (command[0] == "==balance") {
+    //         userdata = require('./discordbot/userdata.json');
+    //         console.log(userdata[message.author.id] === undefined);
+    //         if (userdata[message.author.id] !== undefined) {
+    //             message.channel.send("<@" + message.author.id + ">'s balance: " + userdata[message.author.id])
+    //         } else {
+    //             writeToBalance(message.author.id, 1);
+    //             message.channel.send("<@" + message.author.id + ">'s balance: " + userdata[message.author.id])
+    //         }
+    //     }
+    //     if (command[0] == "==work") {
+    //         userdata = require('./discordbot/userdata.json');
+    //         console.log(userdata[message.author.id] === undefined);
+    //         if (userdata[message.author.id] !== undefined) {
+    //             writeToBalance(message.author.id, ++userdata[message.author.id])
+    //             message.channel.send("<@" + message.author.id + ">'s balance is now: " + userdata[message.author.id])
+    //         } else {
+    //             message.channel.send("You don't have an account! Type `==balance` to get an account.")
+    //         }
+    //     }
+    //     if (command[0] == "==collect") {
+    //         var index_to_remove = false;
+    //         collects.forEach(function (e, i) {
+    //             if (e.channel == message.channel.id) {
+    //                 index_to_remove = i;
+    //                 userdata = require('./discordbot/userdata.json');
+    //                 if (userdata[message.author.id] !== undefined) {
+    //                     userdata[message.author.id] += e.amount;
+    //                     writeToBalance(message.author.id, userdata[message.author.id])
+    //                     message.channel.send("<@" + message.author.id + "> successfully collected the... thing... I guess? Their balance is now: " + userdata[message.author.id])
+    //                 } else {
+    //                     message.channel.send("You don't have an account! Type `==balance` to get an account.")
+    //                 }
+    //                 return;
+    //             }
+    //         });
+    //         collects.splice(index_to_remove, 1);
+    //     }
+    //     if (command[0] == "==say") {
+    //         var cmd2 = "";
 
-            for (var i = 1; command.length > i; i++) {
-                cmd2 += command[i] + " ";
-            }
-            if (writeToMessageBoard(cmd2)) {
-                message.channel.send("Successfully Added");
-            } else {
-                message.channel.send("You're doing this too fast. Wait " + Math.round(10 -  (new Date().getTime() - msgBoardCoolDown) / 1000) + " seconds.");
-            }
-        }
-        if (command[0] == "==stackoverflow") {
-            var cmd2 = "";
+    //         for (var i = 1; command.length > i; i++) {
+    //             cmd2 += command[i] + " ";
+    //         }
 
-            for (var i = 1; command.length > i; i++) {
-                cmd2 += command[i] + " ";
-            }
-            request({ url: 'https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&q=' + cmd2 + '&site=stackoverflow', gzip: true }, function (error, response, body) {
-                if (JSON.parse(body).items.length > 0) {
-                    message.channel.send("<@" + message.author.id + "> " + JSON.parse(body).items[0].link);
-                } else {
-                    message.channel.send("<@" + message.author.id + "> " + "Found nothing on StackOverflow.");
-                }
-            });
-        }
-        if (command[0] == "==help") {
-            message.channel.send(splitNewLine([
-                "Commands (all commands begin with `==`, and following arguments are separated by spaces):",
-                "`+`: Adds all following numbers together.",
-                "`*`: Multiplies all following numbers together.",
-                "`sqrt`: Returns the square root of the following number.",
-                "`madtanks`: Get the madtanks script (turns diep tanks into madman emojis).",
-                "`balance`: Check your adasbucks balance.",
-                "`addmessage`: Adds a message to the global message board, which can be found here: http://50.39.110.171:42069/discordbot/index.html",
-                "`stackoverflow`: Searches for the following text on stackoverflow.",
-                "`ship`: Ships two or more users (or really any text phrases).",
-                "`say`: Says the following text."
-            ]));
-        }
-        if (command[0] == "==eval") {
-            var cmd2 = "";
+    //         message.channel.send(cmd2);
+    //     }
+    //     if (command[0] == "==addmessage") {
+    //         var cmd2 = "";
 
-            for (var i = 1; command.length > i; i++) {
-                cmd2 += command[i] + " ";
-            }
-            if (message.author.id == 192454337958641664) {
-                eval(cmd2);
-            } else {
-                message.channel.send("<@192454337958641664> you do it");
-            }
-        }
-        if (command[0] == "==ship") {
-            if (command.length >= 3) {
-            var ship_score = 0;
-                for (var i2 = 1; command.length > i2; i2++) {
-                    for (var i = 0; command[i2].length > i; i++) {
-                        ship_score += command[i2].charCodeAt(i);
-                    }
-                }
-            }
-            if (hardcoded_100(command)) {
-                ship_score = 100;
-            } else {
-                ship_score %= 100;
-            }
-            var shipmsg = "";
-            for (var i = 1; command.length > i; i++) {
-                shipmsg += command[i];
-                if (i != command.length - 1) {
-                    shipmsg += " x ";
-                }
-            }
-            message.channel.send(shipmsg + ": \nScore: " + ship_score + "%");
-        }
-    }
-    if (false && /\x3f$/.test(message) && channelID != 358671241059762177) {
-        request({ url: 'https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&q=' + message + '&site=stackoverflow', gzip: true }, function (error, response, body) {
-            if (JSON.parse(body).items.length > 0) {
-                bot.sendMessage({
-                    to: channelID,
-                    message: "<@" + message.author.id + "> " + JSON.parse(body).items[0].link
-                });
-            } else {
-                bot.sendMessage({
-                    to: channelID,
-                    message: "<@" + message.author.id + "> " + "Found nothing on StackOverflow. Your question sucks ass."
-                });
-            }
-          });
-    }
+    //         for (var i = 1; command.length > i; i++) {
+    //             cmd2 += command[i] + " ";
+    //         }
+    //         if (writeToMessageBoard(cmd2)) {
+    //             message.channel.send("Successfully Added");
+    //         } else {
+    //             message.channel.send("You're doing this too fast. Wait " + Math.round(10 -  (new Date().getTime() - msgBoardCoolDown) / 1000) + " seconds.");
+    //         }
+    //     }
+    //     if (command[0] == "==stackoverflow") {
+    //         var cmd2 = "";
+
+    //         for (var i = 1; command.length > i; i++) {
+    //             cmd2 += command[i] + " ";
+    //         }
+    //         request({ url: 'https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&q=' + cmd2 + '&site=stackoverflow', gzip: true }, function (error, response, body) {
+    //             if (JSON.parse(body).items.length > 0) {
+    //                 message.channel.send("<@" + message.author.id + "> " + JSON.parse(body).items[0].link);
+    //             } else {
+    //                 message.channel.send("<@" + message.author.id + "> " + "Found nothing on StackOverflow.");
+    //             }
+    //         });
+    //     }
+    //     if (command[0] == "==help") {
+    //         message.channel.send(splitNewLine([
+    //             "Commands (all commands begin with `==`, and following arguments are separated by spaces):",
+    //             "`+`: Adds all following numbers together.",
+    //             "`*`: Multiplies all following numbers together.",
+    //             "`sqrt`: Returns the square root of the following number.",
+    //             "`madtanks`: Get the madtanks script (turns diep tanks into madman emojis).",
+    //             "`balance`: Check your adasbucks balance.",
+    //             "`addmessage`: Adds a message to the global message board, which can be found here: http://50.39.110.171:42069/discordbot/index.html",
+    //             "`stackoverflow`: Searches for the following text on stackoverflow.",
+    //             "`ship`: Ships two or more users (or really any text phrases).",
+    //             "`say`: Says the following text."
+    //         ]));
+    //     }
+    //     if (command[0] == "==eval") {
+    //         var cmd2 = "";
+
+    //         for (var i = 1; command.length > i; i++) {
+    //             cmd2 += command[i] + " ";
+    //         }
+    //         if (message.author.id == 192454337958641664) {
+    //             eval(cmd2);
+    //         } else {
+    //             message.channel.send("<@192454337958641664> you do it");
+    //         }
+    //     }
+    //     if (command[0] == "==ship") {
+    //         if (command.length >= 3) {
+    //         var ship_score = 0;
+    //             for (var i2 = 1; command.length > i2; i2++) {
+    //                 for (var i = 0; command[i2].length > i; i++) {
+    //                     ship_score += command[i2].charCodeAt(i);
+    //                 }
+    //             }
+    //         }
+    //         if (hardcoded_100(command)) {
+    //             ship_score = 100;
+    //         } else {
+    //             ship_score %= 100;
+    //         }
+    //         var shipmsg = "";
+    //         for (var i = 1; command.length > i; i++) {
+    //             shipmsg += command[i];
+    //             if (i != command.length - 1) {
+    //                 shipmsg += " x ";
+    //             }
+    //         }
+    //         message.channel.send(shipmsg + ": \nScore: " + ship_score + "%");
+    //     }
+    // }
+    // if (false && /\x3f$/.test(message) && channelID != 358671241059762177) {
+    //     request({ url: 'https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&q=' + message + '&site=stackoverflow', gzip: true }, function (error, response, body) {
+    //         if (JSON.parse(body).items.length > 0) {
+    //             bot.sendMessage({
+    //                 to: channelID,
+    //                 message: "<@" + message.author.id + "> " + JSON.parse(body).items[0].link
+    //             });
+    //         } else {
+    //             bot.sendMessage({
+    //                 to: channelID,
+    //                 message: "<@" + message.author.id + "> " + "Found nothing on StackOverflow. Your question sucks ass."
+    //             });
+    //         }
+    //       });
+    // }
 });
