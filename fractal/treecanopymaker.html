@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            * {
+                font-family: "Courier New";
+            }
+
+            canvas {
+                top: 0px;
+                left: 0px;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+
+            #controls {
+                top: 0px;
+                left: 0px;
+                z-index: 2;
+                background: #00000077;
+                position: absolute;
+                width: 300px;
+                padding: 16px;
+            }
+
+            input, button {
+                background: Black;
+                border: 2px solid White;
+                color: White;
+            }
+
+            input {
+                width: 64px;
+            }
+
+            p {
+                color: White;
+                margin: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="controls">
+            <p>X Position: <input type="number" value="960"></p>
+            <p>Y Position: <input type="number" value="824"></p>
+            <p>Starting Direction: <input type="number" value="-1.57079632679"></p>
+            <p>Starting Magnitude: <input type="number" value="250"></p>
+            <p>Branch 1 Direction: <input type="number" value="5.8"></p>
+            <p>Branch 1 Magnitude: <input type="number" value="0.82"></p>
+            <p>Branch 2 Direction: <input type="number" value="3"></p>
+            <p>Branch 2 Magnitude: <input type="number" value="0.68"></p>
+            <p>Depth: <input type="number" value="23"></p>
+            <p>Color Multiplier: <input type="number" value="8"></p>
+            <p>Canvas Width: <input type="number" value="1920"></p>
+            <p>Canvas Height: <input type="number" value="1080"></p>
+            <button onclick="generate();">Generate Fractal</button>
+            <p id="progress"></p>
+        </div>
+        <canvas id="canvas" width="1920" height="1080"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+            
+            var ctrls = document.getElementById("controls").children;
+
+            function gc(num) {
+                return Number(ctrls[num].firstElementChild.value);
+            }
+
+            var tc = 0;
+            function tree(x, y, d, m, rule, depth) {
+                tc++;
+                var w = Math.cos(d) * m;
+                var h = Math.sin(d) * m;
+                if (depth > 0) {
+                    rule.forEach(function (e) {
+                    if (tc % 500000 != 0) {
+                        tree(x + w, y + h, d + e[0], m * e[1], rule, depth - 1);
+                    } else {
+                        setTimeout(function () { tree(x + w, y + h, d + e[0], m * e[1], rule, depth - 1); }, 0)
+                    }
+                });
+                } else {
+                	var index = Math.floor(y + h) * 4 * c.width + Math.floor(x + w) * 4
+                    if (dt[index] < 255) {
+                        dt[index] += t.cm;
+                    } else if (dt[Math.floor(y) * 4 * c.width + Math.floor(x) * 4 + 1] < 255) {
+                        dt[index + 1] += t.cm;
+                    } else {
+                        dt[index + 2] += t.cm;
+                    }
+                }
+            }
+            var t = {
+                x: 960,
+                y: 824,
+                d: -Math.PI / 2,
+                m: 250,
+                rule: [[ 5.8, 0.82 ], [ 3, 0.68 ]],
+                depth: 23,
+                cm: 8
+            };
+            var l = 0;
+            var data, dt;
+
+            function generate() {
+                t = {
+                    x: gc(0),
+                    y: gc(1),
+                    d: gc(2),
+                    m: gc(3),
+                    rule: [[gc(4), gc(5)], [gc(6), gc(7)]],
+                    depth: gc(8),
+                    cm: gc(9)
+                };
+                c.width = gc(10);
+                c.height = gc(11);
+                tc = 0;
+                ctx.fillRect(0, 0, c.width, c.width);
+                data = ctx.getImageData(0, 0, c.width, c.width);
+                dt = data.data;
+                tree(t.x, t.y, t.d, t.m, t.rule, t.depth);
+                loop();
+            }
+
+            var progress = document.getElementById("progress");
+            function loop() {
+                progress.innerHTML = "Progress: " + Math.floor(100 * tc / (Math.pow(2, t.depth + 1) - 1)) + "%";
+                ctx.putImageData(data, 0, 0);
+                l++;
+                if (tc < Math.pow(2, t.depth + 1) - 1) {
+                    requestAnimationFrame(loop);
+                }
+            }
+        </script>
+    </body>
+</html>

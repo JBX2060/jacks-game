@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <canvas width="4096" height="4096" id="canvas"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+            
+            ctx.fillStyle = "White";
+            ctx.fillRect(0, 0, c.width, c.height)
+            ctx.fillStyle = "Black";
+
+            var t = 0;
+
+            function loop() {
+                //  ctx.fillStyle = "hsl(" + t + ", 100%, 50%)";
+                t++;
+                for (var i = 1; 64 > i; i++) {
+                    for (var i2 = 1; 64 > i2; i2++) {
+                        ctx.fillRect(-32 + 64 * i + 31 * Math.cos(t * Math.PI / 1007 * i), -32 + 64 * i2 + 31 * Math.sin(t * Math.PI / 1007 * i2), 1, 1);
+                    }   
+                }
+                requestAnimationFrame(loop);
+            }
+            loop();
+        </script>
+    </body>
+</html>
