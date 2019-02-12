@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            p {
+                font-size: 288px;
+            }
+
+            canvas {
+                top: 0px;
+                left: 0px;
+                position: absolute;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" width="1920" height="1080"></canvas>
+        <p id="progress"></p>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+            
+            var tc = 0;
+
+            function tree(x, y, z, d, d2, m, rule, depth, tx, ty, tx2, ty2) {
+                tc++;
+                var w = Math.cos(d) * m * Math.cos(d2);
+                var h = Math.sin(d) * m * Math.cos(d2);
+                var zw = Math.sin(d2) * m;
+                if (depth > 0) {
+                    rule.forEach(function (e) {
+                        tree(x + w, y + h, z + zw, d + e[0], d2 + e[2], m * e[1], rule, depth - 1);
+                    });
+                }// else {
+                    x -= c.width / 2;
+                    z -= 512;
+                    var mag = Math.sqrt(x * x + z * z);
+                    var dir = Math.atan2(z, x) + l / 140;
+                    x = Math.cos(dir) * mag + c.width / 2;
+                    z = Math.sin(dir) * mag + 512;
+                    
+                    if (z > 0) {
+                        var mag = Math.sqrt(w * w + zw * zw);
+                        var dir = Math.atan2(zw, w) + l / 140;
+                        w = Math.cos(dir) * mag;
+                        zw = Math.sin(dir) * mag;
+
+                        tx2 = (x + w - c.width / 2) * 512 / (z + zw) + c.width / 2;
+                        ty2 = (y + h - c.height / 2) * 512 / (z + zw) + c.height / 2;
+                        var index = ~~(ty2) * 4 * c.width + ~~(tx2) * 4;
+                        if (dt[index] < 255) {
+                            dt[index] += 64;
+                        } else if (dt[index + 1] < 255) {
+                            dt[index + 1] += 64;
+                        } else {
+                            dt[index + 2] += 64;
+                        }
+                    }
+                    //b.push({ z, tx, ty, tx2, ty2});
+                //}
+            }
+
+            var t = {
+                x: c.width / 2,
+                y: 924,
+                d: -Math.PI / 2,
+                m: 160,
+                rule: [[-1 * Math.PI / 9, 0.8, 0 * Math.PI / 9], [1 * Math.PI / 9, 0.8, -1 * Math.PI / 9], [0, 0.8, -1 * Math.PI / 9]],
+                depth: 12
+            };
+
+            var l = 0;
+
+            var data, dt;
+            
+            // ctx.fillStyle = "Black";
+            // ctx.fillRect(0, 0, c.width, c.width);
+            // data = ctx.getImageData(0, 0, c.width, c.width);
+            // dt = data.data;
+            
+            // tree(t.x, t.y, 512, t.d, 0, t.m, t.rule, t.depth);
+
+            var playback = new Uint8Array(8294400 * 64);
+
+            var b = [];
+
+            var offsets = [];
+            for (var i = 0; 6 > i; i++) {
+                offsets.push(Infinity);
+            }
+            for (var i = 0; 6 > i; i++) {
+                offsets.push(Math.random() * Math.PI * 2);
+            }
+
+            var progress = document.getElementById("progress");
+            function loop() {
+                tc = 0;
+                ctx.fillStyle = "Black";
+                ctx.fillRect(0, 0, c.width, c.width);
+                data = ctx.getImageData(0, 0, c.width, c.width);
+                dt = data.data;
+                // ctx.strokeStyle = "White";
+                // b = [];
+                tree(t.x, t.y, 512, t.d, 0, t.m, t.rule, t.depth);
+                // b.sort(function (a, b) {
+                //     return b.z - a.z;
+                // });
+                // b.forEach(function (e) {
+                //     ctx.strokeStyle = "hsl(" + e.z + ", 100%, " + (20000 / e.z) + "%)";
+                //     ctx.lineWidth = 750 / e.z;
+                //     ctx.beginPath();
+                //     ctx.moveTo(e.tx, e.ty)
+                //     ctx.lineTo(e.tx2, e.ty2);
+                //     ctx.stroke();
+                // })
+
+                ctx.putImageData(data, 0, 0);
+                l++;
+                t.rule[0][2] = Math.sin(l / offsets[0] + offsets[6]) * 0.5;
+                t.rule[1][2] = Math.sin(l / offsets[1] + offsets[7]) * 0.5;
+                t.rule[2][2] = Math.sin(l / offsets[2] + offsets[8]) * 0.5;
+                t.rule[0][0] = Math.sin(l / offsets[3] + offsets[9]) * 0.5;
+                t.rule[1][0] = Math.sin(l / offsets[4] + offsets[10]) * 0.5;
+                t.rule[2][0] = Math.sin(l / offsets[5] + offsets[11]) * 0.5;
+                requestAnimationFrame(loop);
+            }
+            loop();
+        </script>
+    </body>
+</html>

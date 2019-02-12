@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            body {
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" width="1920" height="1080"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+            
+            var tc = 0;
+
+            var seed = 1;
+            function random() {
+                var x = Math.sin(seed++) * 10000;
+                return x - Math.floor(x);
+            }
+
+            function tree(x, y, d, m, rule, depth) {
+                d += Math.sin(random() * 2 + l / 75 + depth / 4) * 0.15 * 5 / depth;
+                m *= random() * 0.5 + 0.5;
+                var w = Math.cos(d) * m;
+                var h = Math.sin(d) * m;
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + w, y + h);
+                if (depth > 0) {
+                    rule.forEach(function (e) {
+                        if (random() < 0.95) {
+                            tree(x + w, y + h, d + e[0], m * e[1], rule, depth - 1);
+                        }
+                    });
+                }
+            }
+
+            var t = {
+                x: 512,
+                y: 512,
+                d: -Math.PI / 2,
+                m: 100,
+                rule: [[-1 * Math.PI / 9, 1], [1 * Math.PI / 9, 1]],
+                depth: 8
+            };
+
+            var l = 0;
+
+            var o = [];
+
+
+            function Tree(x, y, d, m, rule, depth, seedstart, z) {
+                this.type = "tree";
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.d = d;
+                this.m = m;
+                this.rule = rule;
+                this.depth = depth;
+                this.seedstart = seedstart;
+                this.draw = function () {
+                	ctx.strokeStyle = "hsl(0, 0%, " + (this.z * 22) + "%)";
+                    seed = this.seedstart;
+                    ctx.beginPath();
+                    tree(this.x, this.y, this.d, this.m, this.rule, this.depth);
+                    ctx.stroke();
+                }
+            }
+
+            function Circle(x, y, r, z) {
+                this.type = "circle";
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.r = r;
+                this.draw = function () {
+                	ctx.strokeStyle = "hsl(0, 0%, " + (this.z * 22) + "%)";
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                    ctx.fillStyle = "White";
+                    ctx.fill();
+                    ctx.stroke();
+                }
+            }
+
+            //o.push(new Tree(512, 812, -Math.PI / 2, 100, [[-1 * Math.PI / 9, 1], [1 * Math.PI / 9, 1]], 8, 1));
+            //o.push(new Tree(1112, 812, -Math.PI / 2, 100, [[-1 * Math.PI / 9, 1], [1 * Math.PI / 9, 1]], 8, 2341));
+
+            //o.push(new Circle(300, 2180, 1400));
+            //o.push(new Circle(1500, 2360, 1600));
+            
+            function rand(x) {
+            	return Math.random() * x;
+            }
+            
+            var ypos = 1500;
+           	
+            for (var i = 0; 24 > i; i++) {
+            	var coords = {
+                	x: rand(5760), 
+                    y: ypos,
+                    z: 4 - i / 8,
+                    r: 1000,
+                    t: Math.floor(rand(4)) + 2
+                };
+                ypos += rand(5) + 10;
+                for (var i2 = 0; coords.t > i2; i2++) {
+                	var dir = Math.random() * 1.5 - 0.75 - Math.PI * 0.5;
+                	o.push(new Tree(coords.x + Math.cos(dir) * coords.r, coords.y + Math.sin(dir) * coords.r, dir, (rand(150) + 150) / coords.z, [[-rand(0.5) - 0.15, 1], [rand(0.5) + 0.15, 1]], Math.floor(Math.pow(Math.random(), 2) * 3 + 6), Math.floor(rand(1000000)), coords.z));
+                }
+                o.push(new Circle(coords.x, coords.y, coords.r, coords.z));
+            }
+            
+            function fixScreen() {
+                c.style.position = "absolute";
+                if (window.innerWidth * (9 / 16) > window.innerHeight) {
+                    c.width = window.innerHeight * (16 / 9);
+                    c.height = window.innerHeight;
+                    c.style.top = "0px";
+                    c.style.left = (window.innerWidth * (9 / 16) - window.innerHeight) + "px";
+                } else {
+                    c.width = window.innerWidth;
+                    c.height = window.innerWidth * (9 / 16);
+                    c.style.top = -(window.innerWidth * (9 / 16) - window.innerHeight) / 2 + "px";
+                    c.style.left = "0px";
+                }
+            }
+
+            function fixScreen2() {
+                c.style.position = "absolute";
+                if (window.innerWidth * (9 / 16) > window.innerHeight) {
+                    ctx.scale(window.innerHeight / 1080, window.innerHeight / 1080);
+                    ctx.lineWidth = 1080 / window.innerHeight;
+                } else {
+                    ctx.scale(window.innerWidth / 1920, window.innerWidth / 1920);
+                    ctx.lineWidth = 1920 / window.innerWidth;
+                }
+            }
+
+            function gradients() {
+                var grd = ctx.createLinearGradient(0, 0, 200, 0);
+                grd.addColorStop(0, "#FFFFFF");
+                grd.addColorStop(1, "#FFFFFF00");
+                ctx.fillStyle = grd;
+                ctx.fillRect(0, 0, 200, 1080);
+                grd = ctx.createLinearGradient(1920, 0, 1720, 0);
+                grd.addColorStop(0, "#FFFFFF");
+                grd.addColorStop(1, "#FFFFFF00");
+                ctx.fillStyle = grd;
+                ctx.fillRect(1720, 0, 200, 1080);
+                // grd = ctx.createLinearGradient(0, 0, 0, 200);
+                // grd.addColorStop(0, "#FFFFFF");
+                // grd.addColorStop(1, "#FFFFFF00");
+                // ctx.fillStyle = grd;
+                // ctx.fillRect(0, 0, 1920, 200);
+                // grd = ctx.createLinearGradient(1080, 0, 880, 0);
+                // grd.addColorStop(0, "#FFFFFF");
+                // grd.addColorStop(1, "#FFFFFF00");
+                // ctx.fillStyle = grd;
+                // ctx.fillRect(0, 0, 1920, 200);
+            }
+
+            function loop() {
+                fixScreen();
+                ctx.save();
+                fixScreen2();
+                o.forEach(function (e) {
+                    e.draw();
+                    e.x -= 1 / e.z;
+                    if (e.x < -1920) {
+                        e.x = 3840;
+                    }
+                });
+                gradients();
+                ctx.restore();
+                l++;
+                requestAnimationFrame(loop);
+            }
+            loop();
+        </script>
+    </body>
+</html>

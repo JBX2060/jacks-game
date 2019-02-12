@@ -6,6 +6,10 @@
                 font-family: "Courier New";
             }
 
+            body {
+                background: #000000;
+            }
+
             canvas {
                 top: 0px;
                 left: 0px;
@@ -34,6 +38,10 @@
                 width: 64px;
             }
 
+            .lowwidth {
+                width: 16px;
+            }
+
             p {
                 color: White;
                 margin: 8px;
@@ -54,8 +62,11 @@
             <p>Color Multiplier: <input type="number" value="8"></p>
             <p>Canvas Width: <input type="number" value="1920"></p>
             <p>Canvas Height: <input type="number" value="1080"></p>
+            <p>Use Degrees: <input type="checkbox" class="lowwidth"></p>
+            <p>Steps per Frame: <input type="number" value="500000"></p>
             <button onclick="generate();">Generate Fractal</button>
             <p id="progress"></p>
+            <p>NOTE: The canvas will automatically resize and adjust its aspect ratio to match the screen. This is only a visual change. The actual image resolution will stay the same.</p>
         </div>
         <canvas id="canvas" width="1920" height="1080"></canvas>
         <script>
@@ -65,7 +76,13 @@
             var ctrls = document.getElementById("controls").children;
 
             function gc(num) {
-                return Number(ctrls[num].firstElementChild.value);
+                var input = ctrls[num].firstElementChild;
+                switch (input.type) {
+                    case "number":
+                        return Number(input.value);
+                    case "checkbox": 
+                        return input.checked;//return (input.value == "on") ? true : false;
+                }
             }
 
             var tc = 0;
@@ -75,7 +92,7 @@
                 var h = Math.sin(d) * m;
                 if (depth > 0) {
                     rule.forEach(function (e) {
-                    if (tc % 500000 != 0) {
+                    if (tc % t.step != 0) {
                         tree(x + w, y + h, d + e[0], m * e[1], rule, depth - 1);
                     } else {
                         setTimeout(function () { tree(x + w, y + h, d + e[0], m * e[1], rule, depth - 1); }, 0)
@@ -99,21 +116,36 @@
                 m: 250,
                 rule: [[ 5.8, 0.82 ], [ 3, 0.68 ]],
                 depth: 23,
-                cm: 8
+                cm: 8,
+                step: 500000
             };
             var l = 0;
             var data, dt;
 
             function generate() {
-                t = {
-                    x: gc(0),
-                    y: gc(1),
-                    d: gc(2),
-                    m: gc(3),
-                    rule: [[gc(4), gc(5)], [gc(6), gc(7)]],
-                    depth: gc(8),
-                    cm: gc(9)
-                };
+                if (!gc(12)) {
+                    t = {
+                        x: gc(0),
+                        y: gc(1),
+                        d: gc(2),
+                        m: gc(3),
+                        rule: [[gc(4), gc(5)], [gc(6), gc(7)]],
+                        depth: gc(8),
+                        cm: gc(9),
+                        step: gc(13)
+                    };
+                } else {
+                    t = {
+                        x: gc(0),
+                        y: gc(1),
+                        d: gc(2) * (Math.PI / 180),
+                        m: gc(3),
+                        rule: [[gc(4) * (Math.PI / 180), gc(5)], [gc(6) * (Math.PI / 180), gc(7)]],
+                        depth: gc(8),
+                        cm: gc(9),
+                        step: gc(13)
+                    };
+                }
                 c.width = gc(10);
                 c.height = gc(11);
                 tc = 0;
@@ -129,7 +161,7 @@
                 progress.innerHTML = "Progress: " + Math.floor(100 * tc / (Math.pow(2, t.depth + 1) - 1)) + "%";
                 ctx.putImageData(data, 0, 0);
                 l++;
-                if (tc < Math.pow(2, t.depth + 1) - 1) {
+                if (tc < Math.pow(2, t.depth + 1)) {
                     requestAnimationFrame(loop);
                 }
             }
