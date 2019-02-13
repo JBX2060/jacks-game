@@ -29,17 +29,6 @@ function between(value, min, max) {
     return false;
 }
 
-function collide(rects, obj, w, h) {
-    var ls = [];
-    rects.forEach(function (e) {
-        ls.push(new Segment(e.x - w / 2, e.y - h / 2, e.x + e.w + w / 2, e.y - h / 2));
-        ls.push(new Segment(e.x - w / 2, e.y - h / 2, e.x - w / 2, e.y + e.h + h / 2));
-        ls.push(new Segment(e.x + e.w + w / 2, e.y - h / 2, e.x + e.w + w / 2, e.y + e.h + w / 2));
-        ls.push(new Segment(e.x - w / 2, e.y + e.h + h / 2, e.x + e.w + w / 2, e.y + e.h + w / 2));
-    });
-    
-}
-
 //line segment class
 class Segment {
     constructor(sx, sy, ex, ey) {
@@ -56,25 +45,39 @@ class Segment {
         return false;
     }
     
-    intersect(obj, x, y, dx, dy) {
+    intersect(obj) {
     	if (this.horizontal()) {
-            if (between(x, this.sx, this.ex) || between(x + dx, this.sx, this.ex)) {
-                if (Math.sign(y - this.sy) != Math.sign(y + dy - this.sy)) {
-                
-                } else {
+            if (between(obj.x, this.sx, this.ex) || between(obj.x + obj.dx, this.sx, this.ex)) {
+                //from bottom
+                if (Math.sign(obj.y - this.sy) > Math.sign(obj.y + obj.dy - this.sy)) {
 
+                //from top
+                } else if (Math.sign(obj.y - this.sy) < Math.sign(obj.y + obj.dy - this.sy)) {
+                    return {
+                        y: this.sy + 0.00001,
+                        x: (this.sy - obj.y) * ()
+                    }
                 }
             }
         } else {
-            if (between(y, this.sy, this.ey) || between(y + dy, this.sy, this.ey)) {
-                if (Math.sign(x - this.sx) != Math.sign(x + dx - this.sx)) {
+            if (between(obj.y, this.sy, this.ey) || between(obj.y + obj.dy, this.sy, this.ey)) {
+                //from right
+                if (Math.sign(obj.x - this.sx) > Math.sign(obj.x + obj.dx - this.sx)) {
 
-                } else {
+                //from left
+                } else if (Math.sign(obj.y - this.sy) < Math.sign(obj.y + obj.dy - this.sy)) {
 
                 }
             }
         }
     }
+    
+    /*intersectR(obj, x, y, w, h) {
+    	this.intersect(obj, obj.x + x, obj.y + y, obj.dx, obj.dy, w / 2, h / 2);
+        this.intersect(obj, obj.x + x + w, obj.y + y, obj.dx, obj.dy, -w / 2, h / 2);
+        this.intersect(obj, obj.x + x, obj.y + y + h, obj.dx, obj.dy, w / 2, -h / 2);
+        this.intersect(obj, obj.x + x + w, obj.y + y + h, obj.dx, obj.dy, -w / 2, -h / 2);
+    }*/
     
     get dist() {
         return Math.sqrt(Math.pow(this.sx - this.ex, 2) + Math.pow(this.sy - this.ey, 2));
