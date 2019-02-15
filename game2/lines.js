@@ -7,6 +7,30 @@ document.addEventListener("keyup", function(e) {
     k[e.key] = false;
 });
 
+//mouse info
+var m = { m: [false, false, false], md: [false, false, false], x: 0, y: 0, px: 0, py: 0, w: 0, dx: 0, dy: 0 };
+
+//when the mouse moves
+document.addEventListener("mousemove", function (e) {
+    m.px = m.x;
+    m.py = m.y;
+    m.x = e.clientX * (1920 / window.innerWidth);
+    m.y = e.clientY * (1920 / window.innerWidth);
+    m.dx = e.movementX;
+    m.dy = e.movementY;
+}, false);
+
+//when the mouse is clicked
+document.addEventListener("mousedown", function (e) {
+    m.m[e.which - 1] = true;
+    m.md[e.which - 1] = true;
+}, false);
+document.addEventListener("mouseup", function (e) {
+    m.m[e.which - 1] = false;
+    m.md[e.which - 1] = false;
+}, false);
+
+
 //clamp function
 function clamp(value, min, max) {
     if (value > max) {
@@ -367,20 +391,7 @@ var lvdims = {
     x: 0,
     y: 0
 }
-getImg("test2.png", function(image) {
-    mapimage = image;
-    lvdims = {
-        x: image.width,
-        y: image.height
-    };
-    dataFromImg("test.png", test, function () {
-        test = test[0]
-        lines = imgToMap(test);
-        lines2 = imgToMap_2(test);
-        squares = imgToMap1(test);
-        loop();
-    });
-});
+
 
 function imgToMap(img) {
     return imgToMap4(imgToMap3(imgToMap2(imgToMap1(test), img.width, img.height), img.width, img.height));
@@ -390,10 +401,49 @@ function imgToMap_2(img) {
     return imgToMap4(imgToMap3Simple(imgToMap2(imgToMap1(test), img.width, img.height), img.width, img.height));
 }
 
-function getImg(url, callback) {
+function getImg(url, callback, num) {
     var img = new Image();
     img.src = url;
     img.onload = function () {
-        callback(img);
+        callback(img, num);
     }
 }
+
+function bothCanvas(func) {
+    ctx = context2;
+    func();
+    ctx = context;
+    func();
+}
+
+var loadthese = ["playerbody.png", "playerhead.png"];
+var imgs = Array(loadthese.length);
+var loadedAssets = 0;
+for (var i = 0; loadthese.length > i; i++) {
+    getImg(loadthese[i], function (image, i2) {
+        imgs[i2] = image;
+        loadedAssets++;
+    }, i);
+}
+
+function preloop() {
+    if (loadedAssets == loadthese.length) {
+        getImg("test2.png", function(image) {
+            mapimage = image;
+            lvdims = {
+                x: image.width,
+                y: image.height
+            };
+            dataFromImg("test.png", test, function () {
+                test = test[0]
+                lines = imgToMap(test);
+                lines2 = imgToMap_2(test);
+                squares = imgToMap1(test);
+                loop();
+            });
+        });
+    } else {
+        setTimeout(preloop, 0);
+    }
+}
+preloop();
