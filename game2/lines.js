@@ -1,55 +1,3 @@
-var k = {};
-
-document.addEventListener("keydown", function(e) {
-    k[e.key] = true;
-});
-document.addEventListener("keyup", function(e) {
-    k[e.key] = false;
-});
-
-//mouse info
-var m = { m: [false, false, false], md: [false, false, false], x: 0, y: 0, px: 0, py: 0, w: 0, dx: 0, dy: 0 };
-
-//when the mouse moves
-document.addEventListener("mousemove", function (e) {
-    m.px = m.x;
-    m.py = m.y;
-    m.x = e.clientX * (1920 / window.innerWidth);
-    m.y = e.clientY * (1920 / window.innerWidth);
-    m.dx = e.movementX;
-    m.dy = e.movementY;
-}, false);
-
-//when the mouse is clicked
-document.addEventListener("mousedown", function (e) {
-    m.m[e.which - 1] = true;
-    m.md[e.which - 1] = true;
-}, false);
-document.addEventListener("mouseup", function (e) {
-    m.m[e.which - 1] = false;
-    m.md[e.which - 1] = false;
-}, false);
-
-
-//clamp function
-function clamp(value, min, max) {
-    if (value > max) {
-        return max;
-    } else if (value < min) {
-        return min;
-    }
-    return value;
-}
-
-//test if between
-function between(value, min, max) {
-    return clamp(value, min, max) == value;
-}
-
-function dist(x, y) {
-    return Math.sqrt(x * x + y * y);
-}
-
 function collide(rects, obj, w, h) {
     var ls = [];
     // rects.forEach(function (e) {
@@ -123,11 +71,12 @@ class Rect {
 
 //line segment class
 class Segment {
-    constructor(sx, sy, ex, ey) {
+    constructor(sx, sy, ex, ey, link) {
         this.sx = sx;
         this.sy = sy;
         this.ex = ex;
         this.ey = ey;
+        this.link = link;
     }
 
     horizontal() {
@@ -147,7 +96,8 @@ class Segment {
                         x: obj.x + (this.sy - obj.y) * (obj.dx / obj.dy),
                         dx: obj.dx,
                         dy: -obj.dy,
-                        h: true
+                        h: true,
+                        line: this
                     }
                     //from top
                 } else if (Math.sign(obj.y - this.sy) < Math.sign(obj.y + obj.dy - this.sy)) {
@@ -157,7 +107,8 @@ class Segment {
                         dx: obj.dx,
                         dy: -obj.dy,
                         h: true,
-                        j: true
+                        j: true,
+                        line: this
                     }
                 }
             }
@@ -169,7 +120,8 @@ class Segment {
                         x: this.sx + 0.001,
                         y: obj.y +  (this.sx - obj.x) * (obj.dy / obj.dx),
                         dx: -obj.dx,
-                        dy: obj.dy
+                        dy: obj.dy,
+                        line: this
                     }
                     //from left
                 } else if (Math.sign(obj.x - this.sx) < Math.sign(obj.x + obj.dx - this.sx)) {
@@ -177,7 +129,8 @@ class Segment {
                         x: this.sx - 0.001,
                         y: obj.y +  (this.sx - obj.x) * (obj.dy / obj.dx),
                         dx: -obj.dx,
-                        dy: obj.dy
+                        dy: obj.dy,
+                        line: this
                     }
                 }
             }
@@ -368,82 +321,20 @@ function imgToMap4(arr) {
     return arr;
 }
 
-function dataFromImg(url, ref, callback) {
-    var img = new Image();
-    img.src = url;
-    img.onload = function() {
-        var imagecanvas = document.createElement("canvas");
-        var imagecontext = imagecanvas.getContext("2d");
-        imagecanvas.width = img.width;
-        imagecanvas.height = img.height;
-        imagecontext.drawImage(img, 0, 0);
-        ref.push(imagecontext.getImageData(0, 0, img.width, img.height));
-        callback();
-    }
-}
-
-var test = [];
-var lines;
-var lines2;
-var squares;
-var mapimage;
-var lvdims = {
-    x: 0,
-    y: 0
+function dataFromImage(image) {
+    var imagecanvas = document.createElement("canvas");
+    var imagecontext = imagecanvas.getContext("2d");
+    imagecanvas.width = img.width;
+    imagecanvas.height = img.height;
+    imagecontext.drawImage(img, 0, 0);
+    return imagecontext.getImageData(0, 0, img.width, img.height);
 }
 
 
 function imgToMap(img) {
-    return imgToMap4(imgToMap3(imgToMap2(imgToMap1(test), img.width, img.height), img.width, img.height));
+    return imgToMap4(imgToMap3(imgToMap2(imgToMap1(img), img.width, img.height), img.width, img.height));
 }
 
 function imgToMap_2(img) {
-    return imgToMap4(imgToMap3Simple(imgToMap2(imgToMap1(test), img.width, img.height), img.width, img.height));
+    return imgToMap4(imgToMap3Simple(imgToMap2(imgToMap1(img), img.width, img.height), img.width, img.height));
 }
-
-function getImg(url, callback, num) {
-    var img = new Image();
-    img.src = url;
-    img.onload = function () {
-        callback(img, num);
-    }
-}
-
-function bothCanvas(func) {
-    ctx = context2;
-    func();
-    ctx = context;
-    func();
-}
-
-var loadthese = ["playerbody.png", "playerhead.png"];
-var imgs = Array(loadthese.length);
-var loadedAssets = 0;
-for (var i = 0; loadthese.length > i; i++) {
-    getImg(loadthese[i], function (image, i2) {
-        imgs[i2] = image;
-        loadedAssets++;
-    }, i);
-}
-
-function preloop() {
-    if (loadedAssets == loadthese.length) {
-        getImg("test2.png", function(image) {
-            mapimage = image;
-            lvdims = {
-                x: image.width,
-                y: image.height
-            };
-            dataFromImg("test.png", test, function () {
-                test = test[0]
-                lines = imgToMap(test);
-                lines2 = imgToMap_2(test);
-                squares = imgToMap1(test);
-                loop();
-            });
-        });
-    } else {
-        setTimeout(preloop, 0);
-    }
-}
-preloop();

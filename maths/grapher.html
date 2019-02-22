@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <canvas width="1024" height="1024" id="canvas"></canvas>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+
+            function project(x, y, z) {
+                x /= z / 512;
+                y /= z / 512;
+                x += c.width / 2;
+                y += c.width / 2;
+                return { x, y };
+            }
+
+            function graph(x, y, z, min, max) {
+                var pts = Array(1000);
+                for (var i = 0; 1000 > i; i++) {
+                    pts[i] = project(x(i * 0.01), -y(i * 0.01), z(i * 0.01));
+                }
+                console.log(pts);
+                ctx.beginPath();
+                pts.forEach(function (e) {
+                    ctx.lineTo(e.x, e.y);
+                });
+                ctx.stroke();
+            }
+
+            graph(
+                t => { return Math.cos(t) },
+                t => { return t },
+                t => { return Math.sin(t) + 2}
+            );
+        </script>
+    </body>
+</html>
