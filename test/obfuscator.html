@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <h1>JavaScript Condition Obfuscator</h1>
+        <p>Make horrible, impractically obfuscated JavaScript conditions here! (Warning: This probably won't work correctly unless you use very simple conditions)</p>
+        <p>This was made by <a href="https://adasba.github.io/adasba-portfolio-site/">adasba</a>.</p>
+        <button onclick="whenButtonClicked();">Generate new Obfuscation</button>
+        <p>Condition:</p>
+        <input id="cond" value="true">
+        <p>Replacement Depth:</p>
+        <input id="depth" value="5" type="number">
+        <br>
+        <br>
+        <textarea id="returnCond" style="width: 50%; height: 300px;"></textarea>
+        <textarea id="replaceRules" style="width: 50%; height: 300px;"></textarea>
+        <script>
+
+            // var replace = [
+            //     { rep: ["!false", "(true && true)", "(false || true)", "1", "('f' + 'a' + 'l' + 's' + 'e')", "Boolean(1)"], value: "true" },
+            //     { rep: ["!true", "(true && false)", "(false || false)", "0", "(() => { return false })()", "Boolean(0)"], value: "false" },
+            //     { rep: ["(1 / 2 + 1 / 2)", "(2 - 1)", "(0 + 1)", "(4>>2)", "Number(true)"], value: "1" },
+            //     { rep: ["(Math.pow(5 + 5, 3) + Math.pow(9, 3) - Math.pow(6 + 6, 3) - Math.pow(1, 3))", "(32768 - 32768)", "(0 + 0)", "Number(false)"], value: "0" }
+            // ];
+            
+            //taken from here because i'm extremely lazy and don't want to spend two minutes making an array shuffler https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
+            function shuffle(a) {
+                var j, x, i;
+                for (i = a.length - 1; i > 0; i--) {
+                    j = Math.floor(Math.random() * (i + 1));
+                    x = a[i];
+                    a[i] = a[j];
+                    a[j] = x;
+                }
+                return a;
+            }
+
+            // var replace = [
+            //     { rep: ["!false", "(true && true)", "(false || true)", "Boolean(1)", "!![false].length", "!!'a'.length", "Boolean((true).toString)", "(true == true)", "(1 == 1)", "(0 == 0)", "(true == 1)", "(1 > 0)", "(0 >= 0)"], value: "true" },
+            //     { rep: ["!true", "(true && false)", "(false || false)", "Boolean(0)", "!!Array(0).length", "!!''.length", "Boolean((false).toString)", "(false == true)", "(0 == 1)", "(true === 1)", "(1 < 0)", "(0 >= 1)"], value: "false" },
+            //     { rep: ["Math.sqrt(1)", "((1 + 1) / (-(~(1))))", "Number(true)", "[false].length", "'a'.length", "Math.pow(0, 0)", "(-(~(1) + 1))", "(~(0) - (~(1)))"], value: "1" },
+            //     { rep: ["Math.log(1)", "(1 - (1))", "((1 + 1) - (1 + 1))", "Number(false)", "Array(0).length", "''.length", "(~(-(1)))"], value: "0" }
+            // ];
+
+            // var replace = [
+            //     { rep: ["!false", "(true && true)", "(false || true)", "Boolean(1)", "!![false].length", "!!'a'.length", "Boolean((true).toString)", "(true == true)", "(1 == 1)", "(0 == 0)", "(true == 1)", "(1 > 0)", "(0 >= 0)"], value: "true" },
+            //     { rep: ["!true", "(true && false)", "(false || false)", "Boolean(0)", "!![].length", "!!''.length", "Boolean((false).toString)", "(false == true)", "(0 == 1)", "(true === 1)", "(1 < 0)", "(0 >= 1)"], value: "false" },
+            //     { rep: ["Math.sqrt(1)", "((1 + 1) / (-(~(1))))", "Number(true)", "[false].length", "'a'.length", "Math.pow(0, 0)", "(-(~(1) + 1))", "(~(0) - (~(1)))"], value: "1" },
+            //     { rep: ["Math.log(1)", "(1 - (1))", "((1 + 1) - (1 + 1))", "Number(false)", "[].length", "''.length"], value: "0" }
+            // ];
+
+            var replace = JSON.parse(`[
+{"rep":["!false","(true && true)","(true || false)","(true == true)","(false == false)", "Boolean(1)"],"value":"true"},
+{"rep":["!true","(true && false)","(false || false)","(true == false)","Boolean(0)"],"value":"false"},
+{"rep":["(1 / 1)", "Math.sqrt(1)", "Math.pow(0, 0)", "(1 * 1)", "Number(true)"],"value":"1"},
+{"rep":["(1 - 1)","(0 + 0)","Math.log(1)","(1 * 0)", "Number(false)"],"value":"0"}
+]
+`);
+
+            document.getElementById("replaceRules").innerHTML = JSON.stringify(replace);
+
+            function obfuscateCondition(str, depth) {
+                str = " " + str + " ";
+                for (var i = 0; depth > i; i++) {
+                    replace = shuffle(replace);
+                    replace.forEach(function (e) {
+                        var str2 = str.split(e.value);
+                        var str3 = "";
+                        for (var i2 = 0; str2.length - 1 > i2; i2++) {
+                            str3 += str2[i2];
+                            str3 += e.rep[Math.floor(Math.random() * e.rep.length)];
+                        }
+                        str3 += str2[str2.length - 1];
+                        str = str3;
+                    });
+                }
+                return "!!(" + str + ")";
+            }
+
+            function whenButtonClicked() {
+                replace = JSON.parse(document.getElementById("replaceRules").value);
+                document.getElementById("returnCond").innerHTML = obfuscateCondition(document.getElementById("cond").value, Number(document.getElementById("depth").value));
+            }
+        </script>
+    </body>
+</html>
