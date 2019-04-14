@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+    body {
+    font-family: Arial;
+    }
+    #secret {
+    border: 1px solid red;
+    height: 40px;
+    }
+    #container {
+    border: 1px solid blue;
+    height: 100px;
+    }
+    #encoded {
+    border: 1px solid green;
+    height: 100px;
+    }
+    h1, h2 {
+    text-align: center;
+    width: 80%;
+    margin-left: 10%;
+    font-size: 36px;
+    }
+    p {
+    font-size: 18px;
+    width: 40%;
+    margin-left: 30%;
+    }
+    textarea {
+    width: 30%;
+    margin-left: 35%;
+    resize: none;
+    }
+    .buttons {
+    width: 30%;
+    margin-left: 35%;
+    text-align: center;
+    }
+    #reqwords {
+    text-align: center;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>
+    Secret Code Embedder
+    </h1>
+    <p>
+    This is a script that embeds a secret message into an existing message. The red box contains the secret message, the blue box contains the displayed message, and the green box contains the output (or the input if decoding). Have fun.
+    </p>
+    <p id="reqwords"></p>
+    <textarea id="secret"></textarea>
+    <textarea id="container"></textarea>
+    <textarea id="encoded"></textarea>
+    <div class="buttons">
+      <button type="button" onclick="spaceEncode();">Encode</button>
+      <button type="button" onclick="spaceDecode();">Decode</button>
+    </div>
+    <h2>
+    So how does this work?
+    </h2>
+    <p>
+    This program works by altering the spaces between the letters in the container text. The space you get when you press the spacebar is actually only one out of many different types of whitespace. "Whitespace" is just a fancy term for empty characters. Using three different types of whitespace, all of which look identical to the regular spacebar, the program is able to embed another message within the original. All spaces within the text are subject to being converted into another type of whitespace character.
+    </p>
+    <p>
+    How can all these characters be represented with only three different spaces? They use a binary encoding to accomplish this task. Put simply, computers treat letters as numbers. "A" is 65, "B" is 66, "C" is 67, so on and so forth. If we convert each letter into its number, and convert that number into base 2, we get a unique binary number for each letter. Replace each "0" with one type of space, each "1" with a different type of space, and have each letter separated by a third type of space, and we have a way of storing a secret message within the spaces of another. Now, all we have to do is replace all of the original string's spaces with our new string of spaces.
+    </p>
+    <p>
+    Decoding is relatively straightforward. All we need to do is remove all of the non-whitespace characters from the original string, separate them into individual characters, convert the binary sequences to numbers, and convert those numbers to their corresponding characters. Finally, we can string them together to create our secret message.
+    </p>
+    <script>
+        var secret = document.getElementById("secret");
+        var container = document.getElementById("container");
+        var encoded = document.getElementById("encoded");
+        var reqwords = document.getElementById("reqwords");
+
+        function dec2bin(dec){
+        return (dec >>> 0).toString(2);
+        }
+
+        function spaceEncode() {
+            var result = "";
+        var code = secret.value;
+        for (var i = 0; code.length > i; i++) {
+            result += dec2bin(code.charCodeAt(i));
+            result += "\u2008";
+        }
+        result = result.replace(/0/g, " ");
+        result = result.replace(/1/g, "\u2005");
+        var contain = container.value;
+        contain = contain.split(" ");
+        i = 0;
+        var result2 = "";
+        for (; result.length > i; i++) {
+            result2 += contain[i];
+            result2 += result[i];
+        }
+        for (; contain.length > i; i++) {
+            result2 += contain[i];
+            result2 += " ";
+        }
+        encoded.value = result2;
+        }
+
+        document.getElementsByTagName("button")[0].onclick = spaceEncode;
+
+        function spaceDecode() {
+            var result = "";
+        var encode = encoded.value;
+        encode = encode.match(/[\u0020\u2005\u2008]/g);
+        encode = encode.join('');
+        encode = encode.split("\u2008");
+            for (var i = 0; encode.length > i; i++) {
+            var value = 0;
+            for (var i2 = 0; encode[i].length > i2; i2++) {
+                if (encode[i][i2] != " ") {
+                value += Math.pow(2, encode[i].length - i2 - 1);
+            }
+            }
+            result += String.fromCharCode(value);
+        }
+        secret.value = result;
+        }
+
+        document.getElementsByTagName("button")[1].onclick = spaceDecode;
+
+        function loop() {
+            var secretlength = secret.value.length;
+        for (var i = 0; secret.value.length > i; i++) {
+            secretlength += dec2bin(secret.value.charCodeAt(i)).length;
+        }
+            reqwords.innerHTML = "Container message contains " + container.value.split(" ").length + " words. It requires at least " + (secretlength + 1) + " to fit the secret message.";
+        }
+        setInterval(loop, 500);
+    </script>
+  </body>
+</html>
